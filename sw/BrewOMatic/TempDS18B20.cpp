@@ -1,4 +1,4 @@
-#include "BrewOMaticConfig.h"
+#include "Config.h"
 #include "TempDS18B20.h"
 
 #include <OneWire.h>

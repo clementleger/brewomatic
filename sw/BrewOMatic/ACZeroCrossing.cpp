@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#include "BrewOMaticConfig.h"
+#include "Config.h"
 #include "ACZeroCrossing.h"
 
 #if ZERO_CROSSING_DETECT_PIN == 2
@@ -29,7 +29,12 @@ void ACZeroCrossing::computeFrequency()
 	while(millis() < (start + SEC_TO_MSECS));
 	detachInterrupt(ZERO_CROSSING_IRQ);
 	acFrequency = computedFrequency;
-	
+
+	if (abs(acFrequency - 50) <= 1) {
+		acFrequency = 50;
+	} else if (abs(acFrequency - 60) <= 1) {
+		acFrequency = 60;
+	}
 }
 
 void ACZeroCrossing::classZeroCrossingInterrupt()

@@ -1,5 +1,5 @@
-#ifndef _TEMP_MAX31865_H
-#define _TEMP_MAX31865_H
+#ifndef _TEMP_DS18B20_H
+#define _TEMP_DS18B20_H
 
 #include "TempProbe.h"
 

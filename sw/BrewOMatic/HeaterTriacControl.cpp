@@ -1,4 +1,4 @@
-#include "BrewOMaticConfig.h"
+#include "Config.h"
 #include "HeaterTriacControl.h"
 #include "ACZeroCrossing.h"
 #include "Arduino.h"

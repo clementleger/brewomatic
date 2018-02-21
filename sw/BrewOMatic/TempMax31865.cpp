@@ -1,4 +1,4 @@
-#include "BrewOMaticConfig.h"
+#include "Config.h"
 #include "TempMax31865.h"
 
 #define RREF 430.0
