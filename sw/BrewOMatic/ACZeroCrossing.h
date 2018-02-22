@@ -3,14 +3,16 @@
 
 #define MAX_CALLBACKS	5
 
-typedef void (*zero_crossing_callback)(void *data);
+typedef void (*zeroCrossingCallback)(void *data);
 
 class ACZeroCrossing
 {
 	public:
 		static ACZeroCrossing& Instance(){ return m_instance; };
-		addCallback(zero_crossing_callback cb, void *data);
+		int addCallback(zeroCrossingCallback cb, void *data);
+		void removeCallback(int cbIdx);
 		int getFrequency() { return acFrequency; };
+		int getAcPeriodUs() { return acPeriodUs; };
 
 	private:
 		ACZeroCrossing();
@@ -23,12 +25,14 @@ class ACZeroCrossing
 
 		/* Members */
 		int acFrequency;
+		unsigned int acPeriodUs;
 		static ACZeroCrossing m_instance;
 		int pin;
 		/* Callbacks */
-		zero_crossing_callback callbacksFunc[MAX_CALLBACKS];
+		zeroCrossingCallback callbacksFunc[MAX_CALLBACKS];
 		void * callbacksData[MAX_CALLBACKS];
-		int callbacksNr;
+
+		int findFreeIdx();
 };
 
 #endif

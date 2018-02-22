@@ -56,6 +56,15 @@
 #define MAX31865_CS_PIN		10
 
 /**
+ * Number of wire your PT100 probe is using
+ * This define can be:
+ * - MAX31865_2WIRE: Use 2 wires
+ * - MAX31865_3WIRE: Use 3 wires
+ * - MAX31865_4WIRE: Use 4 wires
+ */
+#define MAX31865_WIRE_COUNT	MAX31865_3WIRE
+
+/**
  * When using TempDS18B20 probe type, we use 1wire
  * The define which pin is used for the 1wire bus
  */

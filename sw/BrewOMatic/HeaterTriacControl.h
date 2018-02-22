@@ -8,8 +8,10 @@ class HeaterTriacControl: public HeaterControl {
 		int setup();
 		void enable(bool enable);
 		void setDutyCycle(unsigned char value);
+		unsigned int getTriacTriggerTimeUs() { return triacTriggerTimeUs; };
 	private:
-		unsigned char dutyCycle;
+		int cbIdx;
+		unsigned int triacTriggerTimeUs;
 };
 
 #endif

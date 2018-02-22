@@ -1,6 +1,6 @@
 #include "DisplayLiquidCrystal.h"
 
-int DisplayLiquidCrystal::setup()
+int DisplayLiquidCrystal::setup(BrewOMatic *b)
 {
 	lcd = new LiquidCrystal(LIQUID_CRYSTAL_RS,
 				LIQUID_CRYSTAL_EN,
@@ -10,17 +10,17 @@ int DisplayLiquidCrystal::setup()
 				LIQUID_CRYSTAL_D7);
 	lcd->begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
 
+	b->addObserver(this);
+	
 	return 0;
 }
 
-void DisplayLiquidCrystal::update(BrewOMatic *b, enum updatedValue val)
+void DisplayLiquidCrystal::updateStatus(BrewOMatic *b, const char *newStatus)
 {
-	switch (val) {
-		case STATUS:
-			break;
-		case TEMPERATURE_SETPOINT:
 
-		default:
-			break;
-	}
+}
+
+void DisplayLiquidCrystal::updateTemperatureSetpoint(BrewOMatic *b, unsigned int value)
+{
+
 }

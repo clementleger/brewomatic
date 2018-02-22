@@ -7,8 +7,9 @@
 
 class DisplayLiquidCrystal: public Display, public BrewOMaticObserver {
 	public:
-		int setup();
-		void update(BrewOMatic *b, enum updatedValue val);
+		int setup(BrewOMatic *b);
+		void updateStatus(BrewOMatic *b, const char *newStatus);
+		void updateTemperatureSetpoint(BrewOMatic *b, unsigned int value);
 	private:
 		LiquidCrystal *lcd;
 };

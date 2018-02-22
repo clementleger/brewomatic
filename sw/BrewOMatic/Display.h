@@ -5,7 +5,7 @@
 
 class Display {
 	public:
-		virtual int setup() = 0;
+		virtual int setup(BrewOMatic *b) = 0;
 };
 
 #endif /* _BREW_DISPLAY_H */

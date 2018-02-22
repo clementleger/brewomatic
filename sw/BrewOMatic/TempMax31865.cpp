@@ -6,7 +6,7 @@
 int TempMax31865::setup()
 {
 	 max_converter = new Adafruit_MAX31865(MAX31865_CS_PIN);
-	 return max_converter->begin(MAX31865_3WIRE);
+	 return max_converter->begin(MAX31865_WIRE_COUNT);
 }
 
 int TempMax31865::getTemp(float *value)

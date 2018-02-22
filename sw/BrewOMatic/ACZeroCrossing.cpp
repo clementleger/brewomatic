@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <avr/power.h>
 
 #include "Config.h"
 #include "ACZeroCrossing.h"
@@ -13,7 +14,7 @@
 
 ACZeroCrossing ACZeroCrossing::m_instance = ACZeroCrossing();
 
-int computedFrequency = 0;
+unsigned char computedFrequency = 0;
 
 void computeFrequencyInterrupt()
 {
@@ -28,12 +29,13 @@ void ACZeroCrossing::computeFrequency()
 	attachInterrupt(ZERO_CROSSING_IRQ, computeFrequencyInterrupt, RISING);
 	while(millis() < (start + SEC_TO_MSECS));
 	detachInterrupt(ZERO_CROSSING_IRQ);
-	acFrequency = computedFrequency;
 
-	if (abs(acFrequency - 50) <= 1) {
+	if (abs(computedFrequency - 100) <= 2) {
 		acFrequency = 50;
-	} else if (abs(acFrequency - 60) <= 1) {
+		acPeriodUs = 20000;
+	} else if (abs(computedFrequency - 120) <= 2) {
 		acFrequency = 60;
+		acPeriodUs = 16666;
 	}
 }
 
@@ -41,8 +43,10 @@ void ACZeroCrossing::classZeroCrossingInterrupt()
 {
 	int i;
 
-	for (i = 0; i < callbacksNr; i++) {
-		callbacksFunc[i](callbacksData[i]);
+	for (i = 0; i < MAX_CALLBACKS; i++) {
+		if (callbacksFunc[i]) {
+			callbacksFunc[i](callbacksData[i]);
+		}
 	}
 }
 
@@ -50,18 +54,45 @@ ACZeroCrossing::ACZeroCrossing()
 {
 	pinMode(ZERO_CROSSING_DETECT_PIN, INPUT);
 	acFrequency = 0;
+	acPeriodUs = 0;
 	computeFrequency();
 	attachInterrupt(ZERO_CROSSING_IRQ, zeroCrossingInterrupt, RISING);
-	callbacksNr = 0;
+	
+	for (int i = 0; i < MAX_CALLBACKS; i++) {
+		callbacksFunc[i] = NULL;
+		callbacksData[i] = NULL;
+	}
 }
 
-int ACZeroCrossing::addCallback(zero_crossing_callback cb, void *data)
+int ACZeroCrossing::findFreeIdx()
 {
-	if (callbacksNr >= MAX_CALLBACKS)
-		return 1;
+	for(int i = 0; i < MAX_CALLBACKS; i++) {
+		if (callbacksFunc[i] == NULL) {
+			return i;
+		}
+	}
 
-	callbacksFunc[callbacksNr] = cb;
-	callbacksData[callbacksNr] = data;
+	return -1;
+}
 
-	callbacksNr++;
+int ACZeroCrossing::addCallback(zeroCrossingCallback cb, void *data)
+{
+	int idx;
+
+	idx = findFreeIdx();
+	if (idx < 0)
+		return -1;
+
+	callbacksFunc[idx] = cb;
+	callbacksData[idx] = data;
+
+	return 0;
+}
+
+void ACZeroCrossing::removeCallback(int cbIdx)
+{
+	if (cbIdx < 0)
+		return;
+	callbacksFunc[cbIdx] = NULL;
+	callbacksData[cbIdx] = NULL;
 }
