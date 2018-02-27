@@ -7,3 +7,6 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #endif
+#if defined(ENABLE_ROTARY_ENCODER) && ENABLE_ROTARY_ENCODER == 1
+#include <Encoder.h>
+#endif

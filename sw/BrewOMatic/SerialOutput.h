@@ -1,7 +1,7 @@
 #ifndef _SERIAL_OUTPUT_H
 #define _SERIAL_OUTPUT_H
 
-#include "BrewOMatic.h"
+#include "BrewOMaticObserver.h"
 
 class SerialOutput: public BrewOMaticObserver {
 
@@ -14,5 +14,8 @@ class SerialOutput: public BrewOMaticObserver {
 		void updateBrewingStep(BrewOMatic *b, const char *newStep);
 
 };
+
+/* Emergency serial output */
+void serialOutput(const char *str);
 
 #endif

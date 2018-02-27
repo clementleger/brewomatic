@@ -1,4 +1,9 @@
+
+#include "Config.h"
+#include "BrewOMatic.h"
 #include "SerialOutput.h"
+
+#include <Arduino.h>
 
 int SerialOutput::setup(BrewOMatic *b)
 {
@@ -29,4 +34,9 @@ void SerialOutput::updateTemperature(BrewOMatic *b, unsigned int temp)
 {
 	Serial.print("TEMPERATURE:");
 	Serial.println(temp);
+}
+
+void serialOutput(const char *str)
+{
+	Serial.println(str);
 }

@@ -3,6 +3,8 @@
 
 #include "Config.h"
 
+#define panic(_str)	do { serialOutput(_str); while(1); } while(0);
+
 #define STRINGIFY_(M) #M
 #define STRINGIFY(M) STRINGIFY_(M)
 
@@ -13,11 +15,15 @@
 #define MAX_OBSERVERS	4
 #define MAX_STR_SIZE	30
 
+class BrewOMatic;
+
+#include "Input.h"
+#include "SerialOutput.h"
+#include "RotaryEncoder.h"
 #include "TempMax31865.h"
 #include "TempDS18B20.h"
 #include "HeaterTriacControl.h"
-
-class BrewOMaticObserver;
+#include "BrewOMaticObserver.h"
 
 class BrewOMatic {
 	public:
@@ -27,6 +33,9 @@ class BrewOMatic {
 		float mTemperatureSetpoint;
 		TempProbe *tempProbe;
 		HeaterControl *heaterControl;
+		SerialOutput *serialOutput;
+		Input *input;
+		
 		BrewOMaticObserver *observers[MAX_OBSERVERS];
 		unsigned int nbObservers;
 		char buffer[MAX_STR_SIZE];
@@ -34,15 +43,6 @@ class BrewOMatic {
 		void notifyStatusChanged(const char *status);
 		void notifyTemperatureChanged(unsigned int temp);
 		
-};
-
-class BrewOMaticObserver {
-	public:
-		virtual void updateStatus(BrewOMatic *b, const char *newStatus) = 0;
-		virtual void updateTemperatureSetpoint(BrewOMatic *b, unsigned int value) = 0;
-		virtual void updateTemperature(BrewOMatic *b, unsigned int value) = 0;
-		virtual void updateBrewingStep(BrewOMatic *b, const char *newStep) = 0;
-
 };
 
 

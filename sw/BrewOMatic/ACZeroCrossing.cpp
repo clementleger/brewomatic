@@ -36,6 +36,8 @@ void ACZeroCrossing::computeFrequency()
 	} else if (abs(computedFrequency - 120) <= 2) {
 		acFrequency = 60;
 		acPeriodUs = 16666;
+	} else {
+		
 	}
 }
 

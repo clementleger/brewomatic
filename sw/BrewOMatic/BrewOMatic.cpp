@@ -26,8 +26,15 @@ void BrewOMatic::setup()
 	notifyStatusChanged(getString(STR_WELCOME));
 	
 	nbObservers = 0;
+	serialOutput = new SerialOutput();
 	tempProbe = new TEMP_PROBE_TYPE();
 	heaterControl = new HeaterTriacControl();
+	input = new RotaryEncoder();
+
+	serialOutput->setup(this);
+	tempProbe->setup();
+	heaterControl->setup();
+	input->setup();
 
 }
 

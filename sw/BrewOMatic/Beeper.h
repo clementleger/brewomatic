@@ -1,12 +1,9 @@
-#ifndef _DISPLAY_LIQUID_CRYSTAL_H
-#define _DISPLAY_LIQUID_CRYSTAL_H
+#ifndef _BEEPER_H
+#define _BEEPER_H
 
-#include "Display.h"
-#include "BrewOMaticObserver.h"
+#include "BrewOMatic.h"
 
-#include <LiquidCrystal.h>
-
-class DisplayLiquidCrystal: public Display, public BrewOMaticObserver {
+class Beeper: public BrewOMaticObserver {
 	public:
 		int setup(BrewOMatic *b);
 		void updateStatus(BrewOMatic *b, const char *newStatus);
@@ -14,8 +11,6 @@ class DisplayLiquidCrystal: public Display, public BrewOMaticObserver {
 		void updateTemperatureSetpoint(BrewOMatic *b, unsigned int value);
 		void updateTemperature(BrewOMatic *b, unsigned int temp);
 
-	private:
-		LiquidCrystal *lcd;
 };
 
 #endif

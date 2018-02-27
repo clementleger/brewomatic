@@ -11,6 +11,43 @@
 #define DISP_LANGUAGE	English
 
 /**
+ * Enable beeper support
+ */
+#define ENABLE_BEEPER	1
+
+/**
+ * Pin where the beeper is connected (must be a PWM one)
+ */
+#define BEEPER_PIN	6
+
+
+/***********************************************************************
+ *                       Inputs
+ **********************************************************************/
+
+/**
+ * Enable rotary encoder support
+ */
+#define ENABLE_ROTARY_ENCODER	1
+
+/**
+ * Pin where the beeper is connected (must be a PWM one)
+ * Must have at elast one PWM pin
+ */
+#define ROTARY_ENCODER_PIN_A		3
+#define ROTARY_ENCODER_PIN_B		A6
+#define ROTARY_ENCODER_SWITCH_PIN	A7
+
+/**
+ * Reverse encoder rotation direction
+ */
+#define ROTARY_ENCODER_DIR_REVERSE	0
+
+/***********************************************************************
+ *                       Display Control
+ **********************************************************************/
+
+/**
  * Display type 
  */
 #define DISP_TYPE	LiquidCrystal
@@ -20,16 +57,14 @@
  */
 #define LIQUID_CRYSTAL_WIDTH	16
 #define LIQUID_CRYSTAL_HEIGHT	2
-#define LIQUID_CRYSTAL_RS	4
-#define LIQUID_CRYSTAL_EN	5
-#define LIQUID_CRYSTAL_D4	6
-#define LIQUID_CRYSTAL_D5	7
-#define LIQUID_CRYSTAL_D6	8
-#define LIQUID_CRYSTAL_D7	9
 
-/***********************************************************************
- *                       Display Control
- **********************************************************************/
+#define LIQUID_CRYSTAL_RS	A0
+#define LIQUID_CRYSTAL_EN	A1
+#define LIQUID_CRYSTAL_D4	A2
+#define LIQUID_CRYSTAL_D5	A3
+#define LIQUID_CRYSTAL_D6	A4
+#define LIQUID_CRYSTAL_D7	A5
+
 
 /**
  * Set to 0 to disable serial output and save some bytes
@@ -37,6 +72,9 @@
  */
 #define SERIAL_OUTPUT	1
 
+/**
+ * Serial baudrate to use
+ */
 #define SERIAL_BAUDRATE 115200
 
 /***********************************************************************
@@ -81,7 +119,7 @@
 #define ZERO_CROSSING_DETECT_PIN	2
 
 /**
- * Heater cotnrol type, can be
+ * Heater control type, can be
  * TRIAC_CONTROL: When using a TRIAC to control AC.
  */
 #define HEATER_CONTROL_TYPE		TRIAC_CONTROL

@@ -11,16 +11,22 @@ int DisplayLiquidCrystal::setup(BrewOMatic *b)
 	lcd->begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
 
 	b->addObserver(this);
-	
+
 	return 0;
 }
 
 void DisplayLiquidCrystal::updateStatus(BrewOMatic *b, const char *newStatus)
 {
+}
 
+void DisplayLiquidCrystal::updateBrewingStep(BrewOMatic *b, const char *newStep)
+{
 }
 
 void DisplayLiquidCrystal::updateTemperatureSetpoint(BrewOMatic *b, unsigned int value)
 {
+}
 
+void DisplayLiquidCrystal::updateTemperature(BrewOMatic *b, unsigned int temp)
+{
 }
