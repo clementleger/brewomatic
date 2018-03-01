@@ -1,10 +1,11 @@
-#define _RECIPE_H
+#ifndef _RECIPE_H
 #define _RECIPE_H
 
 #define MAX_STEP_COUNT	10
 
 class BrewingStep {
 	public:
+		BrewingStep();
 		/**
 		 * Get step duration in mintue
 		 */
@@ -34,12 +35,19 @@ class BrewingStep {
 		 */
 		bool getWaitAfterStep() { return mWaitAfterStep;};
 
+		/**
+		 * Get step name
+		 * @return Step name
+		 */
+		const char *getName() { return mName;};
+
 	private:
 		bool mWaitAfterStep;
 		bool mEnablePump;
 		bool mEnableHeater;
 		unsigned long mTargetTemp;
 		unsigned long mDuration;
+		const char *mName;
 };
 
 /**
@@ -48,11 +56,15 @@ class BrewingStep {
 
 class Recipe {
 	public:
+		Recipe();
 		BrewingStep *getNextBrewingStep();
+		bool hasNextBrewingStep() { return mCurrentStep < mStepsCount;};
 		void resetRecipe() {mCurrentStep = 0;};
 
+		bool addBrewingStep(BrewingStep *step);
+
 	private:
-		BrewingStep steps[MAX_STEP_COUNT];
+		BrewingStep *steps[MAX_STEP_COUNT];
 		unsigned int mStepsCount;
 		unsigned int mCurrentStep;
 };

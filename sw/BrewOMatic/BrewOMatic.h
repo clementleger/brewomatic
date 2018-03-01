@@ -18,6 +18,7 @@
 class BrewOMatic;
 
 #include "Input.h"
+#include "Recipe.h"
 #include "SerialOutput.h"
 #include "RotaryEncoder.h"
 #include "TempMax31865.h"
@@ -42,6 +43,7 @@ class BrewOMatic {
 
 		void notifyStatusChanged(const char *status);
 		void notifyTemperatureChanged(unsigned int temp);
+		void executeRecipe(Recipe *recipe);
 		
 };
 

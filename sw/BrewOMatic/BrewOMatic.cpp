@@ -2,9 +2,7 @@
 #include "Language.h"
 #include "BrewOMatic.h"
 
-
 BrewOMatic brewOMatic;
-
 
 void BrewOMatic::addObserver(BrewOMaticObserver *obs)
 {
@@ -35,9 +33,34 @@ void BrewOMatic::setup()
 	tempProbe->setup();
 	heaterControl->setup();
 	input->setup();
-
 }
 
+void BrewOMatic::executeStep(BrewingStep *step)
+{
+	unsigned long start_millis = millis();
+	unsigned long duration = step->getDuration() * 60 * 1000;
+
+	/* pdate observer */
+
+	while ((start_millis + millis()) < duration) {
+		
+	};
+}
+
+void BrewOMatic::executeRecipe(Recipe *recipe)
+{
+	BrewingStep *step;
+	while (recipe->hasNextBrewingStep()) {
+		step = getNextBrewingStep();
+
+		
+
+	}
+}
+
+/**
+ * Basic C stuff
+ */
 void setup()
 {
 	brewOMatic.setup();
