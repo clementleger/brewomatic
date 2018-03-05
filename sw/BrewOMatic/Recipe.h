@@ -1,11 +1,36 @@
 #ifndef _RECIPE_H
 #define _RECIPE_H
 
-#define MAX_STEP_COUNT	10
+#define MAX_STEP_COUNT		10
+#define MAX_USER_ACTION_COUNT	4
 
-class BrewingStep {
+template<typename T>
+class List {
 	public:
-		BrewingStep();
+		List(int maxElems);
+		T getNextElem();
+		bool hasNextElem() { return mCurrentElem < mElemCount;};
+		void reset() {mCurrentElem = 0;};
+		bool isEmpty() {return mElemCount == 0;};
+		bool addElem(T elem);
+
+	private:
+		T *mElems;
+		unsigned int mElemCount;
+		unsigned int mCurrentElem;
+		unsigned int mMaxElems;
+};
+
+class Action {
+	public:
+		const char *getDescription() {return mDescription;};
+	private:
+		const char *mDescription;
+};
+
+class Step {
+	public:
+		Step();
 		/**
 		 * Get step duration in mintue
 		 */
@@ -30,43 +55,30 @@ class BrewingStep {
 		bool getEnableHeater() { return mEnableHeater;};
 
 		/**
-		 * Should the controller enable the pump when doing this step
-		 * @return a boolean, true if pump should be enabled
-		 */
-		bool getWaitAfterStep() { return mWaitAfterStep;};
-
-		/**
 		 * Get step name
 		 * @return Step name
 		 */
 		const char *getName() { return mName;};
 
+		List<Action *> getUserActions() {return mUserActions;};
+
 	private:
-		bool mWaitAfterStep;
 		bool mEnablePump;
 		bool mEnableHeater;
 		unsigned long mTargetTemp;
 		unsigned long mDuration;
 		const char *mName;
-};
 
-/**
- * All times are in minutes
- */
+		/* List of user action requiring confirmation */
+		List<Action *> mUserActions;
+};
 
 class Recipe {
 	public:
 		Recipe();
-		BrewingStep *getNextBrewingStep();
-		bool hasNextBrewingStep() { return mCurrentStep < mStepsCount;};
-		void resetRecipe() {mCurrentStep = 0;};
-
-		bool addBrewingStep(BrewingStep *step);
-
+		List<Step *> getSteps() {return mSteps;};
 	private:
-		BrewingStep *steps[MAX_STEP_COUNT];
-		unsigned int mStepsCount;
-		unsigned int mCurrentStep;
+		List<Step *> mSteps;
 };
 
 #endif

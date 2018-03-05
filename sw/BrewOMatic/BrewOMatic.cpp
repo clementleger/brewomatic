@@ -35,27 +35,54 @@ void BrewOMatic::setup()
 	input->setup();
 }
 
-void BrewOMatic::executeStep(BrewingStep *step)
+brewomaticError BrewOMatic::executeAction(Action *action)
 {
+	/* Wait confirmation from user */
+
+	return SUCCESS;
+}
+
+brewomaticError BrewOMatic::executeStep(Step *step)
+{
+	Action *action;
+	brewomaticError error;
 	unsigned long start_millis = millis();
 	unsigned long duration = step->getDuration() * 60 * 1000;
 
-	/* pdate observer */
+	if (!step->getUserActions().isEmpty()){
+		
+		while (step->getUserActions().hasNextElem()) {
+			action = step->getUserActions().getNextElem();
+			error = executeAction(action);
+			if (error)
+				return error;
+		}
+	}
+
+	/* update observer */
 
 	while ((start_millis + millis()) < duration) {
-		
+		/* Control PID for temperature */
 	};
+
+	return SUCCESS;
 }
 
-void BrewOMatic::executeRecipe(Recipe *recipe)
+brewomaticError BrewOMatic::executeRecipe(Recipe *recipe)
 {
-	BrewingStep *step;
-	while (recipe->hasNextBrewingStep()) {
-		step = getNextBrewingStep();
+	Step *step;
+	brewomaticError error;
+	recipe->getSteps().reset();
 
-		
+	while (recipe->getSteps().hasNextElem()) {
+		step = recipe->getSteps().getNextElem();
 
+		error = executeStep(step);
+		if (error)
+			return error;
 	}
+
+	return SUCCESS;
 }
 
 /**

@@ -19,7 +19,7 @@ void DisplayLiquidCrystal::updateStatus(BrewOMatic *b, const char *newStatus)
 {
 }
 
-void DisplayLiquidCrystal::updateBrewingStep(BrewOMatic *b, const char *newStep)
+void DisplayLiquidCrystal::updateStep(BrewOMatic *b, const char *newStep)
 {
 }
 

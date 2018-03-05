@@ -26,6 +26,12 @@ class BrewOMatic;
 #include "HeaterTriacControl.h"
 #include "BrewOMaticObserver.h"
 
+typedef enum {
+	SUCCESS = 0,
+	ERROR_RECIPE_EXECUTON_FAILED,
+	ERROR_USER_CANCELLED,
+} brewomaticError;
+
 class BrewOMatic {
 	public:
 		void setup();
@@ -43,8 +49,9 @@ class BrewOMatic {
 
 		void notifyStatusChanged(const char *status);
 		void notifyTemperatureChanged(unsigned int temp);
-		void executeRecipe(Recipe *recipe);
-		
+		brewomaticError executeRecipe(Recipe *recipe);
+		brewomaticError executeStep(Step *step);
+		brewomaticError executeAction(Action *action);
 };
 
 
