@@ -1,20 +1,6 @@
 #include "Recipe.h"
 
 
-
-template<typename T>
-T List<T>::getNextElem()
-{
-	T elem;
-	if (mCurrentElem == mElemCount)
-		return 0;
-
-	elem = mElems[mCurrentElem];
-	mCurrentElem++;
-
-	return elem;
-}
-
 template<typename T>
 List<T>::List(int maxElems) {
 	mCurrentElem = 0;
@@ -22,20 +8,8 @@ List<T>::List(int maxElems) {
 	mMaxElems = maxElems;
 
 	mElems = new T[maxElems];
-	
 }
 
-template<typename T>
-bool List<T>::addElem(T step)
-{
-	if (mElemCount == MAX_STEP_COUNT)
-		return false;
-
-	mElems[mElemCount] = step;
-	mElemCount++;
-
-	return true;
-}
 
 Step::Step():
 mUserActions(MAX_USER_ACTION_COUNT)
@@ -43,8 +17,48 @@ mUserActions(MAX_USER_ACTION_COUNT)
 	
 }
 
-Recipe::Recipe():
-mSteps(MAX_STEP_COUNT)
+Step::Step(const char *name, unsigned long duration,
+	   unsigned long targetTemp, bool enablePump,
+	   bool enableHeater,
+	   unsigned int actionCount):
+mEnablePump(enablePump),
+mEnableHeater(enableHeater),
+mTargetTemp(targetTemp),
+mDuration(duration),
+mName(name),
+mUserActions(actionCount)
 {
 	
+}
+
+Recipe::Recipe(unsigned int stepCount):
+mSteps(stepCount)
+{
+	
+}
+
+Recipe *createDefaultRecipe()
+{
+	Recipe *recipe = new Recipe(6);
+	/* Heating water */
+	Step *heating = new Step("Heating", 0, 50, false, true, 0);
+	recipe->getSteps().addElem(heating);
+
+	/* Add action: insert malt */
+	Step *mashing1 = new Step("Mashing 1", 30, 63, true, true, 1);
+	recipe->getSteps().addElem(mashing1);
+	Step *mashing2 = new Step("Mashing 2", 30, 68, true, true, 0);
+	recipe->getSteps().addElem(mashing2);
+	Step *mashing3 = new Step("Mashing 3", 15, 70, true, true, 0);
+	recipe->getSteps().addElem(mashing3);
+
+	/* Add action: remove malt before boiling */
+	Step *boiling = new Step("Boiling", 0, 100, false, true, 1);
+	recipe->getSteps().addElem(boiling);
+
+	/* Add action: insert chiller for cooling */
+	Step *cooling = new Step("Cooling", 0, 20, false, false, 1);
+	recipe->getSteps().addElem(cooling);
+
+	return recipe;
 }

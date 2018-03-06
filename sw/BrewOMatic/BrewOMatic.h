@@ -35,6 +35,7 @@ typedef enum {
 class BrewOMatic {
 	public:
 		void setup();
+		void run();
 		void addObserver(BrewOMaticObserver *obs);
 	private:
 		float mTemperatureSetpoint;

@@ -19,6 +19,20 @@ void BrewOMatic::notifyStatusChanged(const char *status)
 		observers[nbObservers]->updateStatus(this, status);
 }
 
+void BrewOMatic::run()
+{
+	while(1) {
+		/* Display menu */
+
+		/* Execute action */
+		Recipe *recipe = createDefaultRecipe();
+
+		executeRecipe(recipe);
+
+		delete recipe;
+	}
+}
+
 void BrewOMatic::setup()
 {
 	notifyStatusChanged(getString(STR_WELCOME));
@@ -59,7 +73,7 @@ brewomaticError BrewOMatic::executeStep(Step *step)
 		}
 	}
 
-	/* update observer */
+	/* Update observer */
 
 	while ((start_millis + millis()) < duration) {
 		/* Control PID for temperature */
@@ -95,7 +109,7 @@ void setup()
 
 void loop()
 {
-	
+	brewOMatic.run();
 }
 
 
