@@ -7,10 +7,10 @@
 
 class RotaryEncoder: public Input {
 	public:
-		int setup();
+		RotaryEncoder();
 		int getButtonPressed();
 	private:
-		Encoder *encoder;
+		Encoder encoder;
 		long oldPosition;
 };
 

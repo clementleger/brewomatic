@@ -20,6 +20,10 @@
  */
 #define BEEPER_PIN	6
 
+/**
+ * Duration of beeper click sound
+ */
+#define BEEPER_CLICK_DURATION	100
 
 /***********************************************************************
  *                       Inputs
@@ -31,12 +35,11 @@
 #define ENABLE_ROTARY_ENCODER	1
 
 /**
- * Pin where the beeper is connected (must be a PWM one)
- * Must have at elast one PWM pin
+ * Pin where the beeper is connected
  */
 #define ROTARY_ENCODER_PIN_A		3
-#define ROTARY_ENCODER_PIN_B		A6
-#define ROTARY_ENCODER_SWITCH_PIN	A7
+#define ROTARY_ENCODER_PIN_B		4
+#define ROTARY_ENCODER_SWITCH_PIN	A0
 
 /**
  * Reverse encoder rotation direction
@@ -50,7 +53,7 @@
 /**
  * Display type 
  */
-#define DISP_TYPE	LiquidCrystal
+#define DISPLAY_TYPE	DisplayUcglib
 
 /**
  * Liquid crystal screen configuration
@@ -65,6 +68,14 @@
 #define LIQUID_CRYSTAL_D6	A4
 #define LIQUID_CRYSTAL_D7	A5
 
+/**
+ * Ucglib screen configuration
+ */
+#define UCGLIB_DISPLAY_TYPE	Ucglib_ILI9341_18x240x320_HWSPI
+
+#define UCGLIB_CD_PIN	A1	
+#define UCGLIB_CS_PIN	A2
+#define UCGLIB_RST_PIN	A3
 
 /**
  * Set to 0 to disable serial output and save some bytes

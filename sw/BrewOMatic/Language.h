@@ -8,6 +8,7 @@
 enum brewStringIndex {
 	STR_WELCOME,
 	STR_FAILURE,
+	STR_STARTING,
 };
 
 const char *getString(enum brewStringIndex strIdx);

@@ -32,13 +32,13 @@ void setTimerDutyCycle(void *data)
 	Timer1.attachInterrupt(activateTriacGate);
 }
 
-int HeaterTriacControl::setup()
+HeaterTriacControl::HeaterTriacControl()
 {
 	Timer1.initialize();
 	pinMode(TRIAC_CONTROL_PIN, OUTPUT);
 	digitalWrite(TRIAC_CONTROL_PIN, LOW);
 
-	return 0;
+	ACZeroCrossing::Instance().setup();
 }
 
 void HeaterTriacControl::enable(bool enable)

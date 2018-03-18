@@ -57,73 +57,6 @@ class Step {
 		     unsigned long targetTemp, bool enablePump,
 		     bool enableHeater, unsigned int actionCount);
 
-		/**
-		 * Get step duration in mintue
-		 * @return step duration
-		 */
-		unsigned long getDuration() { return mDuration;};
-
-		/**
-		 * Get step duration in mintue
-		 * @return step duration
-		 */
-		void setDuration(unsigned long duration) { mDuration = duration;};
-
-		/**
-		 * Return targeted temperature
-		 * @return targeted temperature
-		 */
-		unsigned long getTargetTemp() { return mTargetTemp;};
-
-		/**
-		 * Return targeted temperature
-		 * @return targeted temperature
-		 */
-		void setTargetTemp(unsigned long targetTemp) { mTargetTemp = targetTemp;};
-
-		/**
-		 * Should the controller enable the pump when doing this step
-		 * @return a boolean, true if pump should be enabled
-		 */
-		bool getEnablePump() { return mEnablePump;};
-
-		/**
-		 * Should the controller enable the pump when doing this step
-		 * @return a boolean, true if pump should be enabled
-		 */
-		void setEnablePump(bool enablePump) {  mEnablePump = enablePump;};
-
-		/**
-		 * Should the controller enable the heater when doing this step
-		 * @return a boolean, true if heater should be enabled
-		 */
-		bool getEnableHeater() { return mEnableHeater;};
-
-		/**
-		 * Should the controller enable the heater when doing this step
-		 * @return a boolean, true if heater should be enabled
-		 */
-		void setEnableHeater(bool enableHeater) { mEnableHeater = enableHeater;};
-
-		/**
-		 * Get step name
-		 * @return Step name
-		 */
-		const char *getName() { return mName;};
-
-		/**
-		 * Get step name
-		 * @return Step name
-		 */
-		void setName(const char *name) { mName = name;};
-
-		/**
-		 * Get the list of user actions to execute before running
-		 * the step.
-		 */
-		List<Action *> getUserActions() {return mUserActions;};
-
-	private:
 		bool mEnablePump;
 		bool mEnableHeater;
 		unsigned long mTargetTemp;
@@ -136,10 +69,10 @@ class Step {
 
 class Recipe {
 	public:
-		Recipe(unsigned int stepCount);
-		List<Step *> getSteps() {return mSteps;};
-	private:
+		Recipe(unsigned int stepCount, const char *name);
+
 		List<Step *> mSteps;
+		const char *mName;
 };
 
 Recipe *createDefaultRecipe();

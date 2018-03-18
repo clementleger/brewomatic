@@ -4,49 +4,74 @@
 
 BrewOMatic brewOMatic;
 
-void BrewOMatic::addObserver(BrewOMaticObserver *obs)
-{
-	if (nbObservers > MAX_OBSERVERS)
-		return;
 
-	observers[nbObservers] = obs;
-	nbObservers++;
+
+void BrewOMatic::displayIdle()
+{
+	dbgOutput("state: idle\n");
+	mDisp->displayIdle(this);
 }
 
-void BrewOMatic::notifyStatusChanged(const char *status)
+void BrewOMatic::displayMenu()
 {
-	for(unsigned int i = 0; i < nbObservers; i++)
-		observers[nbObservers]->updateStatus(this, status);
+	
 }
+
+void BrewOMatic::handleIdle()
+{
+	int button = mInput->getButtonPressed();
+	if (button == Input::BUTTON_OK) {
+		
+		if (!mInMenu) {
+			mBeeper->click();
+			mInMenu = true;
+			displayMenu();
+		}
+	}
+}
+
+void BrewOMatic::handleBrewing()
+{
+	/* Execute action */
+	Recipe *recipe = createDefaultRecipe();
+
+	executeRecipe(recipe);
+
+	delete recipe;
+}
+
 
 void BrewOMatic::run()
 {
 	while(1) {
 		/* Display menu */
-
-		/* Execute action */
-		Recipe *recipe = createDefaultRecipe();
-
-		executeRecipe(recipe);
-
-		delete recipe;
+		switch (mState) {
+			case STATE_IDLE:
+				handleIdle();
+			break;
+			case STATE_BREWING:
+				handleBrewing();
+			break;
+		}
 	}
 }
 
 void BrewOMatic::setup()
 {
-	notifyStatusChanged(getString(STR_WELCOME));
-	
-	nbObservers = 0;
-	serialOutput = new SerialOutput();
-	tempProbe = new TEMP_PROBE_TYPE();
-	heaterControl = new HeaterTriacControl();
-	input = new RotaryEncoder();
+	mState = STATE_IDLE;
+	mInMenu = false;
+	mSerialOutput = new SerialOutput();
 
-	serialOutput->setup(this);
-	tempProbe->setup();
-	heaterControl->setup();
-	input->setup();
+	dbgOutput("Starting setup...\n");
+
+	mTempProbe = new TEMP_PROBE_TYPE();
+	mDisp = new DISPLAY_TYPE();
+	mHeaterControl = new HeaterTriacControl();
+	mInput = new RotaryEncoder();
+	mBeeper = new Beeper();
+
+	displayIdle();
+	dbgOutput("Setup OK\n");
 }
 
 brewomaticError BrewOMatic::executeAction(Action *action)
@@ -61,12 +86,11 @@ brewomaticError BrewOMatic::executeStep(Step *step)
 	Action *action;
 	brewomaticError error;
 	unsigned long start_millis = millis();
-	unsigned long duration = step->getDuration() * 60 * 1000;
+	unsigned long duration = step->mDuration * 60 * 1000;
 
-	if (!step->getUserActions().isEmpty()){
-		
-		while (step->getUserActions().hasNextElem()) {
-			action = step->getUserActions().getNextElem();
+	if (!step->mUserActions.isEmpty()){
+		while (step->mUserActions.hasNextElem()) {
+			action = step->mUserActions.getNextElem();
 			error = executeAction(action);
 			if (error)
 				return error;
@@ -74,7 +98,6 @@ brewomaticError BrewOMatic::executeStep(Step *step)
 	}
 
 	/* Update observer */
-
 	while ((start_millis + millis()) < duration) {
 		/* Control PID for temperature */
 	};
@@ -86,10 +109,10 @@ brewomaticError BrewOMatic::executeRecipe(Recipe *recipe)
 {
 	Step *step;
 	brewomaticError error;
-	recipe->getSteps().reset();
+	recipe->mSteps.reset();
 
-	while (recipe->getSteps().hasNextElem()) {
-		step = recipe->getSteps().getNextElem();
+	while (recipe->mSteps.hasNextElem()) {
+		step = recipe->mSteps.getNextElem();
 
 		error = executeStep(step);
 		if (error)
@@ -109,6 +132,7 @@ void setup()
 
 void loop()
 {
+	dbgOutput("Entering main loop\n");
 	brewOMatic.run();
 }
 

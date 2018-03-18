@@ -3,7 +3,6 @@
 
 class TempProbe {
 	public:
-		virtual int setup() = 0;
 		virtual int getTemp(float *value) = 0;
 };
 

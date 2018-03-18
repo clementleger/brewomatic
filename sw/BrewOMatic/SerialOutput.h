@@ -1,21 +1,14 @@
 #ifndef _SERIAL_OUTPUT_H
 #define _SERIAL_OUTPUT_H
 
-#include "BrewOMaticObserver.h"
+class BrewOMatic;
 
-class SerialOutput: public BrewOMaticObserver {
-
+class SerialOutput {
 	public:
-		int setup(BrewOMatic *b);
-		/* Observer interface */
-		void updateStatus(BrewOMatic *b, const char *newStatus);
-		void updateTemperatureSetpoint(BrewOMatic *b, unsigned int value);
-		void updateTemperature(BrewOMatic *b, unsigned int temp);
-		void updateBrewingStep(BrewOMatic *b, const char *newStep);
-
+		SerialOutput();
 };
 
 /* Emergency serial output */
-void serialOutput(const char *str);
+void dbgOutput(const char *fmt, ...);
 
 #endif

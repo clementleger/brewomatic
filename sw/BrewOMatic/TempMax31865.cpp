@@ -3,19 +3,19 @@
 
 #define RREF 430.0
 
-int TempMax31865::setup()
+TempMax31865::TempMax31865():
+mConverter(MAX31865_CS_PIN)
 {
-	 max_converter = new Adafruit_MAX31865(MAX31865_CS_PIN);
-	 return max_converter->begin(MAX31865_WIRE_COUNT);
+	 mConverter.begin(MAX31865_WIRE_COUNT);
 }
 
 int TempMax31865::getTemp(float *value)
 {
-	*value = max_converter->temperature(100, RREF);
+	*value = mConverter.temperature(100, RREF);
 
-	uint8_t fault = max_converter->readFault();
+	uint8_t fault = mConverter.readFault();
 	if (fault) {
-		max_converter->clearFault();
+		mConverter.clearFault();
 		return 1;
 	}
 

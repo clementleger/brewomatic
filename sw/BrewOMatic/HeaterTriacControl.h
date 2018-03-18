@@ -5,7 +5,7 @@
 
 class HeaterTriacControl: public HeaterControl {
 	public:
-		int setup();
+		HeaterTriacControl();
 		void enable(bool enable);
 		void setDutyCycle(unsigned char value);
 		unsigned int getTriacTriggerTimeUs() { return triacTriggerTimeUs; };

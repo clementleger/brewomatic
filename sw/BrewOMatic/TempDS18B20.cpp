@@ -5,23 +5,20 @@
 
 OneWire oneWire(DS18B20_ONEWIRE_PIN);
 
-int TempDS18B20::setup()
+TempDS18B20::TempDS18B20():
+mDs(&oneWire)
 {
-	
-	ds = new DallasTemperature(&oneWire);
-	ds->begin();
-	if (ds->getDS18Count() != 1)
-		return 1;
-	if (!ds->getAddress(dsAddr, 0))
-		return 1;
-
-	return 0;
+	mDs.begin();
+	if (mDs.getDS18Count() != 1)
+		return;
+	if (!mDs.getAddress(dsAddr, 0))
+		return;
 }
 
 int TempDS18B20::getTemp(float *value)
 {
-	ds->requestTemperatures();
-	*value = ds->getTempC(dsAddr);
+	mDs.requestTemperatures();
+	*value = mDs.getTempC(dsAddr);
 
 	return 0;
 }

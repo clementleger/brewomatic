@@ -8,11 +8,11 @@
 class TempDS18B20: public TempProbe
 {
 	public:
-		int setup();
+		TempDS18B20();
 		int getTemp(float *value);
 
 	private:
-		DallasTemperature *ds;
+		DallasTemperature mDs;
 		DeviceAddress dsAddr;
 };
 

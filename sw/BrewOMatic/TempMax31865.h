@@ -8,11 +8,11 @@
 class TempMax31865: public TempProbe
 {
 	public:
-		int setup();
+		TempMax31865();
 		int getTemp(float *value);
 
 	private:
-		Adafruit_MAX31865 *max_converter;
+		Adafruit_MAX31865 mConverter;
 };
 
 #endif

@@ -10,7 +10,6 @@ class Input {
 			BUTTON_PREV,
 		};
 
-		virtual int setup() = 0;
 		virtual int getButtonPressed() = 0;
 };
 

@@ -9,6 +9,7 @@ class ACZeroCrossing
 {
 	public:
 		static ACZeroCrossing& Instance(){ return m_instance; };
+		void setup();
 		int addCallback(zeroCrossingCallback cb, void *data);
 		void removeCallback(int cbIdx);
 		int getFrequency() { return acFrequency; };

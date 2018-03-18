@@ -1,31 +1,17 @@
 #include "Beeper.h"
+#include "Arduino.h"
 
-int Beeper::setup(BrewOMatic *b)
+Beeper::Beeper()
 {
 	pinMode(BEEPER_PIN, OUTPUT);
-
-	b->addObserver(this);
-
-	return 0;
 }
 
-void Beeper::updateStatus(BrewOMatic *b, const char *newStatus)
+int Beeper::beep(int note, int duration)
 {
-
+	tone(BEEPER_PIN, note, duration);
 }
 
-void Beeper::updateBrewingStep(BrewOMatic *b, const char *newStep)
+int Beeper::click()
 {
-
+	tone(BEEPER_PIN, NOTE_G6, BEEPER_CLICK_DURATION);
 }
-
-void Beeper::updateTemperatureSetpoint(BrewOMatic *b, unsigned int value)
-{
-
-}
-
-void Beeper::updateTemperature(BrewOMatic *b, unsigned int temp)
-{
-
-}
-
