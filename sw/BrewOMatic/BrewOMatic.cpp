@@ -19,7 +19,7 @@ void BrewOMatic::displayMenu()
 
 void BrewOMatic::handleIdle()
 {
-	int button = mInput->getButtonPressed();
+	char button = mInput->getButtonPressed();
 	if (button == Input::BUTTON_OK) {
 		
 		if (!mInMenu) {

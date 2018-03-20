@@ -17,12 +17,12 @@ class Step {
 	public:
 		Step();
 		Step(const char *name, unsigned long duration,
-		     unsigned long targetTemp, bool enablePump,
-		     bool enableHeater, unsigned int actionCount);
+		     unsigned char targetTemp, bool enablePump,
+		     bool enableHeater, unsigned char actionCount);
 
 		bool mEnablePump;
 		bool mEnableHeater;
-		unsigned long mTargetTemp;
+		unsigned char mTargetTemp;
 		unsigned long mDuration;
 		const char *mName;
 
@@ -32,7 +32,7 @@ class Step {
 
 class Recipe {
 	public:
-		Recipe(unsigned int stepCount, const char *name);
+		Recipe(unsigned char stepCount, const char *name);
 
 		List<Step *> mSteps;
 		const char *mName;

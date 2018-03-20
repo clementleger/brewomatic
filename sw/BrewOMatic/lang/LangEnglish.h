@@ -1,8 +1,9 @@
-#ifndef _LANG_ENGLISH_H
-#define _LANG_ENGLISH_H
-
 STR_DEFINE(WELCOME, "Brew-O-Matic")
 STR_DEFINE(FAILURE, "Failure")
-STR_DEFINE(STARTING, "Starting")
-
-#endif /* _LANG_ENGLISH_H */
+STR_DEFINE(MAIN_MENU, "Main Menu")
+STR_DEFINE(BREWING_MENU, "Brewing Menu")
+STR_DEFINE(BACK, "Back")
+STR_DEFINE(IDLE, "idle")
+STR_DEFINE(BREWING, "Brewing")
+STR_DEFINE(STOP, "Stop")
+STR_DEFINE(MODE, "Mode")

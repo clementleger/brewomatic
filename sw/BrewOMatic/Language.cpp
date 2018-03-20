@@ -1,23 +1,26 @@
 #include "Language.h"
 #include <avr/pgmspace.h>
 
-#define MAX_STR_LEN	30
-
-#define STR_DEFINE(__idx, __str)	const char STR_PTR_ ##__idx[] = __str;
+#define STR_DEFINE(__idx, __str)	const char STR_PTR_ ##__idx[] PROGMEM = __str;
 #include INCLUDE_LANGUAGE
 #undef STR_DEFINE
 
-#define STR_DEFINE(__idx, __str)	[STR_ ##__idx] = STR_PTR_ ##__idx,
-
-const char *const str_array[] = {
+#define STR_DEFINE(__idx, __str)	STR_PTR_ ##__idx,
+const char *const strArray[STR_COUNT] PROGMEM = {
 #include INCLUDE_LANGUAGE
 };
+const char *undef = "Undefined";
 
 static char localBuffer[MAX_STR_LEN];
 
+void getStringInBuffer(enum brewStringIndex strIdx, char *buf, int len)
+{
+	strncpy_P(buf, (char *) pgm_read_word(&strArray[strIdx]), len);
+}
+
 const char *getString(enum brewStringIndex strIdx)
 {
-	strncpy_P(localBuffer, str_array[strIdx], MAX_STR_LEN);
+	getStringInBuffer(strIdx, localBuffer, MAX_STR_LEN);
 
 	return localBuffer;
 }

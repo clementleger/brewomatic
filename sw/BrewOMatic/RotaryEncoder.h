@@ -8,7 +8,7 @@
 class RotaryEncoder: public Input {
 	public:
 		RotaryEncoder();
-		int getButtonPressed();
+		char getButtonPressed();
 	private:
 		Encoder encoder;
 		long oldPosition;

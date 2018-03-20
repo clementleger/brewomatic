@@ -10,7 +10,7 @@ class Input {
 			BUTTON_PREV,
 		};
 
-		virtual int getButtonPressed() = 0;
+		virtual char getButtonPressed() = 0;
 };
 
 #endif /* _INPUT_H */

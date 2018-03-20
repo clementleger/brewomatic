@@ -7,9 +7,9 @@ encoder(ROTARY_ENCODER_PIN_A, ROTARY_ENCODER_PIN_B)
 	 oldPosition = 0;
 }
 
-int RotaryEncoder::getButtonPressed()
+char RotaryEncoder::getButtonPressed()
 {
-	int button = BUTTON_NONE;
+	char button = BUTTON_NONE;
 
 	if (!digitalRead(ROTARY_ENCODER_SWITCH_PIN)) {
 		button = BUTTON_OK;

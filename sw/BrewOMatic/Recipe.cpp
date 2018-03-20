@@ -7,9 +7,9 @@ mUserActions(MAX_USER_ACTION_COUNT)
 }
 
 Step::Step(const char *name, unsigned long duration,
-	   unsigned long targetTemp, bool enablePump,
+	   unsigned char targetTemp, bool enablePump,
 	   bool enableHeater,
-	   unsigned int actionCount):
+	   unsigned char actionCount):
 mEnablePump(enablePump),
 mEnableHeater(enableHeater),
 mTargetTemp(targetTemp),
@@ -20,7 +20,7 @@ mUserActions(actionCount)
 	
 }
 
-Recipe::Recipe(unsigned int stepCount, const char *name):
+Recipe::Recipe(unsigned char stepCount, const char *name):
 mSteps(stepCount),
 mName(name)
 {

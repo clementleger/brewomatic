@@ -14,6 +14,8 @@ class TempDS18B20: public TempProbe
 	private:
 		DallasTemperature mDs;
 		DeviceAddress dsAddr;
+		OneWire oneWire;
+
 };
 
 #endif

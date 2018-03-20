@@ -40,9 +40,9 @@ class List {
 
 	private:
 		T *mElems;
-		unsigned int mElemCount;
-		unsigned int mCurrentElem;
-		unsigned int mMaxElems;
+		unsigned char mElemCount;
+		unsigned char mCurrentElem;
+		unsigned char mMaxElems;
 };
 
 #endif

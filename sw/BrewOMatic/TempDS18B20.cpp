@@ -3,9 +3,8 @@
 
 #include <OneWire.h>
 
-OneWire oneWire(DS18B20_ONEWIRE_PIN);
-
 TempDS18B20::TempDS18B20():
+oneWire(DS18B20_ONEWIRE_PIN),
 mDs(&oneWire)
 {
 	mDs.begin();
