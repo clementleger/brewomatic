@@ -11,22 +11,29 @@ typedef void (*menuItemCallback)(BrewOMatic *b);
 
 class MenuItem {
 	public:
-		MenuItem(enum brewStringIndex title): mTitle(title) {};
+		MenuItem(brewStringIndex title, menuItemCallback callback):
+			mTitle(title),
+			mCallback(callback) {};
 
-		enum brewStringIndex mTitle;
-		menuItemCallback callback;
-		Menu *mSubmenu;
+		brewStringIndex mTitle;
+		menuItemCallback mCallback;
 };
 
 class Menu {
 	public:
-		Menu(enum brewStringIndex name, unsigned char count);
+		Menu(brewStringIndex name, unsigned char count, Menu *parent);
+
+		unsigned char getItemCount() {return mItems.mElemCount;};
+		MenuItem *getItem(unsigned char i) {return mItems.mElems[i];};
+		MenuItem *getSelectedItem() {return mItems.mElems[mSelected];};
 
 		List<MenuItem *> mItems;
-		enum brewStringIndex mName;
+		brewStringIndex mName;
 		Menu *mParent;
+		unsigned char mSelected;
 };
 
 Menu *createIdleMenu();
+Menu *createBrewingMenu();
 
 #endif

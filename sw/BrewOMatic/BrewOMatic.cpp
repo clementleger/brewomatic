@@ -1,43 +1,119 @@
+#include "Menu.h"
 #include "Config.h"
 #include "Language.h"
 #include "BrewOMatic.h"
 
 BrewOMatic brewOMatic;
 
-
-
-void BrewOMatic::displayIdle()
+void BrewOMatic::actionStopBrewing()
 {
-	dbgOutput("state: idle\n");
-	mDisp->displayIdle(this);
+	mState = STATE_IDLE;
+	mCurrentMenu = NULL;
+	mUpdateDisplay = true;
 }
 
-void BrewOMatic::displayMenu()
+void BrewOMatic::actionStartBrewing()
 {
-	
+	mState = STATE_BREWING;
+	mUpdateDisplay = true;
+	mCurrentMenu = NULL;
 }
+
+void BrewOMatic::actionMenuBack()
+{
+	mCurrentMenu = mCurrentMenu->mParent;
+	mUpdateDisplay = true;
+}
+
+int BrewOMatic::handleButton(Menu *onPress)
+{
+	char button = mInput->getButtonPressed();
+
+	switch (button) {
+		case Input::BUTTON_OK:
+			mBeeper->click();
+			if (!mCurrentMenu) {
+				mCurrentMenu = onPress;
+				mUpdateDisplay = true;
+			} else {
+				menuItemCallback mCb = mCurrentMenu->getSelectedItem()->mCallback;
+				if (mCb)
+					mCb(this);
+			}
+		break;
+		case Input::BUTTON_PREV:
+			if (mCurrentMenu == NULL)
+				return 1;
+
+			if (mCurrentMenu->mSelected > 0) {
+				mCurrentMenu->mSelected--;
+				mUpdateDisplay = true;
+			}
+		break;
+		case Input::BUTTON_NEXT:
+			if (mCurrentMenu == NULL)
+				return 1;
+
+			if (mCurrentMenu->mSelected < (mCurrentMenu->getItemCount() - 1)) {
+				mCurrentMenu->mSelected++;
+				mUpdateDisplay = true;
+			}
+		break;
+	}
+	return 0;
+}
+
 
 void BrewOMatic::handleIdle()
 {
-	char button = mInput->getButtonPressed();
-	if (button == Input::BUTTON_OK) {
-		
-		if (!mInMenu) {
-			mBeeper->click();
-			mInMenu = true;
-			displayMenu();
-		}
+	if(handleButton(mIdleMenu))
+		return;
+	
+	if (mCurrentMenu != NULL)
+		return;
+
+	if (millis() - mLastTempUpdate > SEC_TO_MS(2)) {
+		//~ mTempProbe->getTemp(&mCurrentTemp);
+		mUpdateDisplay = true;
+		mCurrentTemp = 20;
+		mLastTempUpdate = millis();
 	}
 }
 
 void BrewOMatic::handleBrewing()
 {
+	if(handleButton(mBrewingMenu))
+		return;
+
 	/* Execute action */
-	Recipe *recipe = createDefaultRecipe();
+	//~ Recipe *recipe = createDefaultRecipe();
 
-	executeRecipe(recipe);
+	//~ executeRecipe(recipe);
 
-	delete recipe;
+	//~ delete recipe;
+}
+
+void BrewOMatic::handleDisplay()
+{	
+	if (!mUpdateDisplay)
+		return;
+
+	if (mCurrentMenu) {
+		mDisp->displayMenu(this, mCurrentMenu);
+		mUpdateDisplay = false;
+		return;
+	}
+
+	switch (mState) {
+		case STATE_IDLE:
+			mDisp->displayIdle(this);
+		break;
+		case STATE_BREWING:
+			mDisp->displayBrewing(this);
+		break;
+	}
+
+	mUpdateDisplay = false;
 }
 
 
@@ -53,14 +129,18 @@ void BrewOMatic::run()
 				handleBrewing();
 			break;
 		}
+		handleDisplay();
 	}
 }
 
 void BrewOMatic::setup()
 {
 	mState = STATE_IDLE;
-	mInMenu = false;
 	mSerialOutput = new SerialOutput();
+	mCurrentMenu = NULL;
+	mLastTempUpdate = 0;
+	mIdleMenu = createIdleMenu();
+	mBrewingMenu = createBrewingMenu();
 
 	dbgOutput("Starting setup...\n");
 
@@ -70,7 +150,7 @@ void BrewOMatic::setup()
 	mInput = new RotaryEncoder();
 	mBeeper = new Beeper();
 
-	displayIdle();
+	mDisp->displayIdle(this);
 	dbgOutput("Setup OK\n");
 }
 

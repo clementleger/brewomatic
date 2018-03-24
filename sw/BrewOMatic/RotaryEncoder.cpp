@@ -15,6 +15,8 @@ char RotaryEncoder::getButtonPressed()
 		button = BUTTON_OK;
 	} else {
 		long newPosition = encoder.read();
+		if (newPosition % 4)
+			return BUTTON_NONE;
 
 		if (newPosition < oldPosition)
 			button = ROTARY_ENCODER_DIR_REVERSE ? BUTTON_PREV : BUTTON_NEXT;
@@ -24,7 +26,5 @@ char RotaryEncoder::getButtonPressed()
 		oldPosition = newPosition;
 	}
 
-	if (button)
-		dbgOutput("Button %d pressed\n", button);
 	return button;
 }

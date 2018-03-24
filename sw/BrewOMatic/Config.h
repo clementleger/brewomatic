@@ -59,7 +59,6 @@
  * Display type 
  */
 #define DISPLAY_TYPE	DisplayUcglib
-
 /**
  * Liquid crystal screen configuration
  */

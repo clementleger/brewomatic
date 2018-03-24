@@ -13,12 +13,12 @@ const char *undef = "Undefined";
 
 static char localBuffer[MAX_STR_LEN];
 
-void getStringInBuffer(enum brewStringIndex strIdx, char *buf, int len)
+void getStringInBuffer(brewStringIndex strIdx, char *buf, int len)
 {
 	strncpy_P(buf, (char *) pgm_read_word(&strArray[strIdx]), len);
 }
 
-const char *getString(enum brewStringIndex strIdx)
+const char *getString(brewStringIndex strIdx)
 {
 	getStringInBuffer(strIdx, localBuffer, MAX_STR_LEN);
 

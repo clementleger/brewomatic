@@ -38,9 +38,10 @@ class List {
 			return elem;
 		}
 
-	private:
-		T *mElems;
 		unsigned char mElemCount;
+		T *mElems;
+
+	private:
 		unsigned char mCurrentElem;
 		unsigned char mMaxElems;
 };

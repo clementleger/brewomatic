@@ -9,6 +9,9 @@
 class DisplayLiquidCrystal: public Display {
 	public:
 		DisplayLiquidCrystal();
+		void displayIdle(BrewOMatic *b);
+		void displayBrewing(BrewOMatic *b);
+		void displayMenu(BrewOMatic *b, Menu *m);
 
 	private:
 		LiquidCrystal *lcd;

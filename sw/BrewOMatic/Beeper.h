@@ -7,8 +7,8 @@
 class Beeper {
 	public:
 		Beeper();
-		int click();
-		int beep(int note, int duration);
+		void click();
+		void beep(int note, int duration);
 };
 
 #define NOTE_B0  31

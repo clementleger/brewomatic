@@ -12,3 +12,16 @@ lcd(LIQUID_CRYSTAL_RS,
 {
 	lcd->begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
 }
+
+void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
+{
+}
+
+void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
+{
+
+}
+
+void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
+{
+}

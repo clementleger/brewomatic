@@ -6,12 +6,12 @@ Beeper::Beeper()
 	pinMode(BEEPER_PIN, OUTPUT);
 }
 
-int Beeper::beep(int note, int duration)
+void Beeper::beep(int note, int duration)
 {
 	tone(BEEPER_PIN, note, duration);
 }
 
-int Beeper::click()
+void Beeper::click()
 {
 	tone(BEEPER_PIN, NOTE_G6, BEEPER_CLICK_DURATION);
 }

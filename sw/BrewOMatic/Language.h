@@ -3,9 +3,9 @@
 
 #include "BrewOMatic.h"
 
-#define MAX_STR_LEN	30
+#define MAX_STR_LEN	40
 
-enum brewStringIndex {
+enum brewStringIndexEnum {
 	STR_WELCOME,
 	STR_FAILURE,
 	STR_MAIN_MENU,
@@ -15,12 +15,20 @@ enum brewStringIndex {
 	STR_BREWING,
 	STR_STOP,
 	STR_MODE,
+	STR_ADJUST_TARGET,
+	STR_ADJUST_TEMP_OFFSET,
+	STR_STARTING,
+	STR_START_BREWING,
+	STR_TEMPERATURE,
+	STR_TARGET_TEMP,
 	/* Always last member of enum */
 	STR_COUNT
 };
 
-const char *getString(enum brewStringIndex strIdx);
+typedef char brewStringIndex;
 
-void getStringInBuffer(enum brewStringIndex strIdx, char *buf, int len);
+const char *getString(brewStringIndex strIdx);
+
+void getStringInBuffer(brewStringIndex strIdx, char *buf, int len);
 
 #endif
