@@ -103,8 +103,12 @@ void DisplayUcglib::displayBrewing(BrewOMatic *b)
 	sprintf(buf + strlen(buf), ": %d°C ", (unsigned char) b->mCurrentStep->mTargetTemp );
 	ucg.drawString(TARGET_TEXT_X, TARGET_TEXT_Y, 0, buf);
 
-	getStringInBuffer(STR_DURATION, buf, 30);
-	sprintf(buf + strlen(buf), ": %dmin", (unsigned char) b->mCurrentStep->mDuration );
+	if (b->mTempReached) {
+		getStringInBuffer(STR_DURATION, buf, 30);
+		sprintf(buf + strlen(buf), ": %dmin", (unsigned char) b->mCurrentStep->mDuration );
+	} else {
+		getStringInBuffer(STR_WAIT_TEMP, buf, 30);
+	}
 	ucg.drawString(DURATION_TEXT_X, DURATION_TEXT_Y, 0, buf);
 }
 

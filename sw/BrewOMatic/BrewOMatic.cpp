@@ -110,12 +110,12 @@ void BrewOMatic::handleBrewing()
 	}
 
 	/* Refresh display */
-	if (!mCurrentMenu &&
-	    ((millis() - mLastTempUpdate) > SEC_TO_MS(2))) {
+	if (((millis() - mLastTempUpdate) > SEC_TO_MS(2))) {
 		//~ mTempProbe->getTemp(&mCurrentTemp);
-		mUpdateDisplay = true;
 		mCurrentTemp = 22;
 		mLastTempUpdate = millis();
+		if (!mCurrentMenu)
+			mUpdateDisplay = true;
 	}
 
 	/* Check if we reach the expected temperature */

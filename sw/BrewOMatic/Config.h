@@ -56,21 +56,23 @@
  **********************************************************************/
 
 /**
- * Display type 
+ * Display type
+ * DisplayUcglib: for ILI9341
  */
 #define DISPLAY_TYPE	DisplayUcglib
+
 /**
  * Liquid crystal screen configuration
  */
-#define LIQUID_CRYSTAL_WIDTH	16
-#define LIQUID_CRYSTAL_HEIGHT	2
+#define LIQUID_CRYSTAL_WIDTH	20
+#define LIQUID_CRYSTAL_HEIGHT	4
 
-#define LIQUID_CRYSTAL_RS	A0
-#define LIQUID_CRYSTAL_EN	A1
-#define LIQUID_CRYSTAL_D4	A2
-#define LIQUID_CRYSTAL_D5	A3
-#define LIQUID_CRYSTAL_D6	A4
-#define LIQUID_CRYSTAL_D7	A5
+#define LIQUID_CRYSTAL_RS	A5
+#define LIQUID_CRYSTAL_EN	9
+#define LIQUID_CRYSTAL_D4	A1
+#define LIQUID_CRYSTAL_D5	A2
+#define LIQUID_CRYSTAL_D6	A3
+#define LIQUID_CRYSTAL_D7	A4
 
 /**
  * Ucglib screen configuration

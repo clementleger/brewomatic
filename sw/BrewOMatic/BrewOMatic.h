@@ -58,6 +58,7 @@ class BrewOMatic {
 		brewomaticState mState;
 		Recipe *mCurrentRecipe;
 		Step *mCurrentStep;
+		bool mTempReached;
 	private:
 		TempProbe *mTempProbe;
 		Display *mDisp;
@@ -72,7 +73,6 @@ class BrewOMatic {
 		Menu *mIdleMenu;
 		Menu *mBrewingMenu;
 		bool mUpdateDisplay;
-		bool mTempReached;
 
 		void handleIdle();
 		void handleBrewing();

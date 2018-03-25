@@ -23,6 +23,7 @@ enum brewStringIndexEnum {
 	STR_TARGET_TEMP,
 	STR_STEP,
 	STR_DURATION,
+	STR_WAIT_TEMP,
 	/* Always last member of enum */
 	STR_COUNT
 };
