@@ -25,6 +25,7 @@ class Step {
 		unsigned char mTargetTemp;
 		unsigned long mDuration;
 		const char *mName;
+		unsigned char mStarted;
 
 		/* List of user action requiring confirmation */
 		List<Action *> mUserActions;

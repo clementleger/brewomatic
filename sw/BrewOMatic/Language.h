@@ -21,6 +21,8 @@ enum brewStringIndexEnum {
 	STR_START_BREWING,
 	STR_TEMPERATURE,
 	STR_TARGET_TEMP,
+	STR_STEP,
+	STR_DURATION,
 	/* Always last member of enum */
 	STR_COUNT
 };

@@ -57,6 +57,7 @@ class BrewOMatic {
 		float mCurrentTemp;
 		brewomaticState mState;
 		Recipe *mCurrentRecipe;
+		Step *mCurrentStep;
 	private:
 		TempProbe *mTempProbe;
 		Display *mDisp;
@@ -65,11 +66,13 @@ class BrewOMatic {
 		Input *mInput;
 		Beeper *mBeeper;
 		unsigned long mLastTempUpdate;
+		unsigned long mStepStartMillis;
 
 		Menu *mCurrentMenu;
 		Menu *mIdleMenu;
 		Menu *mBrewingMenu;
 		bool mUpdateDisplay;
+		bool mTempReached;
 
 		void handleIdle();
 		void handleBrewing();
@@ -81,7 +84,7 @@ class BrewOMatic {
 		brewomaticError executeRecipe(Recipe *recipe);
 		brewomaticError executeStep(Step *step);
 		brewomaticError executeAction(Action *action);
-		int handleButton(Menu *onPress);
+		unsigned char handleButton(Menu *onPress);
 };
 
 #endif

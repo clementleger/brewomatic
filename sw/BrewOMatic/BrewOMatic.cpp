@@ -7,16 +7,24 @@ BrewOMatic brewOMatic;
 
 void BrewOMatic::actionStopBrewing()
 {
+	dbgOutput("Stop brew\n");
 	mState = STATE_IDLE;
-	mCurrentMenu = NULL;
 	mUpdateDisplay = true;
+	mCurrentMenu = NULL;
+	
+	delete mCurrentRecipe;
+	mCurrentRecipe = NULL;
 }
 
 void BrewOMatic::actionStartBrewing()
 {
+	dbgOutput("Start brew\n");
 	mState = STATE_BREWING;
 	mUpdateDisplay = true;
 	mCurrentMenu = NULL;
+
+	mCurrentRecipe = createDefaultRecipe();
+	mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
 }
 
 void BrewOMatic::actionMenuBack()
@@ -25,7 +33,7 @@ void BrewOMatic::actionMenuBack()
 	mUpdateDisplay = true;
 }
 
-int BrewOMatic::handleButton(Menu *onPress)
+unsigned char BrewOMatic::handleButton(Menu *onPress)
 {
 	char button = mInput->getButtonPressed();
 
@@ -43,7 +51,7 @@ int BrewOMatic::handleButton(Menu *onPress)
 		break;
 		case Input::BUTTON_PREV:
 			if (mCurrentMenu == NULL)
-				return 1;
+				return button;
 
 			if (mCurrentMenu->mSelected > 0) {
 				mCurrentMenu->mSelected--;
@@ -52,7 +60,7 @@ int BrewOMatic::handleButton(Menu *onPress)
 		break;
 		case Input::BUTTON_NEXT:
 			if (mCurrentMenu == NULL)
-				return 1;
+				return button;
 
 			if (mCurrentMenu->mSelected < (mCurrentMenu->getItemCount() - 1)) {
 				mCurrentMenu->mSelected++;
@@ -60,15 +68,15 @@ int BrewOMatic::handleButton(Menu *onPress)
 			}
 		break;
 	}
-	return 0;
+
+	return button;
 }
 
 
 void BrewOMatic::handleIdle()
 {
-	if(handleButton(mIdleMenu))
-		return;
-	
+	handleButton(mIdleMenu);
+
 	if (mCurrentMenu != NULL)
 		return;
 
@@ -82,15 +90,57 @@ void BrewOMatic::handleIdle()
 
 void BrewOMatic::handleBrewing()
 {
-	if(handleButton(mBrewingMenu))
-		return;
+	unsigned char b = handleButton(mBrewingMenu);
 
-	/* Execute action */
-	//~ Recipe *recipe = createDefaultRecipe();
+	//~ handleTemp();
 
-	//~ executeRecipe(recipe);
+	/* Start the current step */
+	if (!mCurrentStep->mStarted) {
+		mBeeper->beep(NOTE_B4, SEC_TO_MS(3));
 
-	//~ delete recipe;
+		dbgOutput("Start step %s\n", mCurrentStep->mName);
+		if (mCurrentStep->mEnablePump)
+			digitalWrite(PUMP_CONTROL_PIN, 1);
+
+		if (mCurrentStep->mEnableHeater)
+			mHeaterControl->enable(true);
+
+		mCurrentStep->mStarted = 1;
+		mTempReached = 0;
+	}
+
+	/* Refresh display */
+	if (!mCurrentMenu &&
+	    ((millis() - mLastTempUpdate) > SEC_TO_MS(2))) {
+		//~ mTempProbe->getTemp(&mCurrentTemp);
+		mUpdateDisplay = true;
+		mCurrentTemp = 22;
+		mLastTempUpdate = millis();
+	}
+
+	/* Check if we reach the expected temperature */
+	if (!mTempReached) {
+		if (mCurrentTemp == mCurrentStep->mTargetTemp) {
+			mBeeper->beep(NOTE_B4, SEC_TO_MS(3));
+			mStepStartMillis = millis();
+			mTempReached = true;
+		}
+	} else {
+		/* Check if the step is done */
+		if ((millis() - mStepStartMillis) >= SEC_TO_MS(mCurrentStep->mDuration * 60)) {
+
+			dbgOutput("Stop step %s\n", mCurrentStep->mName);
+			/* Stop the pump */
+			digitalWrite(PUMP_CONTROL_PIN, 0);
+
+			mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
+			if (!mCurrentStep) {
+				actionStopBrewing();
+			}
+			mUpdateDisplay = true;
+			mTempReached = false;
+		}
+	}
 }
 
 void BrewOMatic::handleDisplay()
@@ -141,14 +191,19 @@ void BrewOMatic::setup()
 	mLastTempUpdate = 0;
 	mIdleMenu = createIdleMenu();
 	mBrewingMenu = createBrewingMenu();
+	
+	pinMode(PUMP_CONTROL_PIN, OUTPUT);
+	digitalWrite(PUMP_CONTROL_PIN, 0);
 
-	dbgOutput("Starting setup...\n");
+	dbgOutput("Setup...\n");
 
 	mTempProbe = new TEMP_PROBE_TYPE();
 	mDisp = new DISPLAY_TYPE();
 	mHeaterControl = new HeaterTriacControl();
 	mInput = new RotaryEncoder();
 	mBeeper = new Beeper();
+
+	//~ mTempProbe->getTemp(&mCurrentTemp);
 
 	mDisp->displayIdle(this);
 	dbgOutput("Setup OK\n");
@@ -177,10 +232,7 @@ brewomaticError BrewOMatic::executeStep(Step *step)
 		}
 	}
 
-	/* Update observer */
-	while ((start_millis + millis()) < duration) {
-		/* Control PID for temperature */
-	};
+
 
 	return SUCCESS;
 }

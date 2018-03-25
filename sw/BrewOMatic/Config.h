@@ -127,7 +127,7 @@
  *                       Heater Control
  **********************************************************************/
 
-/*
+/**
  * If using a system which requires crossing detection
  * Set this pin to an interruptible one
  */
@@ -139,11 +139,20 @@
  */
 #define HEATER_CONTROL_TYPE		TRIAC_CONTROL
 
-/*
+/**
  * When using a triac, set the pin number to the one asign to the
  * controlling pin
  */
 #define TRIAC_CONTROL_PIN		4
+
+/***********************************************************************
+ *                       Pump Control
+ **********************************************************************/
+/**
+ * When using TempMax31865 probe type, the hardware SPI bus is used.
+ * However, the chip select can be configured here
+ */
+#define PUMP_CONTROL_PIN	5
 
 /* Do not touch ! */
 #include "ConfigSanity.h"

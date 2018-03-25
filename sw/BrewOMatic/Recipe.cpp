@@ -1,4 +1,5 @@
 #include "Recipe.h"
+#include "BrewOMatic.h"
 
 Step::Step():
 mUserActions(MAX_USER_ACTION_COUNT)
@@ -15,9 +16,9 @@ mEnableHeater(enableHeater),
 mTargetTemp(targetTemp),
 mDuration(duration),
 mName(name),
+mStarted(0),
 mUserActions(actionCount)
 {
-	
 }
 
 Recipe::Recipe(unsigned char stepCount, const char *name):
@@ -31,15 +32,15 @@ Recipe *createDefaultRecipe()
 {
 	Recipe *recipe = new Recipe(6, "Default recipe");
 	/* Heating water */
-	Step *heating = new Step("Heating", 0, 50, false, true, 0);
+	Step *heating = new Step("Heating", 10, 50, false, true, 0);
 	recipe->mSteps.addElem(heating);
 
 	/* Add action: insert malt */
-	Step *mashing1 = new Step("Mashing 1", 30, 63, true, true, 1);
+	Step *mashing1 = new Step("Mashing 1", 30, 64, true, true, 1);
 	recipe->mSteps.addElem(mashing1);
 	Step *mashing2 = new Step("Mashing 2", 30, 68, true, true, 0);
 	recipe->mSteps.addElem(mashing2);
-	Step *mashing3 = new Step("Mashing 3", 15, 70, true, true, 0);
+	Step *mashing3 = new Step("Mashing 3", 10, 72, true, true, 0);
 	recipe->mSteps.addElem(mashing3);
 
 	/* Add action: remove malt before boiling */
