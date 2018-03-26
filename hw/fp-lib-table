@@ -1,0 +1,5 @@
+(fp_lib_table
+  (lib (name TerminalBlock)(type Github)(uri http://github.com/KiCad/TerminalBlock.pretty)(options "")(descr ""))
+  (lib (name Resistors_THT)(type Github)(uri http://github.com/KiCad/Resistors_THT.pretty)(options "")(descr ""))
+  (lib (name Heatsinks)(type Github)(uri "$(KIGITHUB)/Heatsinks.pretty")(options "")(descr ""))
+)
