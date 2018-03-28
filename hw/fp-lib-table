@@ -4,4 +4,6 @@
   (lib (name Heatsinks)(type Github)(uri "$(KIGITHUB)/Heatsinks.pretty")(options "")(descr ""))
   (lib (name Diodes_THT)(type Github)(uri http://github.com/KiCad/Diodes_THT.pretty)(options "")(descr ""))
   (lib (name HV_TO220)(type KiCad)(uri "$(KIPRJMOD)/HV_TO220.pretty")(options "")(descr ""))
+  (lib (name Capacitors_THT)(type Github)(uri http://github.com/KiCad/Capacitors_THT.pretty)(options "")(descr ""))
+  (lib (name Capacitors_Tantalum_SMD)(type Github)(uri http://github.com/KiCad/Capacitors_Tantalum_SMD.pretty)(options "")(descr ""))
 )
