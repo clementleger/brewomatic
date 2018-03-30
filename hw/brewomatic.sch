@@ -292,8 +292,6 @@ Text Label 5900 1250 2    60   ~ 0
 ENC_E1
 Text Label 5900 1050 2    60   ~ 0
 ENC_E2
-Text Label 5900 1450 2    60   ~ 0
-SD_DETECT
 Text Label 7900 4550 2    60   ~ 0
 SPI_MISO
 Text Label 8350 4450 2    60   ~ 0
@@ -435,8 +433,6 @@ F 3 "" H 3700 1100 50  0001 C CNN
 	1    3700 1100
 	1    0    0    -1  
 $EndComp
-Text Label 7900 4150 2    60   ~ 0
-TRIAC_CTRL
 $Comp
 L +3.3V #PWR014
 U 1 1 5AB9D6E8
@@ -536,8 +532,8 @@ F 3 "" H 6200 5250 50  0001 C CNN
 	1    6200 5250
 	-1   0    0    1   
 $EndComp
-Text Label 8400 4050 2    60   ~ 0
-SD_DETECT
+Text Label 7900 4150 2    60   ~ 0
+TEMP_CS
 $Comp
 L IRF540N-RESCUE-brewomatic Q2
 U 1 1 5ABAAB42
@@ -812,8 +808,6 @@ Wire Wire Line
 Wire Wire Line
 	6050 1250 5900 1250
 Wire Wire Line
-	5900 1450 6050 1450
-Wire Wire Line
 	6050 1650 5900 1650
 Wire Wire Line
 	8550 4550 7900 4550
@@ -968,4 +962,6 @@ Wire Wire Line
 	6200 5250 6200 5100
 Wire Wire Line
 	6200 5100 6350 5100
+Text Label 8400 4050 2    60   ~ 0
+TRIAC_CTRL
 $EndSCHEMATC
