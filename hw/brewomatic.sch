@@ -149,17 +149,6 @@ F 3 "" H 3550 2600 50  0001 C CNN
 	0    1    1    0   
 $EndComp
 $Comp
-L R R2
-U 1 1 5A7E1B17
-P 3550 2800
-F 0 "R2" V 3630 2800 50  0000 C CNN
-F 1 "R45K" V 3550 2800 50  0000 C CNN
-F 2 "Resistors_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3480 2800 50  0001 C CNN
-F 3 "" H 3550 2800 50  0001 C CNN
-	1    3550 2800
-	0    1    1    0   
-$EndComp
-$Comp
 L GND #PWR03
 U 1 1 5A7E2324
 P 2600 2900
@@ -753,12 +742,8 @@ Connection ~ 5000 2650
 Wire Wire Line
 	3350 2600 3400 2600
 Wire Wire Line
-	3350 2800 3400 2800
-Wire Wire Line
 	3700 2600 4100 2600
 Connection ~ 4100 2600
-Wire Wire Line
-	3750 2800 3700 2800
 Wire Wire Line
 	2600 2900 2600 2800
 Wire Wire Line
@@ -964,4 +949,6 @@ Wire Wire Line
 	6200 5100 6350 5100
 Text Label 8400 4050 2    60   ~ 0
 TRIAC_CTRL
+Wire Wire Line
+	3750 2800 3350 2800
 $EndSCHEMATC
