@@ -37,6 +37,7 @@ HeaterTriacControl::HeaterTriacControl()
 	Timer1.initialize();
 	pinMode(TRIAC_CONTROL_PIN, OUTPUT);
 	digitalWrite(TRIAC_CONTROL_PIN, LOW);
+	cbIdx = -1;
 
 	ACZeroCrossing::Instance().setup();
 }

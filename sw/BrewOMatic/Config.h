@@ -23,12 +23,22 @@
 /**
  * Duration of beeper click sound
  */
-#define BEEPER_CLICK_DURATION	100
+#define BEEPER_CLICK_DURATION	5
 
 /**
  * Enable debug over UART
  */
 #define ENABLE_DEBUG	0
+
+/**
+ * Delay before starting in seconds
+ */
+#define START_DELAY	2
+
+/**
+ * Banner displyed at start
+ */
+#define START_BANNER	"It's Brew'o'Clock !"
 
 /***********************************************************************
  *                       Inputs
@@ -44,12 +54,12 @@
  */
 #define ROTARY_ENCODER_PIN_A		3
 #define ROTARY_ENCODER_PIN_B		4
-#define ROTARY_ENCODER_SWITCH_PIN	A0
+#define ROTARY_ENCODER_SWITCH_PIN	A3
 
 /**
  * Reverse encoder rotation direction
  */
-#define ROTARY_ENCODER_DIR_REVERSE	0
+#define ROTARY_ENCODER_DIR_REVERSE	1
 
 /***********************************************************************
  *                       Display Control
@@ -59,7 +69,7 @@
  * Display type
  * DisplayUcglib: for ILI9341
  */
-#define DISPLAY_TYPE	DisplayUcglib
+#define DISPLAY_TYPE	DisplayLiquidCrystal
 
 /**
  * Liquid crystal screen configuration
@@ -67,12 +77,12 @@
 #define LIQUID_CRYSTAL_WIDTH	20
 #define LIQUID_CRYSTAL_HEIGHT	4
 
-#define LIQUID_CRYSTAL_RS	A5
-#define LIQUID_CRYSTAL_EN	9
+#define LIQUID_CRYSTAL_RS	A4
+#define LIQUID_CRYSTAL_EN	A2
 #define LIQUID_CRYSTAL_D4	A1
-#define LIQUID_CRYSTAL_D5	A2
-#define LIQUID_CRYSTAL_D6	A3
-#define LIQUID_CRYSTAL_D7	A4
+#define LIQUID_CRYSTAL_D5	A5
+#define LIQUID_CRYSTAL_D6	A0
+#define LIQUID_CRYSTAL_D7	9
 
 /**
  * Ucglib screen configuration
@@ -145,7 +155,7 @@
  * When using a triac, set the pin number to the one asign to the
  * controlling pin
  */
-#define TRIAC_CONTROL_PIN		4
+#define TRIAC_CONTROL_PIN		7
 
 /***********************************************************************
  *                       Pump Control

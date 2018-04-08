@@ -14,7 +14,8 @@ class DisplayLiquidCrystal: public Display {
 		void displayMenu(BrewOMatic *b, Menu *m);
 
 	private:
-		LiquidCrystal *lcd;
+		void dispTitle(const char *str);
+		LiquidCrystal lcd;
 };
 
 #endif

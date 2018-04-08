@@ -26,5 +26,8 @@ char RotaryEncoder::getButtonPressed()
 		oldPosition = newPosition;
 	}
 
+	if (button)
+		delay(200);
+
 	return button;
 }

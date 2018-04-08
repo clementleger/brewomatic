@@ -29,6 +29,7 @@ void BrewOMatic::actionStartBrewing()
 
 void BrewOMatic::actionMenuBack()
 {
+	mCurrentMenu->mSelected = 0;
 	mCurrentMenu = mCurrentMenu->mParent;
 	mUpdateDisplay = true;
 }
@@ -96,7 +97,7 @@ void BrewOMatic::handleBrewing()
 
 	/* Start the current step */
 	if (!mCurrentStep->mStarted) {
-		mBeeper->beep(NOTE_B4, SEC_TO_MS(3));
+		mBeeper->beep(NOTE_B4, 100);
 
 		dbgOutput("Start step %s\n", mCurrentStep->mName);
 		if (mCurrentStep->mEnablePump)
@@ -205,6 +206,7 @@ void BrewOMatic::setup()
 
 	//~ mTempProbe->getTemp(&mCurrentTemp);
 
+	delay(SEC_TO_MS(START_DELAY));
 	mDisp->displayIdle(this);
 	dbgOutput("Setup OK\n");
 }
@@ -231,8 +233,6 @@ brewomaticError BrewOMatic::executeStep(Step *step)
 				return error;
 		}
 	}
-
-
 
 	return SUCCESS;
 }
