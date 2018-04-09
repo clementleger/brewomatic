@@ -59,6 +59,8 @@ class BrewOMatic {
 		Recipe *mCurrentRecipe;
 		Step *mCurrentStep;
 		bool mTempReached;
+		unsigned long mStepStartMillis;
+		brewStringIndex mError;
 	private:
 		TempProbe *mTempProbe;
 		Display *mDisp;
@@ -67,7 +69,6 @@ class BrewOMatic {
 		Input *mInput;
 		Beeper *mBeeper;
 		unsigned long mLastTempUpdate;
-		unsigned long mStepStartMillis;
 
 		Menu *mCurrentMenu;
 		Menu *mIdleMenu;

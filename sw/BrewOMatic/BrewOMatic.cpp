@@ -2,6 +2,7 @@
 #include "Config.h"
 #include "Language.h"
 #include "BrewOMatic.h"
+#include "ACZeroCrossing.h"
 
 BrewOMatic brewOMatic;
 
@@ -10,10 +11,12 @@ void BrewOMatic::actionStopBrewing()
 	dbgOutput("Stop brew\n");
 	mState = STATE_IDLE;
 	mUpdateDisplay = true;
+	mCurrentMenu->mSelected = 0;
 	mCurrentMenu = NULL;
 	
 	delete mCurrentRecipe;
 	mCurrentRecipe = NULL;
+	
 }
 
 void BrewOMatic::actionStartBrewing()
@@ -97,7 +100,7 @@ void BrewOMatic::handleBrewing()
 
 	/* Start the current step */
 	if (!mCurrentStep->mStarted) {
-		mBeeper->beep(NOTE_B4, 100);
+		mBeeper->beep(NOTE_B4, 20);
 
 		dbgOutput("Start step %s\n", mCurrentStep->mName);
 		if (mCurrentStep->mEnablePump)
@@ -111,7 +114,7 @@ void BrewOMatic::handleBrewing()
 	}
 
 	/* Refresh display */
-	if (((millis() - mLastTempUpdate) > SEC_TO_MS(2))) {
+	if (((millis() - mLastTempUpdate) > SEC_TO_MS(1))) {
 		//~ mTempProbe->getTemp(&mCurrentTemp);
 		mCurrentTemp = 22;
 		mLastTempUpdate = millis();
@@ -203,11 +206,15 @@ void BrewOMatic::setup()
 	mHeaterControl = new HeaterTriacControl();
 	mInput = new RotaryEncoder();
 	mBeeper = new Beeper();
+	mError = 0;
 
 	//~ mTempProbe->getTemp(&mCurrentTemp);
-
+	if (ACZeroCrossing::Instance().getFrequency() == 0)
+		mError = STR_MISSING_MAIN;
+		
 	delay(SEC_TO_MS(START_DELAY));
 	mDisp->displayIdle(this);
+
 	dbgOutput("Setup OK\n");
 }
 
