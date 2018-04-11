@@ -92,11 +92,14 @@ void BrewOMatic::handleIdle()
 	}
 }
 
+void BrewOMatic::handleTemp()
+{
+	
+}
+
 void BrewOMatic::handleBrewing()
 {
 	unsigned char b = handleButton(mBrewingMenu);
-
-	//~ handleTemp();
 
 	/* Start the current step */
 	if (!mCurrentStep->mStarted) {
@@ -113,9 +116,11 @@ void BrewOMatic::handleBrewing()
 		mTempReached = 0;
 	}
 
+	//~ mTempProbe->getTemp(&mCurrentTemp);
+	handleTemp();
+
 	/* Refresh display */
 	if (((millis() - mLastTempUpdate) > SEC_TO_MS(1))) {
-		//~ mTempProbe->getTemp(&mCurrentTemp);
 		mCurrentTemp = 22;
 		mLastTempUpdate = millis();
 		if (!mCurrentMenu)

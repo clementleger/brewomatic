@@ -346,7 +346,7 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 6, 2);
 	/* Draw heater status */
 	lcd.write(byte(HEAT_CHAR));
-	drawStatus(b->mCurrentStep->mEnablePump);
+	drawStatus(b->mCurrentStep->mEnableHeater);
 
 	lcd.setCursor(0, 3);
 	lcd.write(byte(CLOCK_CHAR));

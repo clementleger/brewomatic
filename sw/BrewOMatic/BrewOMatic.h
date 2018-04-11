@@ -78,6 +78,7 @@ class BrewOMatic {
 		void handleIdle();
 		void handleBrewing();
 		void handleMenu();
+		void handleTemp();
 
 		void handleDisplay();
 		void displayIdle();

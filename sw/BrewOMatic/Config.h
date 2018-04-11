@@ -28,7 +28,7 @@
 /**
  * Enable debug over UART
  */
-#define ENABLE_DEBUG	0
+#define ENABLE_DEBUG	1
 
 /**
  * Delay before starting in seconds

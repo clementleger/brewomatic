@@ -5,7 +5,11 @@
 
 #include <TimerOne.h>
 
-#define TRIAC_MIN_GATE_TIME_US	10
+#define TRIAC_MIN_GATE_TIME_US	500
+
+/**
+ * Control the triac gate by using a simple 
+ */
 
 void releaseTriacGate()
 {
@@ -13,8 +17,19 @@ void releaseTriacGate()
 	digitalWrite(TRIAC_CONTROL_PIN, LOW);
 }
 
-void activateTriacGate()
+void setTimerDutyCycle(void *data)
 {
+	HeaterTriacControl *tc = (HeaterTriacControl *) data;
+
+	tc->mPulseCount++;
+	if (tc->mPulseCount == (tc->mFrequency * 2))
+		tc->mPulseCount = 0;
+
+	if (tc->mPulseSkipCount == 0)
+		return;
+
+	tc->mPulseSkipCount--;
+
 	/* Activate TRIAC gate */
 	digitalWrite(TRIAC_CONTROL_PIN, HIGH);
 
@@ -24,50 +39,33 @@ void activateTriacGate()
 	Timer1.attachInterrupt(releaseTriacGate);
 }
 
-void setTimerDutyCycle(void *data)
-{
-	HeaterTriacControl *tc = (HeaterTriacControl *) data;
-	/* Setup timer to power on TRIAC gate */
-	Timer1.initialize(tc->getTriacTriggerTimeUs());
-	Timer1.attachInterrupt(activateTriacGate);
-}
-
 HeaterTriacControl::HeaterTriacControl()
 {
 	Timer1.initialize();
 	pinMode(TRIAC_CONTROL_PIN, OUTPUT);
 	digitalWrite(TRIAC_CONTROL_PIN, LOW);
-	cbIdx = -1;
+	mCbIdx = -1;
 
 	ACZeroCrossing::Instance().setup();
+	
+	mFrequency = ACZeroCrossing::Instance().getFrequency();
 }
 
 void HeaterTriacControl::enable(bool enable)
 {
-	/* Nothing to do */
+	if (enable)
+		mCbIdx = ACZeroCrossing::Instance().addCallback(setTimerDutyCycle, this);
+	else
+		ACZeroCrossing::Instance().removeCallback(mCbIdx);
 }
 
 void HeaterTriacControl::setDutyCycle(unsigned char value)
 {
-	if (value == 100) {
-		ACZeroCrossing::Instance().removeCallback(cbIdx);
-		cbIdx = -1;
-		digitalWrite(TRIAC_CONTROL_PIN, HIGH);
-	} else if (value == 0) {
-		ACZeroCrossing::Instance().removeCallback(cbIdx);
-		cbIdx = -1;
-		digitalWrite(TRIAC_CONTROL_PIN, LOW);
-	} else {
-		unsigned int periodUs = ACZeroCrossing::Instance().getAcPeriodUs();
-
-		/* We need to control half-waves so divid the AC period by 2
-		 * TODO: The scale is non linear since we chop a sine wave
-		 * compute lookup table 
-		 */
-		triacTriggerTimeUs = (periodUs / 2) / 100;
-		triacTriggerTimeUs *= (100 - value);
-
-		if (cbIdx == -1)	
-			cbIdx = ACZeroCrossing::Instance().addCallback(setTimerDutyCycle, this);
-	}
+	/*
+	 * Compute number of pulse to skip
+	 * Depending on frequency, we either have 60 or 50 level 
+	 * because we will only skip full periods
+	 */
+	unsigned long tmp = value * mFrequency / 100;
+	mPulseSkipCount = tmp * 2;
 }
