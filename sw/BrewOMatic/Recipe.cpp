@@ -32,7 +32,7 @@ Recipe *createDefaultRecipe()
 {
 	Recipe *recipe = new Recipe(6, "Default recipe");
 	/* Heating water */
-	Step *heating = new Step("Heating", 10, 50, false, true, 0);
+	Step *heating = new Step("Heating", 10, 26, false, true, 0);
 	recipe->mSteps.addElem(heating);
 
 	/* Add action: insert malt */

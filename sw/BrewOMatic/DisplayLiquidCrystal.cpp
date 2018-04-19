@@ -320,6 +320,7 @@ void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 {
 	unsigned long elapsed;
+	unsigned int elapsedMin, elapsedSec;
 	lcd.clear();
 	dispTitle(b->mCurrentRecipe->mName);
 
@@ -352,12 +353,20 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	lcd.write(byte(CLOCK_CHAR));
 	if (b->mTempReached) {
 		elapsed = millis() - b->mStepStartMillis;
-		elapsed = elapsed / ((unsigned long) 1000 * 60);
-		lcd.print(elapsed);
+		elapsedMin = elapsed / ((unsigned long) 1000 * 60);
+		elapsedSec = (elapsed - (elapsedMin * 60 * 1000));
+		elapsedSec /= 1000;
+		if (elapsedMin < 10)
+			lcd.print("0");
+		lcd.print(elapsedMin);
+		lcd.print(":");
+		if (elapsedSec < 10)
+			lcd.print("0");
+		lcd.print(elapsedSec);
 	} else {
 		lcd.print("-");
 	}
 	lcd.print("/");
 	lcd.print(b->mCurrentStep->mDuration);
-	lcd.print("min");
+	lcd.print(":00");
 }

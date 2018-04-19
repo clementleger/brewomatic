@@ -85,9 +85,8 @@ void BrewOMatic::handleIdle()
 		return;
 
 	if (millis() - mLastTempUpdate > SEC_TO_MS(2)) {
-		//~ mTempProbe->getTemp(&mCurrentTemp);
+		mTempProbe->getTemp(&mCurrentTemp);
 		mUpdateDisplay = true;
-		mCurrentTemp = 20;
 		mLastTempUpdate = millis();
 	}
 }
@@ -116,12 +115,11 @@ void BrewOMatic::handleBrewing()
 		mTempReached = 0;
 	}
 
-	//~ mTempProbe->getTemp(&mCurrentTemp);
+	mTempProbe->getTemp(&mCurrentTemp);
 	handleTemp();
 
 	/* Refresh display */
 	if (((millis() - mLastTempUpdate) > SEC_TO_MS(1))) {
-		mCurrentTemp = 22;
 		mLastTempUpdate = millis();
 		if (!mCurrentMenu)
 			mUpdateDisplay = true;
@@ -129,10 +127,11 @@ void BrewOMatic::handleBrewing()
 
 	/* Check if we reach the expected temperature */
 	if (!mTempReached) {
-		if (mCurrentTemp == mCurrentStep->mTargetTemp) {
-			mBeeper->beep(NOTE_B4, SEC_TO_MS(3));
+		if (abs(mCurrentTemp - mCurrentStep->mTargetTemp) <= 1) {
+			mBeeper->beep(NOTE_B4, 20);
 			mStepStartMillis = millis();
 			mTempReached = true;
+			dbgOutput("Step %s reached temp\n", mCurrentStep->mName);
 		}
 	} else {
 		/* Check if the step is done */
@@ -206,14 +205,18 @@ void BrewOMatic::setup()
 
 	dbgOutput("Setup...\n");
 
+	mBeeper = new Beeper();
+	mBeeper->beep(NOTE_B4, 50);
+	delay(50);
+	mBeeper->beep(NOTE_C4, 50);
+	
 	mTempProbe = new TEMP_PROBE_TYPE();
 	mDisp = new DISPLAY_TYPE();
 	mHeaterControl = new HeaterTriacControl();
 	mInput = new RotaryEncoder();
-	mBeeper = new Beeper();
 	mError = 0;
 
-	//~ mTempProbe->getTemp(&mCurrentTemp);
+	mTempProbe->getTemp(&mCurrentTemp);
 	if (ACZeroCrossing::Instance().getFrequency() == 0)
 		mError = STR_MISSING_MAIN;
 		

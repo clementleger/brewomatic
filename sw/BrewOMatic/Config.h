@@ -118,7 +118,7 @@
  * When using TempMax31865 probe type, the hardware SPI bus is used.
  * However, the chip select can be configured here
  */
-#define MAX31865_CS_PIN		10
+#define MAX31865_CS_PIN		8
 
 /**
  * Number of wire your PT100 probe is using
