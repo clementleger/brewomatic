@@ -12,6 +12,8 @@ class Display {
 		virtual void displayIdle(BrewOMatic *b) = 0;
 		virtual void displayMenu(BrewOMatic *b, Menu *m) = 0;
 		virtual void displayBrewing(BrewOMatic *b) = 0;
+		virtual void enterManual(BrewOMatic *b) = 0;
+		virtual void displayManual(BrewOMatic *b) = 0;
 };
 
 #endif /* _DISPLAY_H */

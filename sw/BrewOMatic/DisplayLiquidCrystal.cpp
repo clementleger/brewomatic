@@ -233,11 +233,6 @@ mHeatState(0)
 
 void DisplayLiquidCrystal::enterIdle(BrewOMatic *b)
 {
-	
-}
-
-void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
-{
 	lcd.clear();
 	dispTitle(BREWOMATIC_VERSION_STRING);
 
@@ -245,6 +240,19 @@ void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
 	lcd.write(byte(BEER_CHAR));
 	lcd.print(" ");
 	lcd.print(getString(STR_IDLE));
+
+	lcd.setCursor(0, 3);
+	if (b->mError) {
+		lcd.print(getString(STR_ERROR));
+		lcd.print(": ");
+		lcd.print(getString(STR_MISSING_MAIN));
+	} else {
+		lcd.print(getString(STR_READY));
+	}
+}
+
+void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
+{
 
 	lcd.setCursor(0, 2);
 	lcd.write(byte(THERMOMETER_CHAR));
@@ -255,15 +263,6 @@ void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
 	lcd.write(byte(PLUG_CHAR));
 	lcd.print(ACZeroCrossing::Instance().getFrequency());
 	lcd.print("Hz");
-
-	lcd.setCursor(0, 3);
-	if (b->mError) {
-		lcd.print(getString(STR_ERROR));
-		lcd.print(": ");
-		lcd.print(getString(STR_MISSING_MAIN));
-	} else {
-		lcd.print(getString(STR_READY));
-	}
 }
 
 void DisplayLiquidCrystal::enterMenu(BrewOMatic *b, Menu *m)
@@ -303,7 +302,7 @@ void DisplayLiquidCrystal::loadAnimChar()
 		mHeatState = 0;
 }
 
-void DisplayLiquidCrystal::drawStatus(bool status)
+void DisplayLiquidCrystal::drawBool(bool status)
 {
 	if (status) {
 		lcd.print("On");
@@ -317,20 +316,10 @@ void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 
 }
 
-void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
+void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 {
-	unsigned long elapsed;
-	unsigned int elapsedMin, elapsedSec;
-	lcd.clear();
-	dispTitle(b->mCurrentRecipe->mName);
-
-	lcd.setCursor(0, 1);
-	lcd.write(byte(BEER_CHAR));
-	lcd.print(" Step: ");
-	lcd.print(b->mCurrentStep->mName);
-
 	/* Draw temp status */
-	lcd.setCursor(0, 2);
+	lcd.setCursor(0, row);
 	lcd.write(byte(THERMOMETER_CHAR));
 	lcd.print((int) b->mCurrentTemp);
 	lcd.write(byte(DEGREE_CHAR));
@@ -339,34 +328,69 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	lcd.write(byte(DEGREE_CHAR));
 
 	loadAnimChar();
-	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 1, 2);
+	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 1, row);
 	/* Draw pump status */
 	lcd.write(byte(PUMP_CHAR));
-	drawStatus(b->mCurrentStep->mEnablePump);
+	drawBool(b->mCurrentStep->mEnablePump);
 
-	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 6, 2);
+	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 6, row);
 	/* Draw heater status */
 	lcd.write(byte(HEAT_CHAR));
-	drawStatus(b->mCurrentStep->mEnableHeater);
+	drawBool(b->mCurrentStep->mEnableHeater);
+}
+
+void DisplayLiquidCrystal::drawTime(unsigned long amillis)
+{
+	unsigned long elapsed;
+	unsigned int elapsedMin, elapsedSec;
+
+	elapsed = millis() - amillis;
+	elapsedMin = elapsed / ((unsigned long) 1000 * 60);
+	elapsedSec = (elapsed - (elapsedMin * 60 * 1000));
+	elapsedSec /= 1000;
+	if (elapsedMin < 10)
+		lcd.print("0");
+	lcd.print(elapsedMin);
+	lcd.print(":");
+	if (elapsedSec < 10)
+		lcd.print("0");
+	lcd.print(elapsedSec);
+}
+
+void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
+{
+	lcd.clear();
+	dispTitle(b->mCurrentRecipe->mName);
+
+	lcd.setCursor(0, 1);
+	lcd.write(byte(BEER_CHAR));
+	lcd.print(" Step: ");
+	lcd.print(b->mCurrentStep->mName);
+
+	drawStatus(b, 2);
 
 	lcd.setCursor(0, 3);
 	lcd.write(byte(CLOCK_CHAR));
 	if (b->mTempReached) {
-		elapsed = millis() - b->mStepStartMillis;
-		elapsedMin = elapsed / ((unsigned long) 1000 * 60);
-		elapsedSec = (elapsed - (elapsedMin * 60 * 1000));
-		elapsedSec /= 1000;
-		if (elapsedMin < 10)
-			lcd.print("0");
-		lcd.print(elapsedMin);
-		lcd.print(":");
-		if (elapsedSec < 10)
-			lcd.print("0");
-		lcd.print(elapsedSec);
+		drawTime(b->mStepStartMillis);
 	} else {
 		lcd.print("-");
 	}
 	lcd.print("/");
 	lcd.print(b->mCurrentStep->mDuration);
 	lcd.print(":00");
+}
+
+void DisplayLiquidCrystal::enterManual(BrewOMatic *b)
+{
+	lcd.clear();
+	dispTitle(getString(STR_MANUAL_MODE));
+}
+
+void DisplayLiquidCrystal::displayManual(BrewOMatic *b)
+{
+	drawStatus(b, 1);
+	lcd.setCursor(0, 2);
+	lcd.write(byte(CLOCK_CHAR));
+	drawTime(b->mStepStartMillis);
 }

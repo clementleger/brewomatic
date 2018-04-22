@@ -1,10 +1,23 @@
 #ifndef _HEATER_CONTROL_H
 #define _HEATER_CONTROL_H
 
+#include <PID_v1.h>
+
+#include "HeaterTriacControl.h"
+
 class HeaterControl {
 	public:
-		virtual void enable(bool enable) = 0;
-		virtual void setDutyCycle(unsigned char value) = 0;
+		HeaterControl();
+		void setEnable(bool enable);
+		void setTargetTemp(double targetTemp);
+		void handleHeating(double currentTemp);
+	private:
+		/* Fixme: use config */
+		HeaterTriacControl mCtrl;
+		double mTargetTemp;
+		double mPidOutput;
+		double mPidInput;
+		PID mPid;
 };
 
 #endif

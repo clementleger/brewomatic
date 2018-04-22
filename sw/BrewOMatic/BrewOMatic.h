@@ -31,7 +31,7 @@ class BrewOMatic;
 #include "SerialOutput.h"
 #include "DisplayUcglib.h"
 #include "RotaryEncoder.h"
-#include "HeaterTriacControl.h"
+#include "HeaterControl.h"
 #include "DisplayLiquidCrystal.h"
 
 typedef enum {
@@ -43,6 +43,7 @@ typedef enum {
 typedef enum {
 	STATE_IDLE,
 	STATE_BREWING,
+	STATE_MANUAL,
 } brewomaticState;
 
 class BrewOMatic {
@@ -53,6 +54,7 @@ class BrewOMatic {
 		/* Callbacks */
 		void actionStopBrewing();
 		void actionStartBrewing();
+		void actionStartManual();
 		void actionMenuBack();
 		float mCurrentTemp;
 		brewomaticState mState;
@@ -78,14 +80,10 @@ class BrewOMatic {
 		void handleIdle();
 		void handleBrewing();
 		void handleMenu();
-		void handleTemp();
+		void handleManual();
 
 		void handleDisplay();
-		void displayIdle();
 		void displayMenu();
-		brewomaticError executeRecipe(Recipe *recipe);
-		brewomaticError executeStep(Step *step);
-		brewomaticError executeAction(Action *action);
 		unsigned char handleButton(Menu *onPress);
 };
 

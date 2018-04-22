@@ -1,9 +1,9 @@
 #ifndef _HEATER_TRIAC_CONTROL_H
 #define _HEATER_TRIAC_CONTROL_H
 
-#include "HeaterControl.h"
+#include "HeaterInterface.h"
 
-class HeaterTriacControl: public HeaterControl {
+class HeaterTriacControl: public HeaterInterface {
 	public:
 		HeaterTriacControl();
 		void enable(bool enable);

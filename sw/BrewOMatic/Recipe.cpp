@@ -53,3 +53,8 @@ Recipe *createDefaultRecipe()
 
 	return recipe;
 }
+
+Step *createManualStep()
+{
+	return new Step("Manual", 0, 20, false, true, 0);
+}

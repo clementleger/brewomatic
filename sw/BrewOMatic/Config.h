@@ -135,6 +135,15 @@
  */
 #define DS18B20_ONEWIRE_PIN	4
 
+/**
+ * PID values
+ * We are talking about blackmagic here !
+ */
+
+#define PID_P_VALUE	2
+#define PID_I_VALUE	5
+#define PID_D_VALUE	1
+
 /***********************************************************************
  *                       Heater Control
  **********************************************************************/

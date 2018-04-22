@@ -15,11 +15,16 @@ class DisplayLiquidCrystal: public Display {
 		void enterIdle(BrewOMatic *b);
 		void enterMenu(BrewOMatic *b, Menu *m);
 		void enterBrewing(BrewOMatic *b);
+		void enterManual(BrewOMatic *b);
+		void displayManual(BrewOMatic *b);
 
 	private:
 		void dispTitle(const char *str);
 		void loadAnimChar();
-		void drawStatus(bool status);
+		void drawBool(bool status);
+		void drawStatus(BrewOMatic *b, int row);
+		void drawTime(unsigned long amillis);
+		
 		byte mPumpState;
 		byte mHeatState;
 		LiquidCrystal lcd;

@@ -40,5 +40,6 @@ class Recipe {
 };
 
 Recipe *createDefaultRecipe();
+Step *createManualStep();
 
 #endif
