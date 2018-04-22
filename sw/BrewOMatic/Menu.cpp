@@ -14,9 +14,7 @@ static void actionStopBrewing(BrewOMatic *b)
 
 static void actionEnablePump(BrewOMatic *b)
 {
-	if (b->mCurrentStep) {
-		b->mCurrentStep->mEnablePump = !b->mCurrentStep->mEnablePump;
-	}
+	b->actionEnablePump();
 }
 
 static void actionEnableHeater(BrewOMatic *b)

@@ -11,11 +11,11 @@ class HeaterControl {
 		void setEnable(bool enable);
 		void setTargetTemp(double targetTemp);
 		void handleHeating(double currentTemp);
+		double mPidOutput;
 	private:
 		/* Fixme: use config */
 		HeaterTriacControl mCtrl;
 		double mTargetTemp;
-		double mPidOutput;
 		double mPidInput;
 		PID mPid;
 };

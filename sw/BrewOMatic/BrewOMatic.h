@@ -55,18 +55,19 @@ class BrewOMatic {
 		void actionStopBrewing();
 		void actionStartBrewing();
 		void actionStartManual();
+		void actionEnablePump();
 		void actionMenuBack();
 		float mCurrentTemp;
 		brewomaticState mState;
 		Recipe *mCurrentRecipe;
 		Step *mCurrentStep;
+		HeaterControl *mHeaterControl;
 		bool mTempReached;
 		unsigned long mStepStartMillis;
 		brewStringIndex mError;
 	private:
 		TempProbe *mTempProbe;
 		Display *mDisp;
-		HeaterControl *mHeaterControl;
 		SerialOutput *mSerialOutput;
 		Input *mInput;
 		Beeper *mBeeper;
@@ -76,7 +77,8 @@ class BrewOMatic {
 		Menu *mIdleMenu;
 		Menu *mBrewingMenu;
 		bool mUpdateDisplay;
-
+		
+		void changeState(int state);
 		void handleIdle();
 		void handleBrewing();
 		void handleMenu();

@@ -7,6 +7,7 @@ TempMax31865::TempMax31865():
 mConverter(MAX31865_CS_PIN)
 {
 	 mConverter.begin(MAX31865_WIRE_COUNT);
+	 mConverter.autoConvert(true);
 }
 
 int TempMax31865::getTemp(float *value)

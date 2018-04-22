@@ -33,6 +33,7 @@ void HeaterControl::handleHeating(double currentTemp)
 
 	mPidInput = currentTemp;
 	ret = mPid.Compute();
-	if (ret)
-		dbgOutput("PID output: %d\n", mPidOutput);
+	if (ret) {
+		dbgOutput("PID output: %d\n", (int) mPidOutput);
+	}
 }

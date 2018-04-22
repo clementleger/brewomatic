@@ -27,7 +27,7 @@ char RotaryEncoder::getButtonPressed()
 	}
 
 	if (button)
-		delay(100);
+		delay(150);
 
 	return button;
 }

@@ -249,15 +249,6 @@ void DisplayLiquidCrystal::enterIdle(BrewOMatic *b)
 	} else {
 		lcd.print(getString(STR_READY));
 	}
-}
-
-void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
-{
-
-	lcd.setCursor(0, 2);
-	lcd.write(byte(THERMOMETER_CHAR));
-	lcd.print(b->mCurrentTemp);
-	lcd.write(byte(DEGREE_CHAR));
 
 	lcd.setCursor(LIQUID_CRYSTAL_WIDTH/2, 2);
 	lcd.write(byte(PLUG_CHAR));
@@ -265,16 +256,23 @@ void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
 	lcd.print("Hz");
 }
 
+void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
+{
+	lcd.setCursor(0, 2);
+	lcd.write(byte(THERMOMETER_CHAR));
+	lcd.print(b->mCurrentTemp);
+	lcd.write(byte(DEGREE_CHAR));
+}
+
 void DisplayLiquidCrystal::enterMenu(BrewOMatic *b, Menu *m)
 {
-
+	lcd.clear();
+	dispTitle(getString(m->mName));
 }
 
 void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 {
 	MenuItem *item;
-	lcd.clear();
-	dispTitle(getString(m->mName));
 
 	for (byte i = 0; i < m->getItemCount() && i < 3; i++) {
 		lcd.setCursor(0, 1 + i);
@@ -284,10 +282,11 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 			lcd.print(">");
 		else
 			lcd.print(" ");
-			
+
 		lcd.print(getString(item->mTitle));
 	}
 }
+
 void DisplayLiquidCrystal::loadAnimChar()
 {
 	lcd.createChar(PUMP_CHAR, pumpAnim[mPumpState]);
@@ -313,7 +312,8 @@ void DisplayLiquidCrystal::drawBool(bool status)
 
 void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 {
-
+	lcd.clear();
+	dispTitle(b->mCurrentRecipe->mName);
 }
 
 void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
@@ -334,9 +334,14 @@ void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 	drawBool(b->mCurrentStep->mEnablePump);
 
 	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 6, row);
+
 	/* Draw heater status */
 	lcd.write(byte(HEAT_CHAR));
 	drawBool(b->mCurrentStep->mEnableHeater);
+
+	lcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
+	lcd.print((int) b->mHeaterControl->mPidOutput);
+	lcd.print("% ");
 }
 
 void DisplayLiquidCrystal::drawTime(unsigned long amillis)
@@ -359,12 +364,9 @@ void DisplayLiquidCrystal::drawTime(unsigned long amillis)
 
 void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 {
-	lcd.clear();
-	dispTitle(b->mCurrentRecipe->mName);
-
 	lcd.setCursor(0, 1);
 	lcd.write(byte(BEER_CHAR));
-	lcd.print(" Step: ");
+	lcd.print(" ");
 	lcd.print(b->mCurrentStep->mName);
 
 	drawStatus(b, 2);
@@ -385,12 +387,18 @@ void DisplayLiquidCrystal::enterManual(BrewOMatic *b)
 {
 	lcd.clear();
 	dispTitle(getString(STR_MANUAL_MODE));
+
+	lcd.setCursor(0, 1);
+	lcd.write(byte(BEER_CHAR));
+	lcd.print(" ");
+	lcd.print(getString(STR_MANUAL_MODE));
 }
 
 void DisplayLiquidCrystal::displayManual(BrewOMatic *b)
 {
-	drawStatus(b, 1);
-	lcd.setCursor(0, 2);
+
+	drawStatus(b, 2);
+	lcd.setCursor(0, 3);
 	lcd.write(byte(CLOCK_CHAR));
 	drawTime(b->mStepStartMillis);
 }

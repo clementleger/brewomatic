@@ -6,27 +6,38 @@
 
 BrewOMatic brewOMatic;
 
-void BrewOMatic::actionStopBrewing()
+void BrewOMatic::changeState(int state)
 {
-	dbgOutput("Stop brew\n");
-	mState = STATE_IDLE;
+	dbgOutput("change state %d\n", state);
+	mState = state;
 	mUpdateDisplay = true;
 	mCurrentMenu->mSelected = 0;
 	mCurrentMenu = NULL;
+}
+
+void BrewOMatic::actionEnablePump()
+{
+	mCurrentStep->mEnablePump = !mCurrentStep->mEnablePump;
+	digitalWrite(PUMP_CONTROL_PIN, mCurrentStep->mEnablePump);
+}
+
+void BrewOMatic::actionStopBrewing()
+{
+	changeState(STATE_IDLE);
 
 	if (mCurrentStep) {
 		delete mCurrentStep;
 		mCurrentStep = NULL;
 	}
+	mHeaterControl->setEnable(false);
+	digitalWrite(PUMP_CONTROL_PIN, 0);
+
 	mDisp->enterIdle(this);
 }
 
 void BrewOMatic::actionStartBrewing()
 {
-	dbgOutput("Start brew\n");
-	mState = STATE_BREWING;
-	mUpdateDisplay = true;
-	mCurrentMenu = NULL;
+	changeState(STATE_BREWING);
 
 	mCurrentRecipe = createDefaultRecipe();
 	mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
@@ -34,13 +45,12 @@ void BrewOMatic::actionStartBrewing()
 }
 void BrewOMatic::actionStartManual()
 {
-	dbgOutput("Start manual\n");
-	mState = STATE_MANUAL;
-	mUpdateDisplay = true;
-	mCurrentMenu = NULL;
+	changeState(STATE_MANUAL);
 
 	mCurrentStep = createManualStep();
 	mStepStartMillis = millis();
+
+	mHeaterControl->setTargetTemp(mCurrentStep->mTargetTemp);
 	mHeaterControl->setEnable(true);
 	mDisp->enterManual(this);
 }
@@ -67,8 +77,7 @@ unsigned char BrewOMatic::handleButton(Menu *onPress)
 {
 	char button = mInput->getButtonPressed();
 
-	if (mCurrentMenu == NULL &&
-		(mState == STATE_BREWING || mState == STATE_MANUAL)) {
+	if (mCurrentMenu == NULL && mState == STATE_MANUAL) {
 		if (button == Input::BUTTON_NEXT) {
 			mCurrentStep->mTargetTemp++;
 			mUpdateDisplay = true;
@@ -84,6 +93,7 @@ unsigned char BrewOMatic::handleButton(Menu *onPress)
 			/* If not in menu, start menu when Ok is pressed */
 			if (!mCurrentMenu) {
 				mCurrentMenu = onPress;
+				mDisp->enterMenu(this, mCurrentMenu);
 				mUpdateDisplay = true;
 			} else {
 				/* In menu, execute the menu callback */
@@ -296,10 +306,8 @@ void BrewOMatic::setup()
 	mDisp->enterIdle(this);
 	mDisp->displayIdle(this);
 
-#if 0
-	if (mError)
+	if (mError && !ENABLE_DEBUG)
 		while(1);
-#endif
 
 	dbgOutput("Setup OK\n");
 }
