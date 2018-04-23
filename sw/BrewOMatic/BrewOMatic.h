@@ -55,7 +55,8 @@ class BrewOMatic {
 		void actionStopBrewing();
 		void actionStartBrewing();
 		void actionStartManual();
-		void actionEnablePump();
+		int actionEnablePump();
+		int actionEnableHeater();
 		void actionMenuBack();
 		float mCurrentTemp;
 		brewomaticState mState;

@@ -179,6 +179,7 @@ const static byte fire4[8] = {
 
 static byte *heatAnim[HEAT_STATE_COUNT] = {fire1, fire2, fire3, fire4};
 
+#define DISP_MENU_ENTRY	(LIQUID_CRYSTAL_HEIGHT - 1)
 
 enum customChars{
 	BEER_CHAR = 0,
@@ -277,7 +278,7 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 	for (byte i = 0; i < m->getItemCount() && i < 3; i++) {
 		lcd.setCursor(0, 1 + i);
 		item = m->getItem(i);
-		
+
 		if (i == m->mSelected)
 			lcd.print(">");
 		else
@@ -340,8 +341,10 @@ void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 	drawBool(b->mCurrentStep->mEnableHeater);
 
 	lcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
-	lcd.print((int) b->mHeaterControl->mPidOutput);
-	lcd.print("% ");
+	if (b->mCurrentStep->mEnableHeater) {
+		lcd.print((int) b->mHeaterControl->mPidOutput);
+		lcd.print("% ");
+	}
 }
 
 void DisplayLiquidCrystal::drawTime(unsigned long amillis)

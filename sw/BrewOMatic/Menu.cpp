@@ -2,34 +2,36 @@
 #include "Language.h"
 
 
-static void actionMenuBack(BrewOMatic *b)
+static void actionMenuBack(MenuItem *item, BrewOMatic *b)
 {
 	b->actionMenuBack();
 }
 
-static void actionStopBrewing(BrewOMatic *b)
+static void actionStopBrewing(MenuItem *item, BrewOMatic *b)
 {
 	b->actionStopBrewing();
 }
 
-static void actionEnablePump(BrewOMatic *b)
+static void actionEnablePump(MenuItem *item, BrewOMatic *b)
 {
-	b->actionEnablePump();
+	bool ret = b->actionEnablePump();
+
+	item->mTitle = ret ? STR_DISABLE_PUMP : STR_ENABLE_PUMP;
 }
 
-static void actionEnableHeater(BrewOMatic *b)
+static void actionEnableHeater(MenuItem *item, BrewOMatic *b)
 {
-	if (b->mCurrentStep) {
-		b->mCurrentStep->mEnableHeater = !b->mCurrentStep->mEnableHeater;
-	}
+	bool ret = b->actionEnableHeater();
+
+	item->mTitle = ret ? STR_DISABLE_HEATER : STR_ENABLE_HEATER;
 }
 
-static void actionStartBrewing(BrewOMatic *b)
+static void actionStartBrewing(MenuItem *item, BrewOMatic *b)
 {
 	b->actionStartBrewing();
 }
 
-static void actionStartManual(BrewOMatic *b)
+static void actionStartManual(MenuItem *item, BrewOMatic *b)
 {
 	b->actionStartManual();
 }
@@ -50,9 +52,10 @@ mSelected(0)
  */
 Menu *createIdleMenu()
 {
-	Menu *menu = new Menu(STR_MAIN_MENU, 2, NULL);
+	Menu *menu = new Menu(STR_MAIN_MENU, 4, NULL);
 	menu->mItems.addElem(new MenuItem(STR_START_BREWING, actionStartBrewing));
 	menu->mItems.addElem(new MenuItem(STR_MANUAL_MODE, actionStartManual));
+	menu->mItems.addElem(new MenuItem(STR_ENABLE_PUMP, actionEnablePump));
 	menu->mItems.addElem(new MenuItem(STR_ADJUST_TEMP_OFFSET, 0));
 
 	return menu;
@@ -65,7 +68,7 @@ Menu *createIdleMenu()
 Menu *createBrewingMenu()
 {
 
-	Menu *menu = new Menu(STR_BREWING_MENU, 3, NULL);
+	Menu *menu = new Menu(STR_BREWING_MENU, 4, NULL);
 	menu->mItems.addElem(new MenuItem(STR_STOP, actionStopBrewing));
 	menu->mItems.addElem(new MenuItem(STR_ENABLE_HEATER, actionEnableHeater));
 	menu->mItems.addElem(new MenuItem(STR_ENABLE_PUMP, actionEnablePump));

@@ -30,6 +30,8 @@ enum brewStringIndexEnum {
 	STR_MANUAL_MODE,
 	STR_ENABLE_PUMP,
 	STR_ENABLE_HEATER,
+	STR_DISABLE_PUMP,
+	STR_DISABLE_HEATER,
 	/* Always last member of enum */
 	STR_COUNT
 };

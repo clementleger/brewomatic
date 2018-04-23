@@ -6,8 +6,9 @@
 
 class BrewOMatic;
 class Menu;
+class MenuItem;
 
-typedef void (*menuItemCallback)(BrewOMatic *b);
+typedef void (*menuItemCallback)(MenuItem *item, BrewOMatic *b);
 
 class MenuItem {
 	public:

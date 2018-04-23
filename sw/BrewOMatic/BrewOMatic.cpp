@@ -15,10 +15,27 @@ void BrewOMatic::changeState(int state)
 	mCurrentMenu = NULL;
 }
 
-void BrewOMatic::actionEnablePump()
+int BrewOMatic::actionEnablePump()
 {
 	mCurrentStep->mEnablePump = !mCurrentStep->mEnablePump;
 	digitalWrite(PUMP_CONTROL_PIN, mCurrentStep->mEnablePump);
+	mUpdateDisplay = true;
+
+	return mCurrentStep->mEnablePump;
+}
+
+int BrewOMatic::actionEnableHeater()
+{
+	mCurrentStep->mEnableHeater = !mCurrentStep->mEnableHeater;
+	if (mCurrentStep->mEnableHeater) {
+		mHeaterControl->setTargetTemp(mCurrentStep->mTargetTemp);
+		mHeaterControl->setEnable(true);
+	} else {
+		mHeaterControl->setEnable(false);
+	}
+	mUpdateDisplay = true;
+
+	return mCurrentStep->mEnableHeater;
 }
 
 void BrewOMatic::actionStopBrewing()
@@ -50,8 +67,6 @@ void BrewOMatic::actionStartManual()
 	mCurrentStep = createManualStep();
 	mStepStartMillis = millis();
 
-	mHeaterControl->setTargetTemp(mCurrentStep->mTargetTemp);
-	mHeaterControl->setEnable(true);
 	mDisp->enterManual(this);
 }
 
@@ -99,7 +114,7 @@ unsigned char BrewOMatic::handleButton(Menu *onPress)
 				/* In menu, execute the menu callback */
 				menuItemCallback mCb = mCurrentMenu->getSelectedItem()->mCallback;
 				if (mCb)
-					mCb(this);
+					mCb(mCurrentMenu->getSelectedItem(), this);
 			}
 		break;
 		case Input::BUTTON_PREV:
