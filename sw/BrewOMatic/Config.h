@@ -33,7 +33,7 @@
 /**
  * Delay before starting in seconds
  */
-#define START_DELAY	2
+#define START_DELAY	0
 
 /**
  * Banner displyed at start

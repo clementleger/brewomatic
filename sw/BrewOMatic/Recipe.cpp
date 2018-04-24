@@ -56,5 +56,5 @@ Recipe *createDefaultRecipe()
 
 Step *createManualStep()
 {
-	return new Step("Manual", 0, 20, false, true, 0);
+	return new Step("Manual", 0, 25, false, false, 0);
 }

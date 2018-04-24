@@ -52,10 +52,9 @@ mSelected(0)
  */
 Menu *createIdleMenu()
 {
-	Menu *menu = new Menu(STR_MAIN_MENU, 4, NULL);
+	Menu *menu = new Menu(STR_MAIN_MENU, 3, NULL);
 	menu->mItems.addElem(new MenuItem(STR_START_BREWING, actionStartBrewing));
 	menu->mItems.addElem(new MenuItem(STR_MANUAL_MODE, actionStartManual));
-	menu->mItems.addElem(new MenuItem(STR_ENABLE_PUMP, actionEnablePump));
 	menu->mItems.addElem(new MenuItem(STR_ADJUST_TEMP_OFFSET, 0));
 
 	return menu;

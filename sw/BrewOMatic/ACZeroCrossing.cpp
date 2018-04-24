@@ -20,7 +20,6 @@ unsigned char computedFrequency = 0;
 void computeFrequencyInterrupt()
 {
 	computedFrequency++;
-	dbgOutput("Trig\n");
 }
 
 void ACZeroCrossing::computeFrequency()
