@@ -18,6 +18,7 @@ class HeaterControl {
 		double mTargetTemp;
 		double mPidInput;
 		PID mPid;
+		unsigned char mEnable;
 };
 
 #endif

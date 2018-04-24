@@ -10,7 +10,8 @@ class HeaterTriacControl: public HeaterInterface {
 		void setDutyCycle(unsigned char value);
 
 		unsigned char mPulseCount;
-		unsigned char mPulseSkipCount;
+		unsigned char mPulseTrigCount;
+		unsigned char mCurrentPulseTrigCount;
 		unsigned char mFrequency;
 	private:
 		int mCbIdx;
