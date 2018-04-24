@@ -27,6 +27,7 @@ class DisplayLiquidCrystal: public Display {
 		
 		byte mPumpState;
 		byte mHeatState;
+		byte mLastMenuStart;
 		LiquidCrystal lcd;
 };
 

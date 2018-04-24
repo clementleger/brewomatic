@@ -179,7 +179,7 @@ const static byte fire4[8] = {
 
 static byte *heatAnim[HEAT_STATE_COUNT] = {fire1, fire2, fire3, fire4};
 
-#define DISP_MENU_ENTRY	(LIQUID_CRYSTAL_HEIGHT - 1)
+#define DISP_MENU_ENTRY	(LIQUID_CRYSTAL_HEIGHT)
 
 enum customChars{
 	BEER_CHAR = 0,
@@ -268,15 +268,30 @@ void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
 void DisplayLiquidCrystal::enterMenu(BrewOMatic *b, Menu *m)
 {
 	lcd.clear();
-	dispTitle(getString(m->mName));
+
+	mLastMenuStart = 0;
 }
 
 void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 {
 	MenuItem *item;
+	byte row = 0;
+	byte dispCount = DISP_MENU_ENTRY;
 
-	for (byte i = 0; i < m->getItemCount() && i < 3; i++) {
-		lcd.setCursor(0, 1 + i);
+	lcd.clear();
+	if (m->getItemCount() < DISP_MENU_ENTRY) {
+		mLastMenuStart = 0;
+		dispCount = m->getItemCount();
+	} else if (m->mSelected < mLastMenuStart) {
+		mLastMenuStart = m->mSelected;
+	} else if (m->mSelected > (mLastMenuStart + (DISP_MENU_ENTRY - 1))) {
+		mLastMenuStart = m->mSelected - (DISP_MENU_ENTRY - 1);
+	}
+
+	for (byte i = mLastMenuStart; i < mLastMenuStart + dispCount; i++) {
+		lcd.setCursor(0, row);
+		row++;
+
 		item = m->getItem(i);
 
 		if (i == m->mSelected)
