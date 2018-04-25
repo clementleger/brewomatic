@@ -13,7 +13,7 @@
 
 #define SEC_TO_MSECS	1000
 
-ACZeroCrossing ACZeroCrossing::m_instance = ACZeroCrossing();
+ACZeroCrossing ACZeroCrossing::mInstance = ACZeroCrossing();
 
 unsigned char computedFrequency = 0;
 
@@ -44,17 +44,6 @@ void ACZeroCrossing::computeFrequency()
 	}
 }
 
-void ACZeroCrossing::classZeroCrossingInterrupt()
-{
-	int i;
-
-	for (i = 0; i < MAX_CALLBACKS; i++) {
-		if (callbacksFunc[i]) {
-			callbacksFunc[i](callbacksData[i]);
-		}
-	}
-}
-
 ACZeroCrossing::ACZeroCrossing()
 {
 	pinMode(ZERO_CROSSING_DETECT_PIN, INPUT_PULLUP);
@@ -66,42 +55,18 @@ void ACZeroCrossing::setup()
 {
 	computeFrequency();
 	attachInterrupt(ZERO_CROSSING_IRQ, zeroCrossingInterrupt, RISING);
-
-	for (int i = 0; i < MAX_CALLBACKS; i++) {
-		callbacksFunc[i] = NULL;
-		callbacksData[i] = NULL;
-	}
+	removeCallback();
 }
 
-int ACZeroCrossing::findFreeIdx()
+void ACZeroCrossing::setCallback(zeroCrossingCallback cb, void *data)
 {
-	for(int i = 0; i < MAX_CALLBACKS; i++) {
-		if (callbacksFunc[i] == NULL) {
-			return i;
-		}
-	}
-
-	return -1;
+	noInterrupts();
+	mCallbackFunc = cb;
+	mCallbackData = data;
+	interrupts();
 }
 
-int ACZeroCrossing::addCallback(zeroCrossingCallback cb, void *data)
+void ACZeroCrossing::removeCallback()
 {
-	int idx;
-
-	idx = findFreeIdx();
-	if (idx < 0)
-		return -1;
-
-	callbacksFunc[idx] = cb;
-	callbacksData[idx] = data;
-
-	return 0;
-}
-
-void ACZeroCrossing::removeCallback(int cbIdx)
-{
-	if (cbIdx < 0)
-		return;
-	callbacksFunc[cbIdx] = NULL;
-	callbacksData[cbIdx] = NULL;
+	setCallback(NULL, NULL);
 }

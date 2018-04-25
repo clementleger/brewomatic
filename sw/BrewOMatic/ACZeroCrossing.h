@@ -8,32 +8,31 @@ typedef void (*zeroCrossingCallback)(void *data);
 class ACZeroCrossing
 {
 	public:
-		static ACZeroCrossing& Instance(){ return m_instance; };
+		static ACZeroCrossing& Instance(){ return mInstance; };
 		void setup();
-		int addCallback(zeroCrossingCallback cb, void *data);
-		void removeCallback(int cbIdx);
+		void setCallback(zeroCrossingCallback cb, void *data);
+		void removeCallback();
 		int getFrequency() { return acFrequency; };
 		int getAcPeriodUs() { return acPeriodUs; };
 
 	private:
 		ACZeroCrossing();
 		void computeFrequency();
-		void classZeroCrossingInterrupt();
 
 		static void zeroCrossingInterrupt() {
-			m_instance.classZeroCrossingInterrupt();
+			if (mInstance.mCallbackFunc) {
+				mInstance.mCallbackFunc(mInstance.mCallbackData);
+			}
 		}
 
 		/* Members */
 		int acFrequency;
 		unsigned int acPeriodUs;
-		static ACZeroCrossing m_instance;
+		static ACZeroCrossing mInstance;
 		int pin;
 		/* Callbacks */
-		zeroCrossingCallback callbacksFunc[MAX_CALLBACKS];
-		void * callbacksData[MAX_CALLBACKS];
-
-		int findFreeIdx();
+		zeroCrossingCallback mCallbackFunc;
+		void *mCallbackData;
 };
 
 #endif

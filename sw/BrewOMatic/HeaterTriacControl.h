@@ -9,12 +9,10 @@ class HeaterTriacControl: public HeaterInterface {
 		void enable(bool enable);
 		void setDutyCycle(unsigned char value);
 
-		unsigned char mPulseCount;
-		unsigned char mPulseTrigCount;
-		unsigned char mCurrentPulseTrigCount;
-		unsigned char mFrequency;
+		unsigned long mTriacGateKeepTimeUs;
+		unsigned char mDutyCycle;
+		unsigned long mACPeriodUs;
 	private:
-		int mCbIdx;
 };
 
 #endif
