@@ -2,6 +2,7 @@
 #define _HEATER_TRIAC_CONTROL_H
 
 #include "HeaterInterface.h"
+#include <Arduino.h>
 
 class HeaterTriacControl: public HeaterInterface {
 	public:
@@ -9,9 +10,9 @@ class HeaterTriacControl: public HeaterInterface {
 		void enable(bool enable);
 		void setDutyCycle(unsigned char value);
 
-		unsigned long mTriacGateKeepTimeUs;
-		unsigned char mDutyCycle;
-		unsigned long mACPeriodUs;
+		uint8_t mTriacEnableTick;
+		uint8_t mTriacGateKeepTick;
+		uint8_t mDutyCycle;
 	private:
 };
 
