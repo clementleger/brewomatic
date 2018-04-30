@@ -329,6 +329,7 @@ void DisplayLiquidCrystal::drawBool(bool status)
 void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 {
 	lcd.clear();
+	lcd.setCursor(0, 3);
 	dispTitle(b->mCurrentRecipe->mName);
 }
 
@@ -382,14 +383,14 @@ void DisplayLiquidCrystal::drawTime(unsigned long amillis)
 
 void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 {
-	lcd.setCursor(0, 1);
+	lcd.setCursor(0, 0);
 	lcd.write(byte(BEER_CHAR));
 	lcd.print(" ");
 	lcd.print(b->mCurrentStep->mName);
 
-	drawStatus(b, 2);
+	drawStatus(b, 1);
 
-	lcd.setCursor(0, 3);
+	lcd.setCursor(0, 2);
 	lcd.write(byte(CLOCK_CHAR));
 	if (b->mTempReached) {
 		drawTime(b->mStepStartMillis);
