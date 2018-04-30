@@ -50,6 +50,7 @@ class BrewOMatic {
 	public:
 		void setup();
 		void run();
+		BrewOMatic();
 
 		/* Callbacks */
 		void actionStopBrewing();
@@ -67,18 +68,25 @@ class BrewOMatic {
 		unsigned long mStepStartMillis;
 		brewStringIndex mError;
 	private:
+		brewomaticState mState;
+
 		TempProbe *mTempProbe;
 		Display *mDisp;
 		SerialOutput *mSerialOutput;
 		Input *mInput;
 		Beeper *mBeeper;
-		unsigned long mLastTempUpdate;
+		unsigned long mLastDispUpdate;
+		unsigned long mTempUpdate;
 
 		Menu *mCurrentMenu;
 		Menu *mIdleMenu;
 		Menu *mBrewingMenu;
 		bool mUpdateDisplay;
+		bool mStepStarted;
 		
+		void checkTemp();
+		void checkDisplay();
+
 		void changeState(int state);
 		void handleIdle();
 		void handleBrewing();

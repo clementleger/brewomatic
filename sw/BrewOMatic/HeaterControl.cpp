@@ -3,12 +3,13 @@
 #include "Config.h"
 
 
-HeaterControl::HeaterControl():
+HeaterControl::HeaterControl(unsigned int sampleTime):
 mCtrl(),
 mEnable(0),
 mPid(&mPidInput, &mPidOutput, &mTargetTemp, PID_P_VALUE, PID_I_VALUE, PID_D_VALUE, DIRECT)
 {
 	mPid.SetOutputLimits(0, 100);
+	mPid.SetSampleTime(sampleTime);
 }
 
 void HeaterControl::setEnable(bool enable)

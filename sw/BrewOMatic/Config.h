@@ -144,6 +144,11 @@
 #define PID_I_VALUE	5
 #define PID_D_VALUE	1
 
+/**
+ * Temperature and heating control delay
+ */
+#define TEMP_SAMPLE_TIME_MS	100
+
 /***********************************************************************
  *                       Heater Control
  **********************************************************************/

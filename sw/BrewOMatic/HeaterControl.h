@@ -7,7 +7,7 @@
 
 class HeaterControl {
 	public:
-		HeaterControl();
+		HeaterControl(unsigned int sampleTime);
 		void setEnable(bool enable);
 		void setTargetTemp(double targetTemp);
 		void handleHeating(double currentTemp);

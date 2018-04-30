@@ -1,10 +1,23 @@
+
+#include "Language.h"
 #include "Menu.h"
 #include "Config.h"
-#include "Language.h"
 #include "BrewOMatic.h"
 #include "ACZeroCrossing.h"
 
 BrewOMatic brewOMatic;
+
+BrewOMatic::BrewOMatic()
+{
+	mStepStarted = false;
+	mState = STATE_IDLE;
+	mSerialOutput = new SerialOutput();
+	mCurrentMenu = NULL;
+	mCurrentStep = NULL;
+	mLastDispUpdate = 0;
+	mIdleMenu = createIdleMenu();
+	mBrewingMenu = createBrewingMenu();
+}
 
 void BrewOMatic::changeState(int state)
 {
@@ -88,16 +101,16 @@ void BrewOMatic::actionMenuBack()
 	}
 }
 
-unsigned char BrewOMatic::handleButton(Menu *onPress)
+uint8_t BrewOMatic::handleButton(Menu *onPress)
 {
-	char button = mInput->getButtonPressed();
+	uint8_t button = mInput->getButtonPressed();
 
 	if (mCurrentMenu == NULL && mState == STATE_MANUAL) {
 		if (button == Input::BUTTON_NEXT) {
-			mCurrentStep->mTargetTemp++;
+			mTargetTemp++;
 			mUpdateDisplay = true;
 		} else if (button == Input::BUTTON_PREV) {
-			mCurrentStep->mTargetTemp--;
+			mTargetTemp--;
 			mUpdateDisplay = true;
 		}
 	}
@@ -148,40 +161,59 @@ void BrewOMatic::handleIdle()
 	if (mCurrentMenu != NULL)
 		return;
 
-	if (millis() - mLastTempUpdate > SEC_TO_MS(2)) {
+	if (millis() - mLastDispUpdate > SEC_TO_MS(2)) {
 		mTempProbe->getTemp(&mCurrentTemp);
 		mUpdateDisplay = true;
-		mLastTempUpdate = millis();
+		mLastDispUpdate = millis();
 	}
 }
 
-void BrewOMatic::handleManual()
+void BrewOMatic::checkDisplay()
 {
-	unsigned char b = handleButton(mBrewingMenu);
-	int ret;
-
-	ret = mTempProbe->getTemp(&mCurrentTemp);
-	if (ret) {
-		/* FIXME: Abort brewing if temp read failed multiple times */
-	}
-	mHeaterControl->setTargetTemp(mCurrentStep->mTargetTemp);
-	mHeaterControl->handleHeating(mCurrentTemp);
-
 	/* Refresh display */
-	if (((millis() - mLastTempUpdate) > SEC_TO_MS(1))) {
-		mLastTempUpdate = millis();
+	if (((millis() - mLastDispUpdate) > SEC_TO_MS(1))) {
+		mLastDispUpdate = millis();
 		if (!mCurrentMenu)
 			mUpdateDisplay = true;
 	}
 }
 
-void BrewOMatic::handleBrewing()
+void BrewOMatic::checkTemp()
 {
 	int ret;
+
+	if ((millis() - mTempUpdate) > TEMP_SAMPLE_TIME_MS) {
+		mTempUpdate = millis();
+		ret = mTempProbe->getTemp(&mCurrentTemp);
+		if (ret) {
+			/* FIXME: Abort brewing if temp read failed multiple times */
+		}
+		mHeaterControl->handleHeating(mCurrentTemp);
+	}	
+}
+
+void BrewOMatic::handleManual()
+{
+	unsigned char b = handleButton(mBrewingMenu);
+
+	mHeaterControl->setTargetTemp(mTargetTemp);
+
+	checkTemp();
+	checkDisplay();
+}
+
+void BrewOMatic::setTargetTemp(unsigned int targetTemp)
+{
+	mTargetTemp = targetTemp;
+	mHeaterControl->setTargetTemp(mTargetTemp);
+}
+
+void BrewOMatic::handleBrewing()
+{
 	unsigned char b = handleButton(mBrewingMenu);
 
 	/* Start the current step */
-	if (!mCurrentStep->mStarted) {
+	if (!mStepStarted) {
 		mBeeper->beep(NOTE_B4, 20);
 
 		dbgOutput("Start step %s\n", mCurrentStep->mName);
@@ -190,25 +222,15 @@ void BrewOMatic::handleBrewing()
 
 		if (mCurrentStep->mEnableHeater) {
 			mHeaterControl->setEnable(true);
-			mHeaterControl->setTargetTemp(mCurrentStep->mTargetTemp);
+			setTargetTemp(mCurrentStep->mTargetTemp);
 		}
 
-		mCurrentStep->mStarted = 1;
-		mTempReached = 0;
+		mStepStarted = true;
+		mTempReached = false;
 	}
 
-	ret = mTempProbe->getTemp(&mCurrentTemp);
-	if (ret) {
-		/* FIXME: Abort brewing if temp read failed multiple times */
-	}
-	mHeaterControl->handleHeating(mCurrentTemp);
-
-	/* Refresh display */
-	if (((millis() - mLastTempUpdate) > SEC_TO_MS(1))) {
-		mLastTempUpdate = millis();
-		if (!mCurrentMenu)
-			mUpdateDisplay = true;
-	}
+	checkTemp();
+	checkDisplay();
 
 	/* Check if we reach the expected temperature */
 	if (!mTempReached) {
@@ -226,6 +248,7 @@ void BrewOMatic::handleBrewing()
 			/* Stop the pump */
 			digitalWrite(PUMP_CONTROL_PIN, 0);
 
+			mStepStarted = false;
 			mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
 			if (!mCurrentStep) {
 				actionStopBrewing();
@@ -285,13 +308,6 @@ void BrewOMatic::run()
 void BrewOMatic::setup()
 {
 	int ret;
-
-	mState = STATE_IDLE;
-	mSerialOutput = new SerialOutput();
-	mCurrentMenu = NULL;
-	mLastTempUpdate = 0;
-	mIdleMenu = createIdleMenu();
-	mBrewingMenu = createBrewingMenu();
 	
 	pinMode(PUMP_CONTROL_PIN, OUTPUT);
 	digitalWrite(PUMP_CONTROL_PIN, 0);
@@ -305,7 +321,7 @@ void BrewOMatic::setup()
 	
 	mTempProbe = new TEMP_PROBE_TYPE();
 	mDisp = new DISPLAY_TYPE();
-	mHeaterControl = new HeaterControl();
+	mHeaterControl = new HeaterControl(TEMP_SAMPLE_TIME_MS);
 	mInput = new RotaryEncoder();
 	mError = 0;
 
