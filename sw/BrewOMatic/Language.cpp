@@ -1,4 +1,6 @@
 #include "Language.h"
+#include "BrewOMatic.h"
+
 #include <avr/pgmspace.h>
 
 #define STR_DEFINE(__idx, __str)	const char STR_PTR_ ##__idx[] PROGMEM = __str;

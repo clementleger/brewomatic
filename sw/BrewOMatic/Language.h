@@ -1,8 +1,6 @@
 #ifndef _LANGUAGE_H
 #define _LANGUAGE_H
 
-#include "BrewOMatic.h"
-
 #define MAX_STR_LEN	40
 
 enum brewStringIndexEnum {
@@ -32,6 +30,14 @@ enum brewStringIndexEnum {
 	STR_ENABLE_HEATER,
 	STR_DISABLE_PUMP,
 	STR_DISABLE_HEATER,
+	STR_HEATING,
+	STR_MASHING,
+	STR_BOILING,
+	STR_COOLING,
+	STR_PRESS_OK,
+	STR_INSERT_MALT,
+	STR_REMOVE_MALT,
+	STR_SETUP_COOLER,
 	/* Always last member of enum */
 	STR_COUNT
 };

@@ -1,6 +1,6 @@
 #include "Menu.h"
 #include "Language.h"
-
+#include "BrewOMatic.h"
 
 static void actionMenuBack(MenuItem *item, BrewOMatic *b)
 {

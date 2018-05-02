@@ -246,10 +246,9 @@ void DisplayLiquidCrystal::enterIdle(BrewOMatic *b)
 	if (b->mError) {
 		lcd.print(getString(STR_ERROR));
 		lcd.print(": ");
-		lcd.print(getString(STR_MISSING_MAIN));
-	} else {
-		lcd.print(getString(STR_READY));
 	}
+
+	lcd.print(getString(b->mStatus));
 
 	lcd.setCursor(LIQUID_CRYSTAL_WIDTH/2, 2);
 	lcd.write(byte(PLUG_CHAR));
@@ -386,13 +385,13 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	lcd.setCursor(0, 0);
 	lcd.write(byte(BEER_CHAR));
 	lcd.print(" ");
-	lcd.print(b->mCurrentStep->mName);
+	lcd.print(getString(b->mCurrentStep->mName));
 
 	drawStatus(b, 1);
 
 	lcd.setCursor(0, 2);
 	lcd.write(byte(CLOCK_CHAR));
-	if (b->mTempReached) {
+	if (b->mStepStartMillis != 0) {
 		drawTime(b->mStepStartMillis);
 	} else {
 		lcd.print("-");
@@ -400,6 +399,11 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	lcd.print("/");
 	lcd.print(b->mCurrentStep->mDuration);
 	lcd.print(":00");
+
+	if (b->mStatus) {
+		lcd.setCursor(0, 3);
+		lcd.print(getString(b->mStatus));
+	}
 }
 
 void DisplayLiquidCrystal::enterManual(BrewOMatic *b)

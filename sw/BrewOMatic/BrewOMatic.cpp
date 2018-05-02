@@ -9,14 +9,16 @@ BrewOMatic brewOMatic;
 
 BrewOMatic::BrewOMatic()
 {
-	mStepStarted = false;
 	mState = STATE_IDLE;
 	mSerialOutput = new SerialOutput();
 	mCurrentMenu = NULL;
 	mCurrentStep = NULL;
 	mLastDispUpdate = 0;
+	
 	mIdleMenu = createIdleMenu();
 	mBrewingMenu = createBrewingMenu();
+	mTargetTemp = 0;
+	mError = false;
 }
 
 void BrewOMatic::changeState(int state)
@@ -60,7 +62,7 @@ void BrewOMatic::actionStopBrewing()
 		mCurrentStep = NULL;
 	}
 	mHeaterControl->setEnable(false);
-	digitalWrite(PUMP_CONTROL_PIN, 0);
+	digitalWrite(PUMP_CONTROL_PIN, LOW);
 
 	mDisp->enterIdle(this);
 }
@@ -69,8 +71,9 @@ void BrewOMatic::actionStartBrewing()
 {
 	changeState(STATE_BREWING);
 
+	mBrewingState = BREWING_GET_NEXT_STEP;
+
 	mCurrentRecipe = createDefaultRecipe();
-	mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
 	mDisp->enterBrewing(this);
 }
 void BrewOMatic::actionStartManual()
@@ -85,6 +88,9 @@ void BrewOMatic::actionStartManual()
 
 void BrewOMatic::actionMenuBack()
 {
+	if (!mCurrentMenu)
+		return;
+
 	mCurrentMenu->mSelected = 0;
 	mCurrentMenu = mCurrentMenu->mParent;
 	mUpdateDisplay = true;
@@ -101,23 +107,23 @@ void BrewOMatic::actionMenuBack()
 	}
 }
 
+/**
+ * TODO: Find a way to factorize this code and let each mode
+ * handle it's own buttons 
+ */
 uint8_t BrewOMatic::handleButton(Menu *onPress)
 {
 	uint8_t button = mInput->getButtonPressed();
-
-	if (mCurrentMenu == NULL && mState == STATE_MANUAL) {
-		if (button == Input::BUTTON_NEXT) {
-			mTargetTemp++;
-			mUpdateDisplay = true;
-		} else if (button == Input::BUTTON_PREV) {
-			mTargetTemp--;
-			mUpdateDisplay = true;
-		}
-	}
+	
+	/* Ugly non-generic case: we wait for user input and do not want
+	 * any generic handling */
+	if (mState == STATE_BREWING && mBrewingState == BREWING_PRE_STEP_ACTION)
+		return button;
 
 	switch (button) {
 		case Input::BUTTON_OK:
 			mBeeper->click();
+
 			/* If not in menu, start menu when Ok is pressed */
 			if (!mCurrentMenu) {
 				mCurrentMenu = onPress;
@@ -157,49 +163,64 @@ uint8_t BrewOMatic::handleButton(Menu *onPress)
 void BrewOMatic::handleIdle()
 {
 	handleButton(mIdleMenu);
+	unsigned long curMillis = millis();
 
 	if (mCurrentMenu != NULL)
 		return;
 
-	if (millis() - mLastDispUpdate > SEC_TO_MS(2)) {
+	if (curMillis - mLastDispUpdate > SEC_TO_MS(2)) {
 		mTempProbe->getTemp(&mCurrentTemp);
 		mUpdateDisplay = true;
-		mLastDispUpdate = millis();
+		mLastDispUpdate = curMillis;
 	}
 }
 
-void BrewOMatic::checkDisplay()
+void BrewOMatic::updateDisplay()
 {
+	unsigned long curMillis = millis();
+
 	/* Refresh display */
-	if (((millis() - mLastDispUpdate) > SEC_TO_MS(1))) {
-		mLastDispUpdate = millis();
+	if (((curMillis - mLastDispUpdate) > SEC_TO_MS(1))) {
+		mLastDispUpdate = curMillis;
 		if (!mCurrentMenu)
 			mUpdateDisplay = true;
 	}
 }
 
-void BrewOMatic::checkTemp()
+void BrewOMatic::updateTemp()
 {
 	int ret;
+	unsigned long curMillis = millis();
 
-	if ((millis() - mTempUpdate) > TEMP_SAMPLE_TIME_MS) {
-		mTempUpdate = millis();
+	if ((curMillis - mTempUpdate) > TEMP_SAMPLE_TIME_MS) {
+		mTempUpdate = curMillis;
 		ret = mTempProbe->getTemp(&mCurrentTemp);
 		if (ret) {
 			/* FIXME: Abort brewing if temp read failed multiple times */
 		}
-		mHeaterControl->handleHeating(mCurrentTemp);
-	}	
+	}
+
+	mHeaterControl->handleHeating(mCurrentTemp);
 }
 
 void BrewOMatic::handleManual()
 {
 	unsigned char b = handleButton(mBrewingMenu);
 
-	mHeaterControl->setTargetTemp(mTargetTemp);
+	if (b != Input::BUTTON_NONE) {
+		if (b == Input::BUTTON_NEXT) {
+			setTargetTemp(mTargetTemp + 1);
+			mUpdateDisplay = true;
+		} else if (b == Input::BUTTON_PREV) {
+			if (mTargetTemp > 0) {
+				setTargetTemp(mTargetTemp - 1);
+				mUpdateDisplay = true;
+			}
+		}
+	}
 
-	checkTemp();
-	checkDisplay();
+	updateTemp();
+	updateDisplay();
 }
 
 void BrewOMatic::setTargetTemp(unsigned int targetTemp)
@@ -208,55 +229,111 @@ void BrewOMatic::setTargetTemp(unsigned int targetTemp)
 	mHeaterControl->setTargetTemp(mTargetTemp);
 }
 
+void BrewOMatic::startStep()
+{
+	mBeeper->beep(NOTE_B4, 20);
+
+	dbgOutput("Start step %s\n", mCurrentStep->mName);
+	if (mCurrentStep->mEnablePump)
+		digitalWrite(PUMP_CONTROL_PIN, HIGH);
+
+	if (mCurrentStep->mEnableHeater) {
+		mHeaterControl->setEnable(true);
+		setTargetTemp(mCurrentStep->mTargetTemp);
+	}
+	
+	mBrewingState = BREWING_WAIT_TEMP_REACHED;
+
+}
+
+void BrewOMatic::waitEndOfStep()
+{
+	/* Check if the step is done */
+	if (!((millis() - mStepStartMillis) >=
+	    SEC_TO_MS(mCurrentStep->mDuration * 60)))
+		return;
+
+	dbgOutput("Stop step %s\n", mCurrentStep->mName);
+	/* Stop the pump and heater */
+	digitalWrite(PUMP_CONTROL_PIN, LOW);
+	mHeaterControl->setEnable(false);
+
+	mBrewingState = BREWING_GET_NEXT_STEP;
+}
+
+void BrewOMatic::getNextStep()
+{
+	mUpdateDisplay = true;
+	mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
+	if (!mCurrentStep) {
+		/* TODO: properly stop brewing */
+		actionStopBrewing();
+		return;
+	}
+
+	mStepStartMillis = 0;
+	mBrewingState = BREWING_PRE_STEP_ACTION;
+	if (mCurrentStep->mPreStepAction) {
+		mCurrentAction = mCurrentStep->mPreStepAction;
+		/* We are requesting user attention here ! 
+		 * quit menu if any */
+		actionMenuBack();
+		mCurrentMenu = NULL;
+		mStatus = STR_PRESS_OK;
+	}
+}
+
+void BrewOMatic::waitTempReached()
+{	
+	if (abs(mCurrentTemp - mCurrentStep->mTargetTemp) > 1)
+		return;
+
+	mBeeper->beep(NOTE_B4, 20);
+	mStepStartMillis = millis();
+	dbgOutput("Step %s reached temp\n", mCurrentStep->mName);
+
+	mBrewingState = BREWING_WAIT_END_OF_STEP;
+}
+
+void BrewOMatic::waitUserAction()
+{
+	unsigned long curMillis = millis();
+	if ((curMillis - mLastBeepTime) > SEC_TO_MS(2)) {
+		mBeeper->beep(NOTE_B4, 20);
+		mLastBeepTime = curMillis;
+	}
+}
+
 void BrewOMatic::handleBrewing()
 {
 	unsigned char b = handleButton(mBrewingMenu);
 
-	/* Start the current step */
-	if (!mStepStarted) {
-		mBeeper->beep(NOTE_B4, 20);
-
-		dbgOutput("Start step %s\n", mCurrentStep->mName);
-		if (mCurrentStep->mEnablePump)
-			digitalWrite(PUMP_CONTROL_PIN, 1);
-
-		if (mCurrentStep->mEnableHeater) {
-			mHeaterControl->setEnable(true);
-			setTargetTemp(mCurrentStep->mTargetTemp);
-		}
-
-		mStepStarted = true;
-		mTempReached = false;
-	}
-
-	checkTemp();
-	checkDisplay();
-
-	/* Check if we reach the expected temperature */
-	if (!mTempReached) {
-		if (abs(mCurrentTemp - mCurrentStep->mTargetTemp) <= 1) {
-			mBeeper->beep(NOTE_B4, 20);
-			mStepStartMillis = millis();
-			mTempReached = true;
-			dbgOutput("Step %s reached temp\n", mCurrentStep->mName);
-		}
-	} else {
-		/* Check if the step is done */
-		if ((millis() - mStepStartMillis) >= SEC_TO_MS(mCurrentStep->mDuration * 60)) {
-
-			dbgOutput("Stop step %s\n", mCurrentStep->mName);
-			/* Stop the pump */
-			digitalWrite(PUMP_CONTROL_PIN, 0);
-
-			mStepStarted = false;
-			mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
-			if (!mCurrentStep) {
-				actionStopBrewing();
+	switch (mBrewingState) { 
+		case BREWING_GET_NEXT_STEP:
+			getNextStep();
+		break;
+		case BREWING_PRE_STEP_ACTION:
+			waitUserAction();
+			if (b != Input::BUTTON_NONE) {
+				mBrewingState = BREWING_START_STEP;
+				mCurrentAction = NULL;
+				mUpdateDisplay = true;
+				mStatus = 0;
 			}
-			mUpdateDisplay = true;
-			mTempReached = false;
-		}
+		break;
+		case BREWING_START_STEP:
+			startStep();
+		break;
+		case BREWING_WAIT_TEMP_REACHED:
+			waitTempReached();
+		break;
+		case BREWING_WAIT_END_OF_STEP:
+			waitEndOfStep();
+		break;
 	}
+
+	updateTemp();
+	updateDisplay();
 }
 
 void BrewOMatic::handleDisplay()
@@ -305,6 +382,12 @@ void BrewOMatic::run()
 	}
 }
 
+void BrewOMatic::setError(brewStringIndex err)
+{
+	mError = true;
+	mStatus = err;
+}
+
 void BrewOMatic::setup()
 {
 	int ret;
@@ -323,14 +406,15 @@ void BrewOMatic::setup()
 	mDisp = new DISPLAY_TYPE();
 	mHeaterControl = new HeaterControl(TEMP_SAMPLE_TIME_MS);
 	mInput = new RotaryEncoder();
-	mError = 0;
+	mError = false;
+	mStatus = STR_READY;
 
 	ret = mTempProbe->getTemp(&mCurrentTemp);
 	if (ret)
-		mError = STR_TEMP_FAILED;
+		setError(STR_TEMP_FAILED);
 
 	if (ACZeroCrossing::Instance().getFrequency() == 0)
-		mError = STR_MISSING_MAIN;
+		setError(STR_MISSING_MAIN);
 		
 	delay(SEC_TO_MS(START_DELAY));
 

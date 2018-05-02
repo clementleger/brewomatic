@@ -4,19 +4,28 @@
 #define MAX_STEP_COUNT		10
 #define MAX_USER_ACTION_COUNT	4
 
+#include "Language.h"
 #include "List.h"
 
 class Action {
 	public:
-		const char *getDescription() {return mDescription;};
+		Action(brewStringIndex descIdx, const unsigned long time):
+		mDescIdx(descIdx),
+		mTime(time) {};
+
+		Action(brewStringIndex descIdx):
+		mDescIdx(descIdx) {};
+
+		brewStringIndex getDescIdx() {return mDescIdx;};
 	private:
-		const char *mDescription;
+		brewStringIndex mDescIdx;
+		const unsigned long mTime;
 };
 
 class Step {
 	public:
 		Step();
-		Step(const char *name, unsigned long duration,
+		Step(brewStringIndex name, unsigned long duration,
 		     unsigned char targetTemp, bool enablePump,
 		     bool enableHeater, unsigned char actionCount);
 
@@ -24,10 +33,13 @@ class Step {
 		bool mEnableHeater;
 		unsigned char mTargetTemp;
 		unsigned long mDuration;
-		const char *mName;
+		brewStringIndex mName;
 		unsigned char mStarted;
-
-		/* List of user action requiring confirmation */
+		
+		/* Action to be run before executing the step */
+		Action *mPreStepAction;
+		/* List of user action requiring confirmation
+		 * during brewing */
 		List<Action *> mUserActions;
 };
 
