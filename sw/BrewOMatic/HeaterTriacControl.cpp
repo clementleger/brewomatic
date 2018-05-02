@@ -41,7 +41,7 @@ static void startTimer(uint8_t startTick, uint8_t stopTick)
 	 * add 1 tick to each counter for correct time */
 	startTriacTicks = startTick + 1;
 	stopTriacTicks = stopTick + 1;
-	
+
 	/* Start Timer */
 	TCNT1 = 0;
 	Timer1.resume();
@@ -50,7 +50,7 @@ static void startTimer(uint8_t startTick, uint8_t stopTick)
 void setTimerDutyCycle(void *data)
 {
 	HeaterTriacControl *tc = (HeaterTriacControl *) data;
-	
+
 	/* When using a really low duty cycle (1)
 	 * the end of previous timer could probably not have been reached.
 	 * Hence, stop it right now */
@@ -94,9 +94,9 @@ HeaterTriacControl::HeaterTriacControl()
 	tickDuration /= 100;
 
 	mDutyCycle = 0;
-	
+
 	mTriacGateKeepTick = TRIAC_GATE_KEEP_TIME_US / tickDuration;
-	
+
 	Timer1.initialize(tickDuration);
 	Timer1.attachInterrupt(timerIt);
 	Timer1.stop();

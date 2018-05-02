@@ -10,8 +10,8 @@ mEnableHeater(enableHeater),
 mTargetTemp(targetTemp),
 mDuration(duration),
 mName(name),
-mStarted(0),
-mUserActions(actionCount)
+mUserActions(actionCount),
+mPreStepAction(NULL)
 {
 }
 

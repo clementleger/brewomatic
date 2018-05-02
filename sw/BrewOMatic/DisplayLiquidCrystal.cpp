@@ -328,8 +328,6 @@ void DisplayLiquidCrystal::drawBool(bool status)
 void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 {
 	lcd.clear();
-	lcd.setCursor(0, 3);
-	dispTitle(b->mCurrentRecipe->mName);
 }
 
 void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)

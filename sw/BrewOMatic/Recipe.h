@@ -34,8 +34,7 @@ class Step {
 		unsigned char mTargetTemp;
 		unsigned long mDuration;
 		brewStringIndex mName;
-		unsigned char mStarted;
-		
+
 		/* Action to be run before executing the step */
 		Action *mPreStepAction;
 		/* List of user action requiring confirmation

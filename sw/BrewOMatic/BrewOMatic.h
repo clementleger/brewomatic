@@ -52,6 +52,7 @@ typedef enum {
 	BREWING_START_STEP,
 	BREWING_WAIT_TEMP_REACHED,
 	BREWING_WAIT_END_OF_STEP,
+	BREWING_END,
 } brewingState;
 
 class BrewOMatic {
@@ -103,6 +104,7 @@ class BrewOMatic {
 		void waitEndOfStep();
 		void waitTempReached();
 		void waitUserAction();
+		void brewingEnd();
 
 		void updateTemp();
 		void updateDisplay();

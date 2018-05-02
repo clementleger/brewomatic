@@ -38,6 +38,8 @@ enum brewStringIndexEnum {
 	STR_INSERT_MALT,
 	STR_REMOVE_MALT,
 	STR_SETUP_COOLER,
+	STR_BREWING_DONE,
+	STR_TEMP_REACHED,
 	/* Always last member of enum */
 	STR_COUNT
 };

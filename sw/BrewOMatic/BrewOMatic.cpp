@@ -14,7 +14,7 @@ BrewOMatic::BrewOMatic()
 	mCurrentMenu = NULL;
 	mCurrentStep = NULL;
 	mLastDispUpdate = 0;
-	
+
 	mIdleMenu = createIdleMenu();
 	mBrewingMenu = createBrewingMenu();
 	mTargetTemp = 0;
@@ -71,10 +71,11 @@ void BrewOMatic::actionStartBrewing()
 {
 	changeState(STATE_BREWING);
 
-	mBrewingState = BREWING_GET_NEXT_STEP;
+	mStatus = STR_STARTING;
 
 	mCurrentRecipe = createDefaultRecipe();
 	mDisp->enterBrewing(this);
+	getNextStep();
 }
 void BrewOMatic::actionStartManual()
 {
@@ -241,7 +242,8 @@ void BrewOMatic::startStep()
 		mHeaterControl->setEnable(true);
 		setTargetTemp(mCurrentStep->mTargetTemp);
 	}
-	
+
+	mStatus = STR_WAIT_TEMP;
 	mBrewingState = BREWING_WAIT_TEMP_REACHED;
 
 }
@@ -258,6 +260,7 @@ void BrewOMatic::waitEndOfStep()
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
 	mHeaterControl->setEnable(false);
 
+	mStatus = STR_BREWING;
 	mBrewingState = BREWING_GET_NEXT_STEP;
 }
 
@@ -266,13 +269,14 @@ void BrewOMatic::getNextStep()
 	mUpdateDisplay = true;
 	mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
 	if (!mCurrentStep) {
-		/* TODO: properly stop brewing */
-		actionStopBrewing();
+		/* Stop the pump and heater */
+		digitalWrite(PUMP_CONTROL_PIN, LOW);
+		mHeaterControl->setEnable(false);
+		mBrewingState = BREWING_END;
 		return;
 	}
 
 	mStepStartMillis = 0;
-	mBrewingState = BREWING_PRE_STEP_ACTION;
 	if (mCurrentStep->mPreStepAction) {
 		mCurrentAction = mCurrentStep->mPreStepAction;
 		/* We are requesting user attention here ! 
@@ -280,6 +284,9 @@ void BrewOMatic::getNextStep()
 		actionMenuBack();
 		mCurrentMenu = NULL;
 		mStatus = STR_PRESS_OK;
+		mBrewingState = BREWING_PRE_STEP_ACTION;
+	} else {
+		mBrewingState = BREWING_START_STEP;
 	}
 }
 
@@ -291,7 +298,7 @@ void BrewOMatic::waitTempReached()
 	mBeeper->beep(NOTE_B4, 20);
 	mStepStartMillis = millis();
 	dbgOutput("Step %s reached temp\n", mCurrentStep->mName);
-
+	mStatus = STR_TEMP_REACHED;
 	mBrewingState = BREWING_WAIT_END_OF_STEP;
 }
 
@@ -302,6 +309,11 @@ void BrewOMatic::waitUserAction()
 		mBeeper->beep(NOTE_B4, 20);
 		mLastBeepTime = curMillis;
 	}
+}
+
+void BrewOMatic::brewingEnd()
+{
+	waitUserAction();
 }
 
 void BrewOMatic::handleBrewing()
@@ -329,6 +341,14 @@ void BrewOMatic::handleBrewing()
 		break;
 		case BREWING_WAIT_END_OF_STEP:
 			waitEndOfStep();
+		break;
+		case BREWING_END:
+			brewingEnd();
+			if (b != Input::BUTTON_NONE) {
+				actionStopBrewing();
+				mStatus = STR_BREWING_DONE;
+				break;
+			}
 		break;
 	}
 
