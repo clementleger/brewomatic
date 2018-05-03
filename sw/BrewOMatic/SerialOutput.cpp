@@ -8,12 +8,7 @@
 #define DBG_MSG_MAX_SIZE	50
 #define DBG_MSG_PREFIX		"DBG: "
 
-SerialOutput::SerialOutput()
-{
-	Serial.begin(SERIAL_BAUDRATE);
-}
-
-#if defined(ENABLE_DEBUG) && ENABLE_DEBUG == 1
+#if ENABLED(DEBUG)
 void dbgOutput(const char *fmt, ... ) {
 	char buf[DBG_MSG_MAX_SIZE] = DBG_MSG_PREFIX; // resulting string limited to 128 chars
 	va_list args;

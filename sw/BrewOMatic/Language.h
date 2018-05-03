@@ -40,6 +40,8 @@ enum brewStringIndexEnum {
 	STR_SETUP_COOLER,
 	STR_BREWING_DONE,
 	STR_TEMP_REACHED,
+	STR_NO_SD_CARD,
+	STR_BROWSE_SD_CARD,
 	/* Always last member of enum */
 	STR_COUNT
 };

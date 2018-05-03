@@ -3,11 +3,6 @@
 
 class BrewOMatic;
 
-class SerialOutput {
-	public:
-		SerialOutput();
-};
-
 /* Emergency serial output */
 void dbgOutput(const char *fmt, ...);
 

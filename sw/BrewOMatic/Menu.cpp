@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "Language.h"
+#include "SDHandling.h"
 #include "BrewOMatic.h"
 
 static void actionMenuBack(MenuItem *item, BrewOMatic *b)
@@ -52,9 +53,17 @@ mSelected(0)
  */
 Menu *createIdleMenu()
 {
-	Menu *menu = new Menu(STR_MAIN_MENU, 3, NULL);
+	brewStringIndex sdIdx = STR_NO_SD_CARD;
+	Menu *menu = new Menu(STR_MAIN_MENU, 4, NULL);
 	menu->mItems.addElem(new MenuItem(STR_START_BREWING, actionStartBrewing));
 	menu->mItems.addElem(new MenuItem(STR_MANUAL_MODE, actionStartManual));
+
+#if ENABLED(USE_SD_CARD)
+	if (SDCard::Instance().present() == true) {
+		sdIdx = STR_BROWSE_SD_CARD;
+	}
+#endif
+	menu->mItems.addElem(new MenuItem(sdIdx, 0));
 	menu->mItems.addElem(new MenuItem(STR_ADJUST_TEMP_OFFSET, 0));
 
 	return menu;

@@ -5,14 +5,6 @@
 
 #define panic(_str)	do { mSerialOutput(_str); while(1); } while(0);
 
-#define STRINGIFY_(M) #M
-#define STRINGIFY(M) STRINGIFY_(M)
-
-#define LANGUAGE_INCL_(M) STRINGIFY_(lang/Lang##M.h)
-#define LANGUAGE_INCL(M) LANGUAGE_INCL_(M)
-#define INCLUDE_LANGUAGE LANGUAGE_INCL(DISP_LANGUAGE)
-
-#define MAX_OBSERVERS	4
 #define MAX_STR_SIZE	30
 
 #define BREWOMATIC_VERSION_STRING "BrewOMatic V0.1"
@@ -26,6 +18,7 @@ class BrewOMatic;
 #include "Recipe.h"
 #include "Language.h"
 #include "IdleInfo.h"
+#include "SDHandling.h"
 #include "TempDS18B20.h"
 #include "TempMax31865.h"
 #include "SerialOutput.h"
@@ -83,9 +76,9 @@ class BrewOMatic {
 
 		TempProbe *mTempProbe;
 		Display *mDisp;
-		SerialOutput *mSerialOutput;
 		Input *mInput;
 		Beeper *mBeeper;
+
 		unsigned long mLastDispUpdate;
 		unsigned long mTempUpdate;
 		unsigned long mLastBeepTime;

@@ -1,6 +1,8 @@
 #ifndef _BREWOMATIC_CONFIG_SANITY
 #define _BREWOMATIC_CONFIG_SANITY
 
+#include "Macros.h"
+
 #if !defined(TEMP_PROBE_TYPE)
 # error "Invalid temp probe type !"
 #endif

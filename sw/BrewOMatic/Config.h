@@ -28,7 +28,7 @@
 /**
  * Enable debug over UART
  */
-#define ENABLE_DEBUG	1
+#define DEBUG	1
 
 /**
  * Delay before starting in seconds
@@ -39,6 +39,18 @@
  * Banner displyed at start
  */
 #define START_BANNER	"It's Brew'o'Clock !"
+
+
+/***********************************************************************
+ *                       SD Card
+ **********************************************************************/
+
+#define USE_SD_CARD	1
+
+/**
+ * SD Card chip select
+ */
+#define SD_CARD_CHIP_SELECT	10
 
 /***********************************************************************
  *                       Inputs

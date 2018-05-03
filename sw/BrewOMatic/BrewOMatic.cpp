@@ -4,19 +4,16 @@
 #include "Config.h"
 #include "BrewOMatic.h"
 #include "ACZeroCrossing.h"
+#include "SDHandling.h"
 
 BrewOMatic brewOMatic;
 
 BrewOMatic::BrewOMatic()
 {
 	mState = STATE_IDLE;
-	mSerialOutput = new SerialOutput();
 	mCurrentMenu = NULL;
 	mCurrentStep = NULL;
 	mLastDispUpdate = 0;
-
-	mIdleMenu = createIdleMenu();
-	mBrewingMenu = createBrewingMenu();
 	mTargetTemp = 0;
 	mError = false;
 }
@@ -413,7 +410,7 @@ void BrewOMatic::setup()
 	int ret;
 	
 	pinMode(PUMP_CONTROL_PIN, OUTPUT);
-	digitalWrite(PUMP_CONTROL_PIN, 0);
+	digitalWrite(PUMP_CONTROL_PIN, LOW);
 
 	dbgOutput("Setup...\n");
 
@@ -426,8 +423,17 @@ void BrewOMatic::setup()
 	mDisp = new DISPLAY_TYPE();
 	mHeaterControl = new HeaterControl(TEMP_SAMPLE_TIME_MS);
 	mInput = new RotaryEncoder();
+
 	mError = false;
 	mStatus = STR_READY;
+
+#if ENABLED(USE_SD_CARD)
+	if (SDCard::Instance().init())
+		mStatus = STR_NO_SD_CARD;
+#endif
+
+	mIdleMenu = createIdleMenu();
+	mBrewingMenu = createBrewingMenu();
 
 	ret = mTempProbe->getTemp(&mCurrentTemp);
 	if (ret)
@@ -435,13 +441,13 @@ void BrewOMatic::setup()
 
 	if (ACZeroCrossing::Instance().getFrequency() == 0)
 		setError(STR_MISSING_MAIN);
-		
+
 	delay(SEC_TO_MS(START_DELAY));
 
 	mDisp->enterIdle(this);
 	mDisp->displayIdle(this);
 
-	if (mError && !ENABLE_DEBUG)
+	if (mError && !ENABLED(DEBUG))
 		while(1);
 
 	dbgOutput("Setup OK\n");
@@ -452,6 +458,8 @@ void BrewOMatic::setup()
  */
 void setup()
 {
+	Serial.begin(SERIAL_BAUDRATE);
+
 	brewOMatic.setup();
 }
 
