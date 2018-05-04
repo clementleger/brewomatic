@@ -2,14 +2,7 @@
 #define _BEEPER_H
 
 #include "Config.h"
-
-
-class Beeper {
-	public:
-		Beeper();
-		void click();
-		void beep(int note, int duration);
-};
+#include <Arduino.h>
 
 #define NOTE_B0  31
 #define NOTE_C1  33
@@ -100,5 +93,25 @@ class Beeper {
 #define NOTE_CS8 4435
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
+
+class Beeper {
+	public:
+		Beeper()
+		{
+			pinMode(BEEPER_PIN, OUTPUT);
+		}
+
+		void beep(int note, int duration)
+		{
+			tone(BEEPER_PIN, note, duration);
+		}
+
+		void click()
+		{
+			tone(BEEPER_PIN, NOTE_G6, BEEPER_CLICK_DURATION);
+		}
+
+};
+
 
 #endif
