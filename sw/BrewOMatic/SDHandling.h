@@ -17,11 +17,10 @@ class SDCard {
 		SDCard();
 		int init();
 		bool present() {return mPresent;};
+		Menu *SDCard::createBrowseMenu();
 
 	private:
-		Sd2Card mCard;
-		SdVolume mVolume;
-		SdFile mRoot;
+		File mRoot;
 		static SDCard mInstance;
 		bool mPresent;
 };
