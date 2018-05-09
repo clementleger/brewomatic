@@ -94,24 +94,34 @@
 #define NOTE_D8  4699
 #define NOTE_DS8 4978
 
-class Beeper {
-	public:
-		Beeper()
-		{
-			pinMode(BEEPER_PIN, OUTPUT);
-		}
+#if ENABLED(USE_BEEPER)
 
-		void beep(int note, int duration)
-		{
-			tone(BEEPER_PIN, note, duration);
-		}
+static inline void beeperInit() {
+	pinMode(BEEPER_PIN, OUTPUT);
+}
 
-		void click()
-		{
-			tone(BEEPER_PIN, NOTE_G6, BEEPER_CLICK_DURATION);
-		}
+static inline void beeperBeep(int note, int duration) {
+	tone(BEEPER_PIN, note, duration);
+}
 
-};
+static inline void beeperClick() {
+	tone(BEEPER_PIN, NOTE_G6, BEEPER_CLICK_DURATION);
+}
 
+#else
+
+static inline void beeperInit() {
+	return;
+}
+
+static inline void beeperBeep(int note, int duration) {
+	return;
+}
+
+static inline void beeperClick() {
+	return;
+}
+
+#endif
 
 #endif

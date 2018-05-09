@@ -13,7 +13,7 @@
 /**
  * Enable beeper support
  */
-#define ENABLE_BEEPER	1
+#define USE_BEEPER	1
 
 /**
  * Pin where the beeper is connected (must be a PWM one)
