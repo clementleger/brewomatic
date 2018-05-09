@@ -28,7 +28,7 @@
 /**
  * Enable debug over UART
  */
-#define DEBUG	1
+#define DEBUG	0
 
 /**
  * Delay before starting in seconds
@@ -101,7 +101,7 @@
  */
 #define UCGLIB_DISPLAY_TYPE	Ucglib_ILI9341_18x240x320_HWSPI
 
-#define UCGLIB_CD_PIN	A1	
+#define UCGLIB_CD_PIN	A1
 #define UCGLIB_CS_PIN	A2
 #define UCGLIB_RST_PIN	A3
 
@@ -187,8 +187,7 @@
  *                       Pump Control
  **********************************************************************/
 /**
- * When using TempMax31865 probe type, the hardware SPI bus is used.
- * However, the chip select can be configured here
+ * Pump control pin
  */
 #define PUMP_CONTROL_PIN	5
 

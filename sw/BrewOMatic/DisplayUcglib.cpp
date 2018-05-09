@@ -123,7 +123,7 @@ void DisplayUcglib::displayMenu(BrewOMatic *b, Menu *m)
 		ucg.setColor(TEXT_COLOR);
 		for (byte i = 0; i < m->getItemCount(); i++) {
 			item = m->getItem(i);
-			ucg.drawString(MENU_TEXT_X, MENU_TEXT_Y + i * (FONT_SIZE + VERTICAL_SPACING), 0, getString(item->mTitle));
+			ucg.drawString(MENU_TEXT_X, MENU_TEXT_Y + i * (FONT_SIZE + VERTICAL_SPACING), 0, item->getTitleStr());
 		}
 	}
 

@@ -222,7 +222,7 @@ mHeatState(0)
 
 	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - strlen(getString(STR_STARTING))) / 2, 1);
 	lcd.print(getString(STR_STARTING));
-	
+
 	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - 3)/ 2, 2);
 	lcd.write(byte(BEER_CHAR));
 	lcd.print(" ");
@@ -298,7 +298,7 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 		else
 			lcd.print(" ");
 
-		lcd.print(getString(item->mTitle));
+		lcd.print(item->getTitleStr());
 	}
 }
 

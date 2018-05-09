@@ -11,19 +11,18 @@
 #include <SPI.h>
 #include <SD.h>
 
-class SDCard {
-	public:
-		static SDCard& Instance(){ return mInstance; };
-		SDCard();
-		int init();
-		bool present() {return mPresent;};
-		Menu *SDCard::createBrowseMenu();
+int sdInit();
+Menu *sdCreateBrowseMenu(Menu *parent);
 
-	private:
-		File mRoot;
-		static SDCard mInstance;
-		bool mPresent;
-};
+#else
+
+static inline int sdInit() {
+	return 1;
+}
+
+static inline Menu *sdCreateBrowseMenu(Menu *parent) {
+	return NULL;
+}
 
 #endif
 

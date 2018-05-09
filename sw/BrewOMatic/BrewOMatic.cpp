@@ -18,6 +18,12 @@ BrewOMatic::BrewOMatic()
 	mError = false;
 }
 
+void BrewOMatic::setCurrentMenu(Menu *m)
+{
+	mCurrentMenu = m;
+	mUpdateDisplay = true;
+}
+
 void BrewOMatic::changeState(int state)
 {
 	dbgOutput("change state %d\n", state);
@@ -64,7 +70,7 @@ void BrewOMatic::actionStopBrewing()
 	mDisp->enterIdle(this);
 }
 
-void BrewOMatic::actionStartBrewing()
+void BrewOMatic::actionStartDefaultRecipe()
 {
 	changeState(STATE_BREWING);
 
@@ -107,12 +113,12 @@ void BrewOMatic::actionMenuBack()
 
 /**
  * TODO: Find a way to factorize this code and let each mode
- * handle it's own buttons 
+ * handle it's own buttons
  */
 uint8_t BrewOMatic::handleButton(Menu *onPress)
 {
 	uint8_t button = mInput->getButtonPressed();
-	
+
 	/* Ugly non-generic case: we wait for user input and do not want
 	 * any generic handling */
 	if (mState == STATE_BREWING && mBrewingState == BREWING_PRE_STEP_ACTION)
@@ -120,7 +126,7 @@ uint8_t BrewOMatic::handleButton(Menu *onPress)
 
 	switch (button) {
 		case Input::BUTTON_OK:
-			mBeeper->click();
+			beeperClick();
 
 			/* If not in menu, start menu when Ok is pressed */
 			if (!mCurrentMenu) {
@@ -229,7 +235,7 @@ void BrewOMatic::setTargetTemp(unsigned int targetTemp)
 
 void BrewOMatic::startStep()
 {
-	mBeeper->beep(NOTE_B4, 20);
+	beeperBeep(NOTE_B4, 20);
 
 	dbgOutput("Start step %s\n", mCurrentStep->mName);
 	if (mCurrentStep->mEnablePump)
@@ -276,7 +282,7 @@ void BrewOMatic::getNextStep()
 	mStepStartMillis = 0;
 	if (mCurrentStep->mPreStepAction) {
 		mCurrentAction = mCurrentStep->mPreStepAction;
-		/* We are requesting user attention here ! 
+		/* We are requesting user attention here !
 		 * quit menu if any */
 		actionMenuBack();
 		mCurrentMenu = NULL;
@@ -288,11 +294,11 @@ void BrewOMatic::getNextStep()
 }
 
 void BrewOMatic::waitTempReached()
-{	
+{
 	if (abs(mCurrentTemp - mCurrentStep->mTargetTemp) > 1)
 		return;
 
-	mBeeper->beep(NOTE_B4, 20);
+	beeperBeep(NOTE_B4, 20);
 	mStepStartMillis = millis();
 	dbgOutput("Step %s reached temp\n", mCurrentStep->mName);
 	mStatus = STR_TEMP_REACHED;
@@ -303,7 +309,7 @@ void BrewOMatic::waitUserAction()
 {
 	unsigned long curMillis = millis();
 	if ((curMillis - mLastBeepTime) > SEC_TO_MS(2)) {
-		mBeeper->beep(NOTE_B4, 20);
+		beeperBeep(NOTE_B4, 20);
 		mLastBeepTime = curMillis;
 	}
 }
@@ -317,7 +323,7 @@ void BrewOMatic::handleBrewing()
 {
 	unsigned char b = handleButton(mBrewingMenu);
 
-	switch (mBrewingState) { 
+	switch (mBrewingState) {
 		case BREWING_GET_NEXT_STEP:
 			getNextStep();
 		break;
@@ -354,7 +360,7 @@ void BrewOMatic::handleBrewing()
 }
 
 void BrewOMatic::handleDisplay()
-{	
+{
 	if (!mUpdateDisplay)
 		return;
 
@@ -408,17 +414,16 @@ void BrewOMatic::setError(brewStringIndex err)
 void BrewOMatic::setup()
 {
 	int ret;
-	
+
 	pinMode(PUMP_CONTROL_PIN, OUTPUT);
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
 
 	dbgOutput("Setup...\n");
 
-	mBeeper = new Beeper();
-	mBeeper->beep(NOTE_B4, 50);
+	beeperBeep(NOTE_B4, 50);
 	delay(50);
-	mBeeper->beep(NOTE_C4, 50);
-	
+	beeperBeep(NOTE_C4, 50);
+
 	mTempProbe = new TEMP_PROBE_TYPE();
 	mDisp = new DISPLAY_TYPE();
 	mHeaterControl = new HeaterControl(TEMP_SAMPLE_TIME_MS);
@@ -427,10 +432,8 @@ void BrewOMatic::setup()
 	mError = false;
 	mStatus = STR_READY;
 
-#if ENABLED(USE_SD_CARD)
-	if (SDCard::Instance().init())
+	if (sdInit())
 		mStatus = STR_NO_SD_CARD;
-#endif
 
 	mIdleMenu = createIdleMenu();
 	mBrewingMenu = createBrewingMenu();

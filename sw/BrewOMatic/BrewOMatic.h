@@ -56,11 +56,12 @@ class BrewOMatic {
 
 		/* Callbacks */
 		void actionStopBrewing();
-		void actionStartBrewing();
+		void actionStartDefaultRecipe();
 		void actionStartManual();
 		int actionEnablePump();
 		int actionEnableHeater();
 		void actionMenuBack();
+		void setCurrentMenu(Menu *m);
 		float mCurrentTemp;
 
 		Recipe *mCurrentRecipe;
@@ -77,7 +78,6 @@ class BrewOMatic {
 		TempProbe *mTempProbe;
 		Display *mDisp;
 		Input *mInput;
-		Beeper *mBeeper;
 
 		unsigned long mLastDispUpdate;
 		unsigned long mTempUpdate;

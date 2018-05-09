@@ -19,7 +19,7 @@ Recipe::Recipe(unsigned char stepCount, const char *name):
 mSteps(stepCount),
 mName(name)
 {
-	
+
 }
 
 Recipe *createDefaultRecipe()

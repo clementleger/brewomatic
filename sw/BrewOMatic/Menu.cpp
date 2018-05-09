@@ -16,25 +16,33 @@ static void actionStopBrewing(MenuItem *item, BrewOMatic *b)
 static void actionEnablePump(MenuItem *item, BrewOMatic *b)
 {
 	bool ret = b->actionEnablePump();
+	MenuItemStrIdx *it = item;
 
-	item->mTitle = ret ? STR_DISABLE_PUMP : STR_ENABLE_PUMP;
+	it->mTitle = ret ? STR_DISABLE_PUMP : STR_ENABLE_PUMP;
 }
 
 static void actionEnableHeater(MenuItem *item, BrewOMatic *b)
 {
 	bool ret = b->actionEnableHeater();
+	MenuItemStrIdx *it = item;
 
-	item->mTitle = ret ? STR_DISABLE_HEATER : STR_ENABLE_HEATER;
+	it->mTitle = ret ? STR_DISABLE_HEATER : STR_ENABLE_HEATER;
 }
 
-static void actionStartBrewing(MenuItem *item, BrewOMatic *b)
+static void actionStartDefaultRecipe(MenuItem *item, BrewOMatic *b)
 {
-	b->actionStartBrewing();
+	b->actionStartDefaultRecipe();
 }
 
 static void actionStartManual(MenuItem *item, BrewOMatic *b)
 {
 	b->actionStartManual();
+}
+
+static void actionSubmenu(MenuItem *item, BrewOMatic *b)
+{
+	MenuItemStrIdxMenu *it = item;
+	b->setCurrentMenu(it->mMenu);
 }
 
 Menu::Menu(brewStringIndex name, unsigned char count, Menu *parent):
@@ -43,8 +51,8 @@ mName(name),
 mParent(parent),
 mSelected(0)
 {
-	/* Automaticcaly add the default */
-	MenuItem *back = new MenuItem(STR_BACK, actionMenuBack);
+	/* Automatically add the default */
+	MenuItemStrIdx *back = new MenuItemStrIdx(STR_BACK, actionMenuBack);
 	mItems.addElem(back);
 }
 
@@ -53,18 +61,20 @@ mSelected(0)
  */
 Menu *createIdleMenu()
 {
-	brewStringIndex sdIdx = STR_NO_SD_CARD;
+	Menu *sdCardMenu;
 	Menu *menu = new Menu(STR_MAIN_MENU, 4, NULL);
-	menu->mItems.addElem(new MenuItem(STR_START_BREWING, actionStartBrewing));
-	menu->mItems.addElem(new MenuItem(STR_MANUAL_MODE, actionStartManual));
 
-#if ENABLED(USE_SD_CARD)
-	if (SDCard::Instance().present() == true) {
-		sdIdx = STR_BROWSE_SD_CARD;
+	menu->mItems.addElem(new MenuItemStrIdx(STR_START_BREWING, actionStartDefaultRecipe));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_MANUAL_MODE, actionStartManual));
+
+	sdCardMenu = sdCreateBrowseMenu(menu);
+	if (sdCardMenu) {
+		menu->mItems.addElem(new MenuItemStrIdxMenu(STR_BROWSE_SD_CARD, actionSubmenu, sdCardMenu));
+	} else {
+		menu->mItems.addElem(new MenuItemStrIdx(STR_NO_SD_CARD, 0));
 	}
-#endif
-	menu->mItems.addElem(new MenuItem(sdIdx, 0));
-	menu->mItems.addElem(new MenuItem(STR_ADJUST_TEMP_OFFSET, 0));
+
+	menu->mItems.addElem(new MenuItemStrIdx(STR_ADJUST_TEMP_OFFSET, 0));
 
 	return menu;
 }
@@ -77,10 +87,10 @@ Menu *createBrewingMenu()
 {
 
 	Menu *menu = new Menu(STR_BREWING_MENU, 4, NULL);
-	menu->mItems.addElem(new MenuItem(STR_STOP, actionStopBrewing));
-	menu->mItems.addElem(new MenuItem(STR_ENABLE_HEATER, actionEnableHeater));
-	menu->mItems.addElem(new MenuItem(STR_ENABLE_PUMP, actionEnablePump));
-	menu->mItems.addElem(new MenuItem(STR_ADJUST_TEMP_OFFSET, 0));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_STOP, actionStopBrewing));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_HEATER, actionEnableHeater));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_ADJUST_TEMP_OFFSET, 0));
 
 	return menu;
 }

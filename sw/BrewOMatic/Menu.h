@@ -12,12 +12,41 @@ typedef void (*menuItemCallback)(MenuItem *item, BrewOMatic *b);
 
 class MenuItem {
 	public:
-		MenuItem(brewStringIndex title, menuItemCallback callback):
+		MenuItem(menuItemCallback callback):
+		mCallback(callback) {};
+		virtual const char *getTitleStr() = 0;
+
+		menuItemCallback mCallback;
+		Menu *mSubMenu;
+};
+
+class MenuItemStrIdx : public MenuItem {
+	public:
+		MenuItemStrIdx(brewStringIndex title, menuItemCallback callback):
 			mTitle(title),
-			mCallback(callback) {};
+			MenuItem(callback) {};
+		const char *getTitleStr() { return getString(mTitle);};
 
 		brewStringIndex mTitle;
-		menuItemCallback mCallback;
+};
+
+class MenuItemStr : public MenuItem {
+	public:
+		MenuItemStr(const char *title, menuItemCallback callback):
+			mTitle(title),
+			MenuItem(callback) {};
+		const char *getTitleStr() { return mTitle;};
+
+		const char *mTitle;
+};
+
+class MenuItemStrIdxMenu : public MenuItemStrIdx {
+	public:
+		MenuItemStrIdxMenu(brewStringIndex title, menuItemCallback callback, Menu *menu):
+			MenuItemStrIdx(title, callback),
+			mMenu(menu) {};
+
+		Menu *mMenu;
 };
 
 class Menu {
