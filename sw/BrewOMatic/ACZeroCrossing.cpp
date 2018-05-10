@@ -46,7 +46,6 @@ void ACZeroCrossing::computeFrequency()
 
 ACZeroCrossing::ACZeroCrossing()
 {
-	return;
 	pinMode(ZERO_CROSSING_DETECT_PIN, INPUT_PULLUP);
 	acFrequency = 0;
 	acPeriodUs = 0;
