@@ -1,10 +1,10 @@
 #ifndef _LANGUAGE_H
 #define _LANGUAGE_H
 
-#define MAX_STR_LEN	40
+#define MAX_STR_LEN	30
 
 enum brewStringIndexEnum {
-	STR_WELCOME,
+	STR_BREWOMATIC,
 	STR_FAILURE,
 	STR_MAIN_MENU,
 	STR_BREWING_MENU,

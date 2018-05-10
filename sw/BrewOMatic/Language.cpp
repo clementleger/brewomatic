@@ -11,7 +11,6 @@
 const char *const strArray[STR_COUNT] PROGMEM = {
 #include INCLUDE_LANGUAGE
 };
-const char *undef = "Undefined";
 
 static char localBuffer[MAX_STR_LEN];
 

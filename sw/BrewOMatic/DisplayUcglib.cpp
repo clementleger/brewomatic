@@ -47,7 +47,7 @@ ucg(UCGLIB_CD_PIN, UCGLIB_CS_PIN, UCGLIB_RST_PIN)
 
 	ucg.setFont(ucg_font_10x20_mf);
 	ucg.setColor(255, 165, 0);
-	ucg.drawString(TITLE_TEXT_X, TITLE_TEXT_Y, 0, BREWOMATIC_VERSION_STRING);
+	ucg.drawString(TITLE_TEXT_X, TITLE_TEXT_Y, 0, getString(STR_BREWOMATIC));
 	ucg.drawHLine(0, SEPARATOR_Y, ucg.getWidth());
 	ucg.setColor(TEXT_COLOR);
 

@@ -83,6 +83,19 @@ const static byte pump1[8] = {
 	0b01010
 };
 
+const static byte fire1[8] = {
+	0b00000,
+	0b01000,
+	0b01100,
+	0b01100,
+	0b01110,
+	0b11111,
+	0b11111,
+	0b01110
+};
+
+#if ENABLED(LIQUID_CRYSTAL_ANIM)
+
 const static byte pump2[8] = {
 	0b01010,
 	0b01010,
@@ -131,17 +144,6 @@ const static byte pump5[8] = {
 
 static byte *pumpAnim[PUMP_STATE_COUNT] = {pump1, pump2, pump3, pump4, pump5};
 
-const static byte fire1[8] = {
-	0b00000,
-	0b01000,
-	0b01100,
-	0b01100,
-	0b01110,
-	0b11111,
-	0b11111,
-	0b01110
-};
-
 const static byte fire2[8] = {
 	0b00000,
 	0b00100,
@@ -179,6 +181,8 @@ const static byte fire4[8] = {
 
 static byte *heatAnim[HEAT_STATE_COUNT] = {fire1, fire2, fire3, fire4};
 
+#endif
+
 #define DISP_MENU_ENTRY	(LIQUID_CRYSTAL_HEIGHT)
 
 enum customChars{
@@ -209,6 +213,7 @@ lcd(LIQUID_CRYSTAL_RS,
 mPumpState(0),
 mHeatState(0)
 {
+	const char *str;
 	lcd.begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
 	lcd.createChar(BEER_CHAR, beer);
 	lcd.createChar(THERMOMETER_CHAR, thermometer);
@@ -218,24 +223,21 @@ mHeatState(0)
 	lcd.createChar(HEAT_CHAR, fire1);
 	lcd.createChar(CLOCK_CHAR, clock);
 
-	dispTitle(BREWOMATIC_VERSION_STRING);
-
-	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - strlen(getString(STR_STARTING))) / 2, 1);
-	lcd.print(getString(STR_STARTING));
+	dispTitle(getString(STR_BREWOMATIC));
+	str = getString(STR_STARTING);
+	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - strlen(str)) / 2, 1);
+	lcd.print(str);
 
 	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - 3)/ 2, 2);
 	lcd.write(byte(BEER_CHAR));
 	lcd.print(" ");
 	lcd.write(byte(BEER_CHAR));
-
-	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - (strlen(START_BANNER)))/ 2, 3);
-	lcd.print(START_BANNER);
 }
 
 void DisplayLiquidCrystal::enterIdle(BrewOMatic *b)
 {
 	lcd.clear();
-	dispTitle(BREWOMATIC_VERSION_STRING);
+	dispTitle(getString(STR_BREWOMATIC));
 
 	lcd.setCursor(0, 1);
 	lcd.write(byte(BEER_CHAR));
@@ -302,6 +304,8 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 	}
 }
 
+#if ENABLED(LIQUID_CRYSTAL_ANIM)
+
 void DisplayLiquidCrystal::loadAnimChar()
 {
 	lcd.createChar(PUMP_CHAR, pumpAnim[mPumpState]);
@@ -315,6 +319,13 @@ void DisplayLiquidCrystal::loadAnimChar()
 	if (mHeatState == HEAT_STATE_COUNT)
 		mHeatState = 0;
 }
+#else
+
+void DisplayLiquidCrystal::loadAnimChar()
+{
+}
+
+#endif
 
 void DisplayLiquidCrystal::drawBool(bool status)
 {
@@ -338,7 +349,7 @@ void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 	lcd.print((int) b->mCurrentTemp);
 	lcd.write(byte(DEGREE_CHAR));
 	lcd.print("/");
-	lcd.print(b->mCurrentStep->mTargetTemp);
+	lcd.print(b->mTargetTemp);
 	lcd.write(byte(DEGREE_CHAR));
 
 	loadAnimChar();

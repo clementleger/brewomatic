@@ -24,7 +24,7 @@ class DisplayLiquidCrystal: public Display {
 		void drawBool(bool status);
 		void drawStatus(BrewOMatic *b, int row);
 		void drawTime(unsigned long amillis);
-		
+
 		byte mPumpState;
 		byte mHeatState;
 		byte mLastMenuStart;

@@ -2,10 +2,9 @@
 #define _DISPLAY_UCGLIB_H
 
 #include "Display.h"
+#include "Language.h"
 
 #include "Ucglib.h"
-
-typedef char brewStringIndex;
 
 class DisplayUcglib: public Display {
 	public:

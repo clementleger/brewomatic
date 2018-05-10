@@ -97,6 +97,12 @@
 #define LIQUID_CRYSTAL_D7	9
 
 /**
+ * Set to 1 if you want animated icons
+ * Disabling it saves some space
+ */
+#define LIQUID_CRYSTAL_ANIM	0
+
+/**
  * Ucglib screen configuration
  */
 #define UCGLIB_DISPLAY_TYPE	Ucglib_ILI9341_18x240x320_HWSPI
