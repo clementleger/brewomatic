@@ -60,6 +60,7 @@ Menu *sdCreateBrowseMenu(Menu *parent)
 
 		if (!entry.isDirectory())
 			entryCount++;
+		entry.close();
 	}
 	sdRoot.rewindDirectory();
 

@@ -26,6 +26,17 @@
 #define BEEPER_CLICK_DURATION	5
 
 /**
+ * Set to 0 to disable serial output and save some bytes
+ * Serial output will output informations periodically.
+ */
+#define SERIAL_OUTPUT	0
+
+/**
+ * Serial baudrate to use
+ */
+#define SERIAL_BAUDRATE 115200
+
+/**
  * Enable debug over UART
  */
 #define DEBUG	0
@@ -34,12 +45,6 @@
  * Delay before starting in seconds
  */
 #define START_DELAY	0
-
-/**
- * Banner displyed at start
- */
-#define START_BANNER	"It's Brew'o'Clock !"
-
 
 /***********************************************************************
  *                       SD Card
@@ -110,17 +115,6 @@
 #define UCGLIB_CD_PIN	A1
 #define UCGLIB_CS_PIN	A2
 #define UCGLIB_RST_PIN	A3
-
-/**
- * Set to 0 to disable serial output and save some bytes
- * Serial output will output informations periodically.
- */
-#define SERIAL_OUTPUT	1
-
-/**
- * Serial baudrate to use
- */
-#define SERIAL_BAUDRATE 115200
 
 /***********************************************************************
  *                       Temperature Control

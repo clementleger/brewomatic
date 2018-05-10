@@ -3,11 +3,7 @@
 
 #include "Config.h"
 
-#define panic(_str)	do { mSerialOutput(_str); while(1); } while(0);
-
 #define MAX_STR_SIZE	30
-
-#define BREWOMATIC_VERSION_STRING "BrewOMatic V0.1"
 
 #define SEC_TO_MS(_sec)	(_sec * 1000)
 
@@ -58,8 +54,8 @@ class BrewOMatic {
 		void actionStopBrewing();
 		void actionStartDefaultRecipe();
 		void actionStartManual();
-		int actionEnablePump();
-		int actionEnableHeater();
+		bool actionEnablePump();
+		bool actionEnableHeater();
 		void actionMenuBack();
 		void setCurrentMenu(Menu *m);
 		float mCurrentTemp;
@@ -71,6 +67,7 @@ class BrewOMatic {
 		HeaterControl *mHeaterControl;
 		unsigned long mStepStartMillis;
 		brewStringIndex mStatus;
+		unsigned int mTargetTemp;
 		bool mError;
 	private:
 		brewomaticState mState;
@@ -82,7 +79,6 @@ class BrewOMatic {
 		unsigned long mLastDispUpdate;
 		unsigned long mTempUpdate;
 		unsigned long mLastBeepTime;
-		unsigned int mTargetTemp;
 		void setTargetTemp(unsigned int);
 		void setError(brewStringIndex err);
 

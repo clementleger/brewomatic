@@ -33,7 +33,7 @@ void BrewOMatic::changeState(int state)
 	mCurrentMenu = NULL;
 }
 
-int BrewOMatic::actionEnablePump()
+bool BrewOMatic::actionEnablePump()
 {
 	mCurrentStep->mEnablePump = !mCurrentStep->mEnablePump;
 	digitalWrite(PUMP_CONTROL_PIN, mCurrentStep->mEnablePump);
@@ -42,7 +42,7 @@ int BrewOMatic::actionEnablePump()
 	return mCurrentStep->mEnablePump;
 }
 
-int BrewOMatic::actionEnableHeater()
+bool BrewOMatic::actionEnableHeater()
 {
 	mCurrentStep->mEnableHeater = !mCurrentStep->mEnableHeater;
 	if (mCurrentStep->mEnableHeater) {
@@ -385,7 +385,6 @@ void BrewOMatic::handleDisplay()
 	mUpdateDisplay = false;
 }
 
-
 void BrewOMatic::run()
 {
 	while(1) {
@@ -418,8 +417,6 @@ void BrewOMatic::setup()
 	pinMode(PUMP_CONTROL_PIN, OUTPUT);
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
 
-	dbgOutput("Setup...\n");
-
 	beeperBeep(NOTE_B4, 50);
 	delay(50);
 	beeperBeep(NOTE_C4, 50);
@@ -450,9 +447,6 @@ void BrewOMatic::setup()
 	mDisp->enterIdle(this);
 	mDisp->displayIdle(this);
 
-	if (mError && !ENABLED(DEBUG))
-		while(1);
-
 	dbgOutput("Setup OK\n");
 }
 
@@ -461,7 +455,9 @@ void BrewOMatic::setup()
  */
 void setup()
 {
+#if ENABLED(SERIAL_OUTPUT) || ENABLED(DEBUG)
 	Serial.begin(SERIAL_BAUDRATE);
+#endif
 
 	brewOMatic.setup();
 }

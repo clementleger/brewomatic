@@ -29,7 +29,7 @@ class ACZeroCrossing
 		int acFrequency;
 		unsigned int acPeriodUs;
 		static ACZeroCrossing mInstance;
-		int pin;
+
 		/* Callbacks */
 		zeroCrossingCallback mCallbackFunc;
 		void *mCallbackData;

@@ -8,7 +8,6 @@
 #include "Recipe.h"
 #include "Menu.h"
 
-#include <SPI.h>
 #include <SD.h>
 
 int sdInit();

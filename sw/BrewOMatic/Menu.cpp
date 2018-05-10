@@ -62,7 +62,7 @@ mSelected(0)
 Menu *createIdleMenu()
 {
 	Menu *sdCardMenu;
-	Menu *menu = new Menu(STR_MAIN_MENU, 4, NULL);
+	Menu *menu = new Menu(STR_MAIN_MENU, 3, NULL);
 
 	menu->mItems.addElem(new MenuItemStrIdx(STR_START_BREWING, actionStartDefaultRecipe));
 	menu->mItems.addElem(new MenuItemStrIdx(STR_MANUAL_MODE, actionStartManual));
@@ -74,8 +74,6 @@ Menu *createIdleMenu()
 		menu->mItems.addElem(new MenuItemStrIdx(STR_NO_SD_CARD, 0));
 	}
 
-	menu->mItems.addElem(new MenuItemStrIdx(STR_ADJUST_TEMP_OFFSET, 0));
-
 	return menu;
 }
 
@@ -86,11 +84,10 @@ Menu *createIdleMenu()
 Menu *createBrewingMenu()
 {
 
-	Menu *menu = new Menu(STR_BREWING_MENU, 4, NULL);
+	Menu *menu = new Menu(STR_BREWING_MENU, 3, NULL);
 	menu->mItems.addElem(new MenuItemStrIdx(STR_STOP, actionStopBrewing));
 	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_HEATER, actionEnableHeater));
 	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump));
-	menu->mItems.addElem(new MenuItemStrIdx(STR_ADJUST_TEMP_OFFSET, 0));
 
 	return menu;
 }

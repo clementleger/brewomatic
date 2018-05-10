@@ -18,6 +18,8 @@ void dbgOutput(const char *fmt, ... ) {
 	Serial.print(buf);
 }
 #else
+
 void dbgOutput(const char *fmt, ... ) {
 }
+
 #endif

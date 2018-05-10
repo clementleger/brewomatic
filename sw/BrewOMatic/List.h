@@ -5,25 +5,20 @@ template<typename T>
 class List {
 	public:
 		List(int maxElems) {
+			mElems = new T[maxElems];
 			mCurrentElem = 0;
 			mElemCount = 0;
 			mMaxElems = maxElems;
-			mElems = new T[maxElems];
 		};
 		
 		bool hasNextElem() { return mCurrentElem < mElemCount;};
 		void reset() {mCurrentElem = 0;};
 		bool isEmpty() {return mElemCount == 0;};
 
-		bool addElem(T step)
+		void addElem(T step)
 		{
-			if (mElemCount == mMaxElems)
-				return false;
-
 			mElems[mElemCount] = step;
 			mElemCount++;
-
-			return true;
 		};
 
 		T getNextElem()
