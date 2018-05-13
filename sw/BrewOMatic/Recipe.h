@@ -27,10 +27,9 @@ class Step {
 		Step();
 		Step(brewStringIndex name, unsigned long duration,
 		     unsigned char targetTemp, bool enablePump,
-		     bool enableHeater, unsigned char actionCount);
+		     unsigned char actionCount);
 
 		bool mEnablePump;
-		bool mEnableHeater;
 		unsigned char mTargetTemp;
 		unsigned long mDuration;
 		brewStringIndex mName;

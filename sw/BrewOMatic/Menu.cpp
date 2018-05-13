@@ -21,14 +21,6 @@ static void actionEnablePump(MenuItem *item, BrewOMatic *b)
 	it->mTitle = ret ? STR_DISABLE_PUMP : STR_ENABLE_PUMP;
 }
 
-static void actionEnableHeater(MenuItem *item, BrewOMatic *b)
-{
-	bool ret = b->actionEnableHeater();
-	MenuItemStrIdx *it = item;
-
-	it->mTitle = ret ? STR_DISABLE_HEATER : STR_ENABLE_HEATER;
-}
-
 static void actionStartDefaultRecipe(MenuItem *item, BrewOMatic *b)
 {
 	b->actionStartDefaultRecipe();
@@ -86,7 +78,6 @@ Menu *createBrewingMenu()
 
 	Menu *menu = new Menu(STR_BREWING_MENU, 3, NULL);
 	menu->mItems.addElem(new MenuItemStrIdx(STR_STOP, actionStopBrewing));
-	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_HEATER, actionEnableHeater));
 	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump));
 
 	return menu;

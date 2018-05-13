@@ -42,20 +42,6 @@ bool BrewOMatic::actionEnablePump()
 	return mCurrentStep->mEnablePump;
 }
 
-bool BrewOMatic::actionEnableHeater()
-{
-	mCurrentStep->mEnableHeater = !mCurrentStep->mEnableHeater;
-	if (mCurrentStep->mEnableHeater) {
-		mHeaterControl->setTargetTemp(mCurrentStep->mTargetTemp);
-		mHeaterControl->setEnable(true);
-	} else {
-		mHeaterControl->setEnable(false);
-	}
-	mUpdateDisplay = true;
-
-	return mCurrentStep->mEnableHeater;
-}
-
 void BrewOMatic::actionStopBrewing()
 {
 	changeState(STATE_IDLE);
@@ -78,6 +64,9 @@ void BrewOMatic::actionStartDefaultRecipe()
 
 	mCurrentRecipe = createDefaultRecipe();
 	mDisp->enterBrewing(this);
+	
+	mHeaterControl->setEnable(true);
+	setTargetTemp(0);
 	getNextStep();
 }
 void BrewOMatic::actionStartManual()
@@ -241,11 +230,6 @@ void BrewOMatic::startStep()
 	if (mCurrentStep->mEnablePump)
 		digitalWrite(PUMP_CONTROL_PIN, HIGH);
 
-	if (mCurrentStep->mEnableHeater) {
-		mHeaterControl->setEnable(true);
-		setTargetTemp(mCurrentStep->mTargetTemp);
-	}
-
 	mStatus = STR_WAIT_TEMP;
 	mBrewingState = BREWING_WAIT_TEMP_REACHED;
 
@@ -274,7 +258,6 @@ void BrewOMatic::getNextStep()
 	if (!mCurrentStep) {
 		/* Stop the pump and heater */
 		digitalWrite(PUMP_CONTROL_PIN, LOW);
-		mHeaterControl->setEnable(false);
 		mBrewingState = BREWING_END;
 		return;
 	}

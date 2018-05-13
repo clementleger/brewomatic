@@ -362,13 +362,11 @@ void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 
 	/* Draw heater status */
 	lcd.write(byte(HEAT_CHAR));
-	drawBool(b->mCurrentStep->mEnableHeater);
+	drawBool(1);
 
 	lcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
-	if (b->mCurrentStep->mEnableHeater) {
-		lcd.print((int) b->mHeaterControl->mPidOutput);
-		lcd.print("% ");
-	}
+	lcd.print((int) b->mHeaterControl->mPidOutput);
+	lcd.print("% ");
 }
 
 void DisplayLiquidCrystal::drawTime(unsigned long amillis)

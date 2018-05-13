@@ -23,24 +23,17 @@ int sdInit()
 	return 0;
 }
 
+#define MAX_LINE_SIZE	40
+
 static void actionExecuteRecipe(MenuItem *item, BrewOMatic *b)
 {
 	MenuItemStr *it = item;
-	uint8_t *bytes;
+	uint8_t line[MAX_LINE_SIZE];
 	int avail;
 
 	dbgOutput("Starting %s\n", it->getTitleStr());
 
 	File file = SD.open(it->getTitleStr());
-	avail = file.available();
-	if (!avail)
-		return;
-
-	bytes = new uint8_t[avail];
-	if (!bytes)
-		return;
-
-	file.read(bytes, avail);
 
 	/* TODO: parse recipe */
 }
@@ -54,12 +47,13 @@ Menu *sdCreateBrowseMenu(Menu *parent)
 		return NULL;
 
 	while(true) {
-		File entry =  sdRoot.openNextFile();
+		File entry = sdRoot.openNextFile();
 		if (!entry)
 			break;
 
 		if (!entry.isDirectory())
 			entryCount++;
+
 		entry.close();
 	}
 	sdRoot.rewindDirectory();

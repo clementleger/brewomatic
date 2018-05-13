@@ -63,6 +63,54 @@ Depending on your configuration, you will need the following libraries:
 Using and arduino ide, load the BrewOMatic.ino file into the IDE.
 Compile it and upload it to the arduino.
 
+# Usage
+
+It is advised to use a SD card to store recipe easily
+
+## Modes
+
+### Manual mode
+
+When in manual, mode, user can control pump, temperature
+
+### Recipe execution
+
+In order to execute a recipe, go Browse SD card.
+
+## Recipe format
+
+Recipes are stored in .br (Brew Recipe) files on SD card.
+The format is basically a csv files with specific values:
+
+Lines format is the following:
+step;duration;temperature;pump_enable
+
+Step is mainly an indicator to display the correct step name on LCD.
+Step can be one of the following value:
+ - H: Heating step
+ - M: Mashing step
+ - B: Boiling step
+ - C: Cooling
+
+Duration is then the step duration described in minutes.
+Temperature is the target temperature for this phase in Celsius.
+And finally pump enable is a boolean desribing if pump should be enabled for the
+step.
+
+For instance, the following line tell the system that we are in a heating step for 10 minutes
+and that the expected temperature is 70 degrees celsius:
+
+H;10;70;1
+
+Additionnaly to these main steps, some actions can be added using the following syntax:
+A;time;action_type
+
+Action type can be on of the following value:
+ - IM: Insert malt
+ - RM: Remove malt
+ - SC: Setup Cooler
+ - IH: Insert Hop
+
 # Hardware
 
 A kicad pcb is available which contains support for 20A load control, pump and LCD 2004 support (such as for 3D printer).

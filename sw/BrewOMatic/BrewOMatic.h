@@ -55,7 +55,6 @@ class BrewOMatic {
 		void actionStartDefaultRecipe();
 		void actionStartManual();
 		bool actionEnablePump();
-		bool actionEnableHeater();
 		void actionMenuBack();
 		void setCurrentMenu(Menu *m);
 		float mCurrentTemp;
