@@ -83,10 +83,9 @@
  **********************************************************************/
 
 /**
- * Display type
- * DisplayUcglib: for ILI9341
+ * Uncomment to use Liquid Crystal display
  */
-#define DISPLAY_TYPE	DisplayLiquidCrystal
+#define LIQUID_CRYSTAL_DISPLAY
 
 /**
  * Liquid crystal screen configuration
@@ -108,6 +107,11 @@
 #define LIQUID_CRYSTAL_ANIM	0
 
 /**
+ * Uncomment to use ucglib display (not ready)
+ */
+//#define UCGLIB_DISPLAY
+
+/**
  * Ucglib screen configuration
  */
 #define UCGLIB_DISPLAY_TYPE	Ucglib_ILI9341_18x240x320_HWSPI
@@ -120,11 +124,9 @@
  *                       Temperature Control
  **********************************************************************/
 /**
- * Temperature probe type, can be
- * TempMax31865: When using a PT100 probe
- * TempDS18B20: When using a ds18b20 sensor probe
+ * Uncomment to use PT100 temperature probe behind max 31865
  */
-#define TEMP_PROBE_TYPE		TempMax31865
+#define TEMP_MAX31865
 
 /**
  * When using TempMax31865 probe type, the hardware SPI bus is used.
@@ -142,11 +144,19 @@
 #define MAX31865_WIRE_COUNT	MAX31865_3WIRE
 
 /**
+ * Uncomment to use DS18B20 temperature probe
+ */
+//#define TEMP_DS18B20
+
+/**
  * When using TempDS18B20 probe type, we use 1wire
  * The define which pin is used for the 1wire bus
  */
 #define DS18B20_ONEWIRE_PIN	4
 
+/***********************************************************************
+ *                       Heater Control
+ **********************************************************************/
 /**
  * PID values
  * We are talking about blackmagic here !
@@ -160,10 +170,6 @@
  * Temperature and heating control delay
  */
 #define TEMP_SAMPLE_TIME_MS	100
-
-/***********************************************************************
- *                       Heater Control
- **********************************************************************/
 
 /**
  * If using a system which requires crossing detection

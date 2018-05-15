@@ -1,5 +1,8 @@
 #ifndef _TEMP_DS18B20_H
 #define _TEMP_DS18B20_H
+#include "Config.h"
+
+#if ENABLED(TEMP_DS18B20)
 
 #include "TempProbe.h"
 
@@ -12,10 +15,12 @@ class TempDS18B20: public TempProbe
 		int getTemp(float *value);
 
 	private:
+		OneWire oneWire;
 		DallasTemperature mDs;
 		DeviceAddress dsAddr;
-		OneWire oneWire;
 
 };
+
+#endif
 
 #endif

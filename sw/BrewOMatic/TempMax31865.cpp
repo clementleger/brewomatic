@@ -1,4 +1,7 @@
 #include "Config.h"
+
+#if ENABLED(TEMP_MAX31865)
+
 #include "TempMax31865.h"
 
 #define RREF 430.0
@@ -22,3 +25,5 @@ int TempMax31865::getTemp(float *value)
 
 	return 0;
 }
+
+#endif

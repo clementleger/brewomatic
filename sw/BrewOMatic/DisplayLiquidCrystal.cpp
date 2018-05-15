@@ -1,3 +1,7 @@
+#include "Config.h"
+
+#if ENABLED(LIQUID_CRYSTAL_DISPLAY)
+
 #include "Menu.h"
 #include "Language.h"
 #include "BrewOMatic.h"
@@ -197,14 +201,14 @@ enum customChars{
 
 void DisplayLiquidCrystal::dispTitle(const char *str)
 {
-	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - (strlen(str) + 2)) / 2, 0);
-	lcd.print("<");
-	lcd.print(str);
-	lcd.print(">");
+	mLcd.setCursor((LIQUID_CRYSTAL_WIDTH - (strlen(str) + 2)) / 2, 0);
+	mLcd.print("<");
+	mLcd.print(str);
+	mLcd.print(">");
 }
 
 DisplayLiquidCrystal::DisplayLiquidCrystal():
-lcd(LIQUID_CRYSTAL_RS,
+mLcd(LIQUID_CRYSTAL_RS,
 	LIQUID_CRYSTAL_EN,
 	LIQUID_CRYSTAL_D4,
 	LIQUID_CRYSTAL_D5,
@@ -214,61 +218,65 @@ mPumpState(0),
 mHeatState(0)
 {
 	const char *str;
-	lcd.begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
-	lcd.createChar(BEER_CHAR, beer);
-	lcd.createChar(THERMOMETER_CHAR, thermometer);
-	lcd.createChar(DEGREE_CHAR, degree);
-	lcd.createChar(PLUG_CHAR, plug);
-	lcd.createChar(PUMP_CHAR, pump1);
-	lcd.createChar(HEAT_CHAR, fire1);
-	lcd.createChar(CLOCK_CHAR, clock);
+	mLcd.begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
+	mLcd.createChar(BEER_CHAR, (uint8_t *) beer);
+	mLcd.createChar(THERMOMETER_CHAR, (uint8_t *) thermometer);
+	mLcd.createChar(DEGREE_CHAR, (uint8_t *) degree);
+	mLcd.createChar(PLUG_CHAR, (uint8_t *) plug);
+	mLcd.createChar(PUMP_CHAR, (uint8_t *) pump1);
+	mLcd.createChar(HEAT_CHAR, (uint8_t *) fire1);
+	mLcd.createChar(CLOCK_CHAR, (uint8_t *) clock);
 
 	dispTitle(getString(STR_BREWOMATIC));
 	str = getString(STR_STARTING);
-	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - strlen(str)) / 2, 1);
-	lcd.print(str);
+	mLcd.setCursor((LIQUID_CRYSTAL_WIDTH - strlen(str)) / 2, 1);
+	mLcd.print(str);
 
-	lcd.setCursor((LIQUID_CRYSTAL_WIDTH - 3)/ 2, 2);
-	lcd.write(byte(BEER_CHAR));
-	lcd.print(" ");
-	lcd.write(byte(BEER_CHAR));
+	mLcd.setCursor((LIQUID_CRYSTAL_WIDTH - 3)/ 2, 2);
+	mLcd.write(byte(BEER_CHAR));
+	mLcd.print(" ");
+	mLcd.write(byte(BEER_CHAR));
+
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 - 2, 2);
+	mLcd.print("V");
+	mLcd.write(BREWOMATIC_VERSION_STRING);
 }
 
 void DisplayLiquidCrystal::enterIdle(BrewOMatic *b)
 {
-	lcd.clear();
+	mLcd.clear();
 	dispTitle(getString(STR_BREWOMATIC));
 
-	lcd.setCursor(0, 1);
-	lcd.write(byte(BEER_CHAR));
-	lcd.print(" ");
-	lcd.print(getString(STR_IDLE));
+	mLcd.setCursor(0, 1);
+	mLcd.write(byte(BEER_CHAR));
+	mLcd.print(" ");
+	mLcd.print(getString(STR_IDLE));
 
-	lcd.setCursor(0, 3);
+	mLcd.setCursor(0, 3);
 	if (b->mError) {
-		lcd.print(getString(STR_ERROR));
-		lcd.print(": ");
+		mLcd.print(getString(STR_ERROR));
+		mLcd.print(": ");
 	}
 
-	lcd.print(getString(b->mStatus));
+	mLcd.print(getString(b->mStatus));
 
-	lcd.setCursor(LIQUID_CRYSTAL_WIDTH/2, 2);
-	lcd.write(byte(PLUG_CHAR));
-	lcd.print(ACZeroCrossing::Instance().getFrequency());
-	lcd.print("Hz");
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH/2, 2);
+	mLcd.write(byte(PLUG_CHAR));
+	mLcd.print(ACZeroCrossing::Instance().getFrequency());
+	mLcd.print("Hz");
 }
 
 void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
 {
-	lcd.setCursor(0, 2);
-	lcd.write(byte(THERMOMETER_CHAR));
-	lcd.print(b->mCurrentTemp);
-	lcd.write(byte(DEGREE_CHAR));
+	mLcd.setCursor(0, 2);
+	mLcd.write(byte(THERMOMETER_CHAR));
+	mLcd.print(b->mCurrentTemp);
+	mLcd.write(byte(DEGREE_CHAR));
 }
 
 void DisplayLiquidCrystal::enterMenu(BrewOMatic *b, Menu *m)
 {
-	lcd.clear();
+	mLcd.clear();
 
 	mLastMenuStart = 0;
 }
@@ -279,7 +287,7 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 	byte row = 0;
 	byte dispCount = DISP_MENU_ENTRY;
 
-	lcd.clear();
+	mLcd.clear();
 	if (m->getItemCount() < DISP_MENU_ENTRY) {
 		mLastMenuStart = 0;
 		dispCount = m->getItemCount();
@@ -290,17 +298,17 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 	}
 
 	for (byte i = mLastMenuStart; i < mLastMenuStart + dispCount; i++) {
-		lcd.setCursor(0, row);
+		mLcd.setCursor(0, row);
 		row++;
 
 		item = m->getItem(i);
 
 		if (i == m->mSelected)
-			lcd.print(">");
+			mLcd.print(">");
 		else
-			lcd.print(" ");
+			mLcd.print(" ");
 
-		lcd.print(item->getTitleStr());
+		mLcd.print(item->getTitleStr());
 	}
 }
 
@@ -308,13 +316,13 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 
 void DisplayLiquidCrystal::loadAnimChar()
 {
-	lcd.createChar(PUMP_CHAR, pumpAnim[mPumpState]);
+	mLcd.createChar(PUMP_CHAR, pumpAnim[mPumpState]);
 
 	mPumpState++;
 	if (mPumpState == PUMP_STATE_COUNT)
 		mPumpState = 0;
 
-	lcd.createChar(HEAT_CHAR, heatAnim[mHeatState]);
+	mLcd.createChar(HEAT_CHAR, heatAnim[mHeatState]);
 	mHeatState++;
 	if (mHeatState == HEAT_STATE_COUNT)
 		mHeatState = 0;
@@ -330,43 +338,43 @@ void DisplayLiquidCrystal::loadAnimChar()
 void DisplayLiquidCrystal::drawBool(bool status)
 {
 	if (status) {
-		lcd.print("On");
+		mLcd.print("On");
 	} else {
-		lcd.print("Off");
+		mLcd.print("Off");
 	}
 }
 
 void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 {
-	lcd.clear();
+	mLcd.clear();
 }
 
 void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 {
 	/* Draw temp status */
-	lcd.setCursor(0, row);
-	lcd.write(byte(THERMOMETER_CHAR));
-	lcd.print((int) b->mCurrentTemp);
-	lcd.write(byte(DEGREE_CHAR));
-	lcd.print("/");
-	lcd.print(b->mTargetTemp);
-	lcd.write(byte(DEGREE_CHAR));
+	mLcd.setCursor(0, row);
+	mLcd.write(byte(THERMOMETER_CHAR));
+	mLcd.print((int) b->mCurrentTemp);
+	mLcd.write(byte(DEGREE_CHAR));
+	mLcd.print("/");
+	mLcd.print(b->mTargetTemp);
+	mLcd.write(byte(DEGREE_CHAR));
 
 	loadAnimChar();
-	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 1, row);
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 1, row);
 	/* Draw pump status */
-	lcd.write(byte(PUMP_CHAR));
+	mLcd.write(byte(PUMP_CHAR));
 	drawBool(b->mCurrentStep->mEnablePump);
 
-	lcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 6, row);
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 6, row);
 
 	/* Draw heater status */
-	lcd.write(byte(HEAT_CHAR));
+	mLcd.write(byte(HEAT_CHAR));
 	drawBool(1);
 
-	lcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
-	lcd.print((int) b->mHeaterControl->mPidOutput);
-	lcd.print("% ");
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
+	mLcd.print((int) b->mHeaterControl->mPidOutput);
+	mLcd.print("% ");
 }
 
 void DisplayLiquidCrystal::drawTime(unsigned long amillis)
@@ -379,56 +387,58 @@ void DisplayLiquidCrystal::drawTime(unsigned long amillis)
 	elapsedSec = (elapsed - (elapsedMin * 60 * 1000));
 	elapsedSec /= 1000;
 	if (elapsedMin < 10)
-		lcd.print("0");
-	lcd.print(elapsedMin);
-	lcd.print(":");
+		mLcd.print("0");
+	mLcd.print(elapsedMin);
+	mLcd.print(":");
 	if (elapsedSec < 10)
-		lcd.print("0");
-	lcd.print(elapsedSec);
+		mLcd.print("0");
+	mLcd.print(elapsedSec);
 }
 
 void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 {
-	lcd.setCursor(0, 0);
-	lcd.write(byte(BEER_CHAR));
-	lcd.print(" ");
-	lcd.print(getString(b->mCurrentStep->mName));
+	mLcd.setCursor(0, 0);
+	mLcd.write(byte(BEER_CHAR));
+	mLcd.print(" ");
+	mLcd.print(getString(b->mCurrentStep->mName));
 
 	drawStatus(b, 1);
 
-	lcd.setCursor(0, 2);
-	lcd.write(byte(CLOCK_CHAR));
+	mLcd.setCursor(0, 2);
+	mLcd.write(byte(CLOCK_CHAR));
 	if (b->mStepStartMillis != 0) {
 		drawTime(b->mStepStartMillis);
 	} else {
-		lcd.print("-");
+		mLcd.print("-");
 	}
-	lcd.print("/");
-	lcd.print(b->mCurrentStep->mDuration);
-	lcd.print(":00");
+	mLcd.print("/");
+	mLcd.print(b->mCurrentStep->mDuration);
+	mLcd.print(":00");
 
 	if (b->mStatus) {
-		lcd.setCursor(0, 3);
-		lcd.print(getString(b->mStatus));
+		mLcd.setCursor(0, 3);
+		mLcd.print(getString(b->mStatus));
 	}
 }
 
 void DisplayLiquidCrystal::enterManual(BrewOMatic *b)
 {
-	lcd.clear();
+	mLcd.clear();
 	dispTitle(getString(STR_MANUAL_MODE));
 
-	lcd.setCursor(0, 1);
-	lcd.write(byte(BEER_CHAR));
-	lcd.print(" ");
-	lcd.print(getString(STR_MANUAL_MODE));
+	mLcd.setCursor(0, 1);
+	mLcd.write(byte(BEER_CHAR));
+	mLcd.print(" ");
+	mLcd.print(getString(STR_MANUAL_MODE));
 }
 
 void DisplayLiquidCrystal::displayManual(BrewOMatic *b)
 {
 
 	drawStatus(b, 2);
-	lcd.setCursor(0, 3);
-	lcd.write(byte(CLOCK_CHAR));
+	mLcd.setCursor(0, 3);
+	mLcd.write(byte(CLOCK_CHAR));
 	drawTime(b->mStepStartMillis);
 }
+
+#endif

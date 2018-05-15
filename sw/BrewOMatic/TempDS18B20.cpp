@@ -1,4 +1,7 @@
 #include "Config.h"
+
+#if ENABLED(TEMP_DS18B20)
+
 #include "TempDS18B20.h"
 
 #include <OneWire.h>
@@ -21,3 +24,5 @@ int TempDS18B20::getTemp(float *value)
 
 	return 0;
 }
+
+#endif

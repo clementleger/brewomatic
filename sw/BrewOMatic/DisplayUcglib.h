@@ -1,6 +1,10 @@
 #ifndef _DISPLAY_UCGLIB_H
 #define _DISPLAY_UCGLIB_H
 
+#include "Config.h"
+
+#if ENABLED(UCGLIB_DISPLAY)
+
 #include "Display.h"
 #include "Language.h"
 
@@ -18,5 +22,7 @@ class DisplayUcglib: public Display {
 		unsigned int lastState;
 		void displayModeTemp(BrewOMatic *b, brewStringIndex mode);
 };
+
+#endif
 
 #endif

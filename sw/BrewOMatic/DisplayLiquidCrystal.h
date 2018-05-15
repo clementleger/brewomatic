@@ -2,8 +2,10 @@
 #define _DISPLAY_LIQUID_CRYSTAL_H
 
 #include "Config.h"
-#include "Display.h"
 
+#if ENABLED(LIQUID_CRYSTAL_DISPLAY)
+
+#include "Display.h"
 #include <LiquidCrystal.h>
 
 class DisplayLiquidCrystal: public Display {
@@ -25,10 +27,12 @@ class DisplayLiquidCrystal: public Display {
 		void drawStatus(BrewOMatic *b, int row);
 		void drawTime(unsigned long amillis);
 
+		byte mLastMenuStart;
+		LiquidCrystal mLcd;
 		byte mPumpState;
 		byte mHeatState;
-		byte mLastMenuStart;
-		LiquidCrystal lcd;
 };
+
+#endif
 
 #endif

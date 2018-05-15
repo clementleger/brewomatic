@@ -1,5 +1,8 @@
-#include "Menu.h"
 #include "Config.h"
+
+#if ENABLED(UCGLIB_DISPLAY)
+
+#include "Menu.h"
 #include "Language.h"
 #include "BrewOMatic.h"
 #include "DisplayUcglib.h"
@@ -142,3 +145,5 @@ void DisplayUcglib::displayMenu(BrewOMatic *b, Menu *m)
 			 MENU_TEXT_Y + offset);
 
 }
+
+#endif

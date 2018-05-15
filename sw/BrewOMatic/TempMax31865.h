@@ -1,5 +1,8 @@
 #ifndef _TEMP_MAX31865_H
 #define _TEMP_MAX31865_H
+#include "Config.h"
+
+#if ENABLED(TEMP_MAX31865)
 
 #include "TempProbe.h"
 
@@ -14,5 +17,7 @@ class TempMax31865: public TempProbe
 	private:
 		Adafruit_MAX31865 mConverter;
 };
+
+#endif
 
 #endif
