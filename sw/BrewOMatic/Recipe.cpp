@@ -8,15 +8,40 @@ mEnablePump(enablePump),
 mTargetTemp(targetTemp),
 mDuration(duration),
 mName(name),
-mUserActions(actionCount),
-mPreStepAction(NULL)
+mPreStepAction(NULL),
+mUserActions(actionCount)
 {
 }
 
 Recipe::Recipe(unsigned char stepCount, const char *name):
 mSteps(stepCount),
-mName(name)
+mName(strdup(name))
 {
+
+}
+
+Recipe::~Recipe()
+{
+	Step *step;
+
+	delete mName;
+	mSteps.reset();
+	while ((step = mSteps.getNextElem())) {
+		delete step;
+	}
+}
+
+Step::~Step()
+{
+	Action *act;
+
+	if (mPreStepAction)
+		delete mPreStepAction;
+
+	mUserActions.reset();
+	while ((act = mUserActions.getNextElem())) {
+		delete act;
+	}
 
 }
 
@@ -51,5 +76,5 @@ Recipe *createDefaultRecipe()
 
 Step *createManualStep()
 {
-	return new Step("Manual", 0, 25, false, 0);
+	return new Step(STR_MANUAL_MODE, 0, 25, false, 0);
 }

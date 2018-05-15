@@ -8,8 +8,6 @@
 #include "Recipe.h"
 #include "Menu.h"
 
-#include <SD.h>
-
 int sdInit();
 Menu *sdCreateBrowseMenu(Menu *parent);
 

@@ -7,6 +7,8 @@
 
 #define SEC_TO_MS(_sec)	(_sec * 1000)
 
+#define BREWOMATIC_VERSION_STRING	"0.1"
+
 class BrewOMatic;
 
 #include "Input.h"
@@ -55,7 +57,7 @@ class BrewOMatic {
 		void actionStartDefaultRecipe();
 		void actionStartManual();
 		bool actionEnablePump();
-		void actionMenuBack();
+		void actionMenuBack(bool exit);
 		void setCurrentMenu(Menu *m);
 		float mCurrentTemp;
 
@@ -65,8 +67,8 @@ class BrewOMatic {
 
 		HeaterControl *mHeaterControl;
 		unsigned long mStepStartMillis;
-		brewStringIndex mStatus;
 		unsigned int mTargetTemp;
+		brewStringIndex mStatus;
 		bool mError;
 	private:
 		brewomaticState mState;
@@ -97,7 +99,7 @@ class BrewOMatic {
 		void updateTemp();
 		void updateDisplay();
 
-		void changeState(int state);
+		void changeState(brewomaticState state);
 		void handleIdle();
 		void handleBrewing();
 		void handleMenu();

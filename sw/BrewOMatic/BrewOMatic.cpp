@@ -24,7 +24,7 @@ void BrewOMatic::setCurrentMenu(Menu *m)
 	mUpdateDisplay = true;
 }
 
-void BrewOMatic::changeState(int state)
+void BrewOMatic::changeState(brewomaticState state)
 {
 	dbgOutput("change state %d\n", state);
 	mState = state;
@@ -79,13 +79,13 @@ void BrewOMatic::actionStartManual()
 	mDisp->enterManual(this);
 }
 
-void BrewOMatic::actionMenuBack()
+void BrewOMatic::actionMenuBack(bool exit)
 {
 	if (!mCurrentMenu)
 		return;
 
 	mCurrentMenu->mSelected = 0;
-	mCurrentMenu = mCurrentMenu->mParent;
+	mCurrentMenu = exit ? NULL : mCurrentMenu->mParent;
 	mUpdateDisplay = true;
 	switch (mState) {
 		case STATE_IDLE:
@@ -266,8 +266,8 @@ void BrewOMatic::getNextStep()
 	if (mCurrentStep->mPreStepAction) {
 		mCurrentAction = mCurrentStep->mPreStepAction;
 		/* We are requesting user attention here !
-		 * quit menu if any */
-		actionMenuBack();
+		 * quit all menu */
+		actionMenuBack(true);
 		mCurrentMenu = NULL;
 		mStatus = STR_PRESS_OK;
 		mBrewingState = BREWING_PRE_STEP_ACTION;

@@ -23,8 +23,8 @@ class MenuItem {
 class MenuItemStrIdx : public MenuItem {
 	public:
 		MenuItemStrIdx(brewStringIndex title, menuItemCallback callback):
-			mTitle(title),
-			MenuItem(callback) {};
+			MenuItem(callback),
+			mTitle(title) {};
 		const char *getTitleStr() { return getString(mTitle);};
 
 		brewStringIndex mTitle;
@@ -33,8 +33,8 @@ class MenuItemStrIdx : public MenuItem {
 class MenuItemStr : public MenuItem {
 	public:
 		MenuItemStr(const char *title, menuItemCallback callback):
-			mTitle(title),
-			MenuItem(callback) {};
+			MenuItem(callback),
+			mTitle(title) {};
 		const char *getTitleStr() { return mTitle;};
 
 		const char *mTitle;

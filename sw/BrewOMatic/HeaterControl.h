@@ -15,10 +15,10 @@ class HeaterControl {
 	private:
 		/* Fixme: use config */
 		HeaterTriacControl mCtrl;
+		unsigned char mEnable;
 		double mTargetTemp;
 		double mPidInput;
 		PID mPid;
-		unsigned char mEnable;
 };
 
 #endif

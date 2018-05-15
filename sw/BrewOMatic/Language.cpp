@@ -16,7 +16,7 @@ static char localBuffer[MAX_STR_LEN];
 
 void getStringInBuffer(brewStringIndex strIdx, char *buf, int len)
 {
-	strncpy_P(buf, (char *) pgm_read_word(&strArray[strIdx]), len);
+	strncpy_P(buf, (char *) pgm_read_word(&strArray[(int) strIdx]), len);
 }
 
 const char *getString(brewStringIndex strIdx)

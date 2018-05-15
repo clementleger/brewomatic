@@ -9,7 +9,7 @@
 
 class Action {
 	public:
-		Action(brewStringIndex descIdx, const unsigned long time):
+		Action(brewStringIndex descIdx, unsigned long time):
 		mDescIdx(descIdx),
 		mTime(time) {};
 
@@ -19,11 +19,12 @@ class Action {
 		brewStringIndex getDescIdx() {return mDescIdx;};
 	private:
 		brewStringIndex mDescIdx;
-		const unsigned long mTime;
+		unsigned long mTime;
 };
 
 class Step {
 	public:
+		~Step();
 		Step();
 		Step(brewStringIndex name, unsigned long duration,
 		     unsigned char targetTemp, bool enablePump,
@@ -43,10 +44,11 @@ class Step {
 
 class Recipe {
 	public:
+		~Recipe();
 		Recipe(unsigned char stepCount, const char *name);
 
 		List<Step *> mSteps;
-		const char *mName;
+		char *mName;
 };
 
 Recipe *createDefaultRecipe();

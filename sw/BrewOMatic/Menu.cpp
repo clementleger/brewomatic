@@ -5,7 +5,7 @@
 
 static void actionMenuBack(MenuItem *item, BrewOMatic *b)
 {
-	b->actionMenuBack();
+	b->actionMenuBack(false);
 }
 
 static void actionStopBrewing(MenuItem *item, BrewOMatic *b)
@@ -16,7 +16,7 @@ static void actionStopBrewing(MenuItem *item, BrewOMatic *b)
 static void actionEnablePump(MenuItem *item, BrewOMatic *b)
 {
 	bool ret = b->actionEnablePump();
-	MenuItemStrIdx *it = item;
+	MenuItemStrIdx *it = (MenuItemStrIdx *) item;
 
 	it->mTitle = ret ? STR_DISABLE_PUMP : STR_ENABLE_PUMP;
 }
@@ -33,7 +33,7 @@ static void actionStartManual(MenuItem *item, BrewOMatic *b)
 
 static void actionSubmenu(MenuItem *item, BrewOMatic *b)
 {
-	MenuItemStrIdxMenu *it = item;
+	MenuItemStrIdxMenu *it = (MenuItemStrIdxMenu *) item;
 	b->setCurrentMenu(it->mMenu);
 }
 
