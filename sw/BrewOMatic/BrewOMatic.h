@@ -54,7 +54,7 @@ class BrewOMatic {
 
 		/* Callbacks */
 		void actionStopBrewing();
-		void actionStartDefaultRecipe();
+		void actionStartBrewing();
 		void actionStartManual();
 		bool actionEnablePump();
 		void actionMenuBack(bool exit);

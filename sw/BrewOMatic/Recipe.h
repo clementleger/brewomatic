@@ -51,7 +51,6 @@ class Recipe {
 		char *mName;
 };
 
-Recipe *createDefaultRecipe();
 Step *createManualStep();
 
 #endif

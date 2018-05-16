@@ -21,11 +21,6 @@ static void actionEnablePump(MenuItem *item, BrewOMatic *b)
 	it->mTitle = ret ? STR_DISABLE_PUMP : STR_ENABLE_PUMP;
 }
 
-static void actionStartDefaultRecipe(MenuItem *item, BrewOMatic *b)
-{
-	b->actionStartDefaultRecipe();
-}
-
 static void actionStartManual(MenuItem *item, BrewOMatic *b)
 {
 	b->actionStartManual();
@@ -54,9 +49,8 @@ mSelected(0)
 Menu *createIdleMenu()
 {
 	Menu *sdCardMenu;
-	Menu *menu = new Menu(STR_MAIN_MENU, 3, NULL);
+	Menu *menu = new Menu(STR_MAIN_MENU, 2, NULL);
 
-	menu->mItems.addElem(new MenuItemStrIdx(STR_START_BREWING, actionStartDefaultRecipe));
 	menu->mItems.addElem(new MenuItemStrIdx(STR_MANUAL_MODE, actionStartManual));
 
 	sdCardMenu = sdCreateBrowseMenu(menu);

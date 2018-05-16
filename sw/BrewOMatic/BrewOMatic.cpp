@@ -56,13 +56,12 @@ void BrewOMatic::actionStopBrewing()
 	mDisp->enterIdle(this);
 }
 
-void BrewOMatic::actionStartDefaultRecipe()
+void BrewOMatic::actionStartBrewing()
 {
 	changeState(STATE_BREWING);
 
 	mStatus = STR_STARTING;
 
-	mCurrentRecipe = createDefaultRecipe();
 	mDisp->enterBrewing(this);
 	
 	mHeaterControl->setEnable(true);
