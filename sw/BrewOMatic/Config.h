@@ -26,18 +26,13 @@
 #define BEEPER_CLICK_DURATION	5
 
 /**
- * Set to 0 to disable serial output and save some bytes
- * Serial output will output informations periodically.
- */
-#define SERIAL_OUTPUT	0
-
-/**
  * Serial baudrate to use
  */
 #define SERIAL_BAUDRATE 115200
 
 /**
- * Enable debug over UART
+ * Set to 0 to disable serial output and save some bytes
+ * Serial output will output informations periodically.
  */
 #define DEBUG	0
 

@@ -44,12 +44,16 @@ bool BrewOMatic::actionEnablePump()
 
 void BrewOMatic::actionStopBrewing()
 {
-	changeState(STATE_IDLE);
-
-	if (mCurrentStep) {
+	if (mState == STATE_MANUAL) {
 		delete mCurrentStep;
 		mCurrentStep = NULL;
+	} else if (mState == STATE_BREWING) {
+		delete mCurrentRecipe;
+		mCurrentRecipe = NULL;
 	}
+	changeState(STATE_IDLE);
+
+	/* Stop everything */
 	mHeaterControl->setEnable(false);
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
 
@@ -65,7 +69,6 @@ void BrewOMatic::actionStartBrewing()
 	mDisp->enterBrewing(this);
 	
 	mHeaterControl->setEnable(true);
-	setTargetTemp(0);
 	getNextStep();
 }
 void BrewOMatic::actionStartManual()
@@ -75,6 +78,7 @@ void BrewOMatic::actionStartManual()
 	mCurrentStep = createManualStep();
 	mStepStartMillis = millis();
 
+	mHeaterControl->setEnable(true);
 	mDisp->enterManual(this);
 }
 
@@ -229,6 +233,7 @@ void BrewOMatic::startStep()
 	if (mCurrentStep->mEnablePump)
 		digitalWrite(PUMP_CONTROL_PIN, HIGH);
 
+	setTargetTemp(mCurrentStep->mTargetTemp);
 	mStatus = STR_WAIT_TEMP;
 	mBrewingState = BREWING_WAIT_TEMP_REACHED;
 
@@ -236,6 +241,7 @@ void BrewOMatic::startStep()
 
 void BrewOMatic::waitEndOfStep()
 {
+
 	/* Check if the step is done */
 	if (!((millis() - mStepStartMillis) >=
 	    SEC_TO_MS(mCurrentStep->mDuration * 60)))

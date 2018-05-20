@@ -41,11 +41,13 @@ static uint8_t fileGetLine(SdBaseFile *file, char line[MAX_LINE_SIZE])
 		/* End of file */
 		if (c == -1) {
 			ret = 1;
+			line[cur_offset] = 0;
 			break;
 		}
 
 		if (c == '\n') {
-			break;
+			line[cur_offset] = 0;
+			goto exit;
 		}
 
 		line[cur_offset] = c;
@@ -59,6 +61,7 @@ static uint8_t fileGetLine(SdBaseFile *file, char line[MAX_LINE_SIZE])
 
 	line[cur_offset+1] = 0;
 
+exit:
 	return ret;
 }
 
@@ -111,6 +114,16 @@ static brewStringIndex getStepStr(const char c)
 	}
 }
 
+static brewStringIndex getActionStr(const char c)
+{
+	switch (c) {
+		case 'I': return STR_INSERT_MALT;
+		case 'R': return STR_REMOVE_MALT;
+		case 'C': return STR_SETUP_COOLER;
+		case 'H': return STR_INSERT_HOP;
+	}
+}
+
 static Recipe *fileParseRecipe(SdBaseFile *file)
 {
 	char line[MAX_LINE_SIZE];
@@ -121,29 +134,40 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 	int duration, targetTemp;
 	bool pumpEnable;
 	brewStringIndex idx;
+	Action *action;
 
 	/* Get the first line */
 	ret = fileGetLine(file, line);
 	count = splitLine(line, fields);
 
-	if (checkRecipeHeader(fields, count))
+	if (checkRecipeHeader(fields, count)) {
 		return NULL;
+	}
 
 	recipe = new Recipe(MAX_RECIPE_STEPS, fields[3]);
 
 	do {
 		ret = fileGetLine(file, line);
+		/* Check end of file */
+		if (ret)
+			break;
+			
+		if (line[0] == '#')
+			continue;
+
 		count = splitLine(line, fields);
-		if (count <= 2)
-			return NULL;
+		if (count <= 2) {
+			goto err;
+		}
 
 		switch (fields[0][0]) {
 			case 'H':
 			case 'M':
 			case 'B':
 			case 'C':
-				if (count != 4)
+				if (count != 4) {
 					goto err;
+				}
 
 				duration = atoi(fields[1]);
 				targetTemp = atoi(fields[2]);
@@ -153,23 +177,23 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 				recipe->mSteps.addElem(step);
 			break;
 			case 'A':
-				if (count != 3 || step == NULL)
+				if (count != 3 || step == NULL) {
 					goto err;
-				
-				duration = atoi(fields[1]);
-				Action *action = new Action(STR_INSERT_MALT, duration);
+				}
+
+				idx = getActionStr(fields[1][0]);
+				duration = atoi(fields[2]);
+				action = new Action(idx, duration);
 				step->mUserActions.addElem(action);				
 			break;
 		}
-		
-	} while(ret != -1);
+	} while(1);
 
 	return recipe;
 err:
 	delete recipe;
 
 	return NULL;
-
 }
 
 static void actionExecuteRecipe(MenuItem *item, BrewOMatic *b)
@@ -183,6 +207,7 @@ static void actionExecuteRecipe(MenuItem *item, BrewOMatic *b)
 	file.open(it->getTitleStr(), O_READ);
 
 	recipe = fileParseRecipe(&file);
+
 	if (recipe == NULL) {
 		b->mError = true;
 		b->mStatus = STR_INVALID_RECIPE;
@@ -192,7 +217,6 @@ static void actionExecuteRecipe(MenuItem *item, BrewOMatic *b)
 
 	b->mCurrentRecipe = recipe;
 	b->actionStartBrewing();
-	
 }
 
 #define MAX_NAME_SIZE	30

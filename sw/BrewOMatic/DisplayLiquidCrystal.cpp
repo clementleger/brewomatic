@@ -237,7 +237,7 @@ mHeatState(0)
 	mLcd.print(" ");
 	mLcd.write(byte(BEER_CHAR));
 
-	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 - 2, 2);
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 - 3, 3);
 	mLcd.print("V");
 	mLcd.write(BREWOMATIC_VERSION_STRING);
 }
