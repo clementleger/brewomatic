@@ -55,6 +55,17 @@ const static byte folder[8] PROGMEM = {
 	0b00000
 };
 
+const static byte uplevel[8] PROGMEM = {
+	0b00100,
+	0b01110,
+	0b11111,
+	0b00100,
+	0b11100,
+	0b00000,
+	0b00000,
+	0b00000
+};
+
 const static byte beer[8] PROGMEM = {
 	0b00000,
 	0b11100,
@@ -98,6 +109,18 @@ const static byte fire1[8] PROGMEM = {
 	0b11111,
 	0b01110
 };
+
+const static byte cross[8] PROGMEM = {
+	0b00000,
+	0b10001,
+	0b01010,
+	0b00100,
+	0b01010,
+	0b10001,
+	0b00000,
+	0b00000
+};
+
 
 #if ENABLED(LIQUID_CRYSTAL_ANIM)
 
@@ -190,14 +213,28 @@ static byte *heatAnim[HEAT_STATE_COUNT] = {fire1, fire2, fire3, fire4};
 
 #define DISP_MENU_ENTRY	(LIQUID_CRYSTAL_HEIGHT)
 
-enum customChars{
+enum commonDispChar {
 	BEER_CHAR = 0,
 	THERMOMETER_CHAR,
 	DEGREE_CHAR,
-	PLUG_CHAR,
-	PUMP_CHAR,
+	/* Do not touch this one ! */
+	LAST_CHAR
+};
+
+enum idleDispChar{
+	PLUG_CHAR = LAST_CHAR,
+};
+
+enum brewingDispChar {
+	PUMP_CHAR = LAST_CHAR,
 	HEAT_CHAR,
 	CLOCK_CHAR,
+};
+
+enum menuDispChar {
+	FOLDER_CHAR = 0,
+	UPLEVEL_CHAR,
+	CROSS_CHAR
 };
 
 void DisplayLiquidCrystal::dispTitle(const char *str)
@@ -229,12 +266,6 @@ mHeatState(0)
 	const char *str;
 	mLcd.begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
 	createChar(BEER_CHAR, (uint8_t *) beer);
-	createChar(THERMOMETER_CHAR, (uint8_t *) thermometer);
-	createChar(DEGREE_CHAR, (uint8_t *) degree);
-	createChar(PLUG_CHAR, (uint8_t *) plug);
-	createChar(PUMP_CHAR, (uint8_t *) pump1);
-	createChar(HEAT_CHAR, (uint8_t *) fire1);
-	createChar(CLOCK_CHAR, (uint8_t *) clock);
 
 	dispTitle(getString(STR_BREWOMATIC));
 	str = getString(STR_STARTING);
@@ -253,6 +284,11 @@ mHeatState(0)
 
 void DisplayLiquidCrystal::enterIdle(BrewOMatic *b)
 {
+	createChar(BEER_CHAR, (uint8_t *) beer);
+	createChar(THERMOMETER_CHAR, (uint8_t *) thermometer);
+	createChar(DEGREE_CHAR, (uint8_t *) degree);
+	createChar(PLUG_CHAR, (uint8_t *) plug);
+
 	mLcd.clear();
 	dispTitle(getString(STR_BREWOMATIC));
 
@@ -285,6 +321,10 @@ void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
 
 void DisplayLiquidCrystal::enterMenu(BrewOMatic *b, Menu *m)
 {
+	createChar(FOLDER_CHAR, (uint8_t *) folder);
+	createChar(UPLEVEL_CHAR, (uint8_t *) uplevel);
+	createChar(CROSS_CHAR, (uint8_t *) cross);
+
 	mLcd.clear();
 
 	mLastMenuStart = 0;
@@ -295,6 +335,7 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 	MenuItem *item;
 	byte row = 0;
 	byte dispCount = DISP_MENU_ENTRY;
+	byte icon;
 
 	mLcd.clear();
 	if (m->getItemCount() < DISP_MENU_ENTRY) {
@@ -308,16 +349,31 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 
 	for (byte i = mLastMenuStart; i < mLastMenuStart + dispCount; i++) {
 		mLcd.setCursor(0, row);
-		row++;
 
 		item = m->getItem(i);
-
 		if (i == m->mSelected)
 			mLcd.print(">");
 		else
 			mLcd.print(" ");
 
 		mLcd.print(item->getTitleStr());
+
+		if (item->mIcon) {
+			switch (item->mIcon) {
+				case ICON_BACK:
+					icon = UPLEVEL_CHAR;
+				break;
+				case ICON_FOLDER:
+					icon = FOLDER_CHAR;
+				break;
+				case ICON_CROSS:
+					icon = CROSS_CHAR;
+				break;
+			}
+			mLcd.setCursor(LIQUID_CRYSTAL_WIDTH - 1, row);
+			mLcd.write(byte(icon));
+		}
+		row++;
 	}
 }
 
@@ -354,6 +410,14 @@ void DisplayLiquidCrystal::drawBool(bool status)
 
 void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 {
+	
+	createChar(BEER_CHAR, (uint8_t *) beer);
+	createChar(THERMOMETER_CHAR, (uint8_t *) thermometer);
+	createChar(DEGREE_CHAR, (uint8_t *) degree);
+	createChar(PUMP_CHAR, (uint8_t *) pump1);
+	createChar(HEAT_CHAR, (uint8_t *) fire1);
+	createChar(CLOCK_CHAR, (uint8_t *) clock);
+
 	mLcd.clear();
 }
 
@@ -431,7 +495,8 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 
 void DisplayLiquidCrystal::enterManual(BrewOMatic *b)
 {
-	mLcd.clear();
+	enterBrewing(b);
+
 	dispTitle(getString(STR_MANUAL_MODE));
 
 	mLcd.setCursor(0, 1);

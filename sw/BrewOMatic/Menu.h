@@ -4,26 +4,38 @@
 #include "List.h"
 #include "Language.h"
 
+#include <stdint.h>
+
 class BrewOMatic;
 class Menu;
 class MenuItem;
+
+enum iconClass {
+	ICON_EMPTY = 0,
+	ICON_BACK,
+	ICON_FOLDER,
+	ICON_CROSS,
+};
+
+typedef uint8_t brewMenuIcon;
 
 typedef void (*menuItemCallback)(MenuItem *item, BrewOMatic *b);
 
 class MenuItem {
 	public:
-		MenuItem(menuItemCallback callback):
-		mCallback(callback) {};
+		MenuItem(menuItemCallback callback, brewMenuIcon icon):
+		mCallback(callback), mIcon(icon) {};
 		virtual const char *getTitleStr() = 0;
 
 		menuItemCallback mCallback;
 		Menu *mSubMenu;
+		brewMenuIcon mIcon;
 };
 
 class MenuItemStrIdx : public MenuItem {
 	public:
-		MenuItemStrIdx(brewStringIndex title, menuItemCallback callback):
-			MenuItem(callback),
+		MenuItemStrIdx(brewStringIndex title, menuItemCallback callback, brewMenuIcon icon):
+			MenuItem(callback, icon),
 			mTitle(title) {};
 		const char *getTitleStr() { return getString(mTitle);};
 
@@ -32,8 +44,8 @@ class MenuItemStrIdx : public MenuItem {
 
 class MenuItemStr : public MenuItem {
 	public:
-		MenuItemStr(const char *title, menuItemCallback callback):
-			MenuItem(callback),
+		MenuItemStr(const char *title, menuItemCallback callback, brewMenuIcon icon):
+			MenuItem(callback, icon),
 			mTitle(title) {};
 		const char *getTitleStr() { return mTitle;};
 
@@ -42,8 +54,8 @@ class MenuItemStr : public MenuItem {
 
 class MenuItemStrIdxMenu : public MenuItemStrIdx {
 	public:
-		MenuItemStrIdxMenu(brewStringIndex title, menuItemCallback callback, Menu *menu):
-			MenuItemStrIdx(title, callback),
+		MenuItemStrIdxMenu(brewStringIndex title, menuItemCallback callback, Menu *menu, brewMenuIcon icon):
+			MenuItemStrIdx(title, callback, icon),
 			mMenu(menu) {};
 
 		Menu *mMenu;

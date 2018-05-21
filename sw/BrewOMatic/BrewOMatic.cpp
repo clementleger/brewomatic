@@ -90,6 +90,11 @@ void BrewOMatic::actionMenuBack(bool exit)
 	mCurrentMenu->mSelected = 0;
 	mCurrentMenu = exit ? NULL : mCurrentMenu->mParent;
 	mUpdateDisplay = true;
+
+	/* Still in menu, no need to reload display */
+	if (mCurrentMenu != NULL)
+		return;
+
 	switch (mState) {
 		case STATE_IDLE:
 			mDisp->enterIdle(this);

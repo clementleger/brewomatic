@@ -39,7 +39,7 @@ mParent(parent),
 mSelected(0)
 {
 	/* Automatically add the default */
-	MenuItemStrIdx *back = new MenuItemStrIdx(STR_BACK, actionMenuBack);
+	MenuItemStrIdx *back = new MenuItemStrIdx(STR_BACK, actionMenuBack, ICON_BACK);
 	mItems.addElem(back);
 }
 
@@ -51,13 +51,13 @@ Menu *createIdleMenu()
 	Menu *sdCardMenu;
 	Menu *menu = new Menu(STR_MAIN_MENU, 2, NULL);
 
-	menu->mItems.addElem(new MenuItemStrIdx(STR_MANUAL_MODE, actionStartManual));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_MANUAL_MODE, actionStartManual, ICON_EMPTY));
 
 	sdCardMenu = sdCreateBrowseMenu(menu);
 	if (sdCardMenu) {
-		menu->mItems.addElem(new MenuItemStrIdxMenu(STR_BROWSE_SD_CARD, actionSubmenu, sdCardMenu));
+		menu->mItems.addElem(new MenuItemStrIdxMenu(STR_BROWSE_SD_CARD, actionSubmenu, sdCardMenu, ICON_FOLDER));
 	} else {
-		menu->mItems.addElem(new MenuItemStrIdx(STR_NO_SD_CARD, 0));
+		menu->mItems.addElem(new MenuItemStrIdx(STR_NO_SD_CARD, 0, ICON_CROSS));
 	}
 
 	return menu;
@@ -71,8 +71,8 @@ Menu *createBrewingMenu()
 {
 
 	Menu *menu = new Menu(STR_BREWING_MENU, 3, NULL);
-	menu->mItems.addElem(new MenuItemStrIdx(STR_STOP, actionStopBrewing));
-	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_STOP, actionStopBrewing, ICON_CROSS));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump, ICON_EMPTY));
 
 	return menu;
 }

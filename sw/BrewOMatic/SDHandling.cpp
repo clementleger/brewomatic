@@ -254,7 +254,7 @@ Menu *sdCreateBrowseMenu(Menu *parent)
 		}
 
 		file.getName(name, MAX_NAME_SIZE);
-		MenuItemStr *it = new MenuItemStr(strdup(name), actionExecuteRecipe);
+		MenuItemStr *it = new MenuItemStr(strdup(name), actionExecuteRecipe, ICON_EMPTY);
 
 		menu->mItems.addElem(it);
 
