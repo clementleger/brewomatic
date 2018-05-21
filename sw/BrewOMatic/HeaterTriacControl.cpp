@@ -60,15 +60,7 @@ void setTimerDutyCycle(void *data)
 	if (tc->mDutyCycle == 0)
 		return;
 
-	/* Full power, enabled triac right now */
-	if (tc->mDutyCycle == 100) {
-		/* Activate TRIAC gate */
-		digitalWrite(TRIAC_CONTROL_PIN, HIGH);
-		/* Set start tick greater than stp tick to trigger stop tick only */
-		startTimer(0xFF, tc->mTriacGateKeepTick);
-	} else {
-		startTimer(tc->mTriacEnableTick, tc->mTriacEnableTick + tc->mTriacGateKeepTick);
-	}
+	startTimer(tc->mTriacEnableTick, tc->mTriacEnableTick + tc->mTriacGateKeepTick);
 }
 
 HeaterTriacControl::HeaterTriacControl()
@@ -113,6 +105,8 @@ void HeaterTriacControl::enable(bool enable)
 
 void HeaterTriacControl::setDutyCycle(unsigned char value)
 {
+	noInterrupts();
 	mDutyCycle = value;
 	mTriacEnableTick = 100 - value;
+	interrupts();
 }
