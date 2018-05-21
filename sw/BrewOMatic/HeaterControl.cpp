@@ -8,6 +8,7 @@ mCtrl(),
 mEnable(0),
 mTargetTemp(0),
 mPidInput(0),
+mPidOutput(0),
 mPid(&mPidInput, &mPidOutput, &mTargetTemp, PID_P_VALUE, PID_I_VALUE, PID_D_VALUE, DIRECT)
 {
 	mPid.SetOutputLimits(0, 100);
@@ -19,6 +20,9 @@ void HeaterControl::setEnable(bool enable)
 	if (enable) {
 		if (mEnable)
 			return;
+
+		mPidOutput = 0;
+		mTargetTemp = 0;
 		mPid.SetMode(AUTOMATIC);
 		mCtrl.enable(true);
 	} else {
