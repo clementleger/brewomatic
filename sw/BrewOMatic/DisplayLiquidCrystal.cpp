@@ -402,7 +402,7 @@ void DisplayLiquidCrystal::loadAnimChar()
 void DisplayLiquidCrystal::drawBool(bool status)
 {
 	if (status) {
-		mLcd.print("On");
+		mLcd.print("On ");
 	} else {
 		mLcd.print("Off");
 	}
@@ -423,6 +423,13 @@ void DisplayLiquidCrystal::enterBrewing(BrewOMatic *b)
 
 void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 {
+	/* Clear temp status */
+	/* Min string length is 6, <icon>0°/0° */
+	mLcd.setCursor(6, row);
+	/* Max string length is 10 <icon>100°/100° ,
+	 * so only clear the 4 variable chars */
+	mLcd.print("    ");
+
 	/* Draw temp status */
 	mLcd.setCursor(0, row);
 	mLcd.write(byte(THERMOMETER_CHAR));
@@ -445,8 +452,10 @@ void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 	drawBool(1);
 
 	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
+	mLcd.print("    ");
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
 	mLcd.print((int) b->mHeaterControl->mPidOutput);
-	mLcd.print("% ");
+	mLcd.print("%");
 }
 
 void DisplayLiquidCrystal::drawTime(unsigned long amillis)
