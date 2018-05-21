@@ -9,8 +9,9 @@
 #include "DisplayLiquidCrystal.h"
 
 #include <Arduino.h>
+#include <avr/pgmspace.h>
 
-const static byte degree[8] = {
+const static byte degree[8] PROGMEM = {
 	0b01100,
 	0b10010,
 	0b10010,
@@ -21,7 +22,7 @@ const static byte degree[8] = {
 	0b00000
 };
 
-const static byte thermometer[8] = {
+const static byte thermometer[8] PROGMEM = {
 	0b00100,
 	0b01010,
 	0b01010,
@@ -32,7 +33,7 @@ const static byte thermometer[8] = {
 	0b01110
 };
 
-const static byte clock[8] = {
+const static byte clock[8] PROGMEM = {
 	0b00000,
 	0b01110,
 	0b10011,
@@ -43,7 +44,7 @@ const static byte clock[8] = {
 	0b00000
 };
 
-const static byte folder[8] = {
+const static byte folder[8] PROGMEM = {
 	0b00000,
 	0b11100,
 	0b11111,
@@ -54,7 +55,7 @@ const static byte folder[8] = {
 	0b00000
 };
 
-const static byte beer[8] = {
+const static byte beer[8] PROGMEM = {
 	0b00000,
 	0b11100,
 	0b11111,
@@ -65,7 +66,7 @@ const static byte beer[8] = {
 	0b00000
 };
 
-const static byte plug[8] = {
+const static byte plug[8] PROGMEM = {
 	0b01010,
 	0b01010,
 	0b11111,
@@ -76,7 +77,7 @@ const static byte plug[8] = {
 	0b00100
 };
 
-const static byte pump1[8] = {
+const static byte pump1[8] PROGMEM = {
 	0b01010,
 	0b01010,
 	0b10011,
@@ -87,7 +88,7 @@ const static byte pump1[8] = {
 	0b01010
 };
 
-const static byte fire1[8] = {
+const static byte fire1[8] PROGMEM = {
 	0b00000,
 	0b01000,
 	0b01100,
@@ -100,7 +101,7 @@ const static byte fire1[8] = {
 
 #if ENABLED(LIQUID_CRYSTAL_ANIM)
 
-const static byte pump2[8] = {
+const static byte pump2[8] PROGMEM = {
 	0b01010,
 	0b01010,
 	0b10001,
@@ -111,7 +112,7 @@ const static byte pump2[8] = {
 	0b01010
 };
 
-const static byte pump3[8] = {
+const static byte pump3[8] PROGMEM = {
 	0b01010,
 	0b01010,
 	0b10001,
@@ -122,7 +123,7 @@ const static byte pump3[8] = {
 	0b01010
 };
 
-const static byte pump4[8] = {
+const static byte pump4[8] PROGMEM = {
 	0b01010,
 	0b01010,
 	0b11001,
@@ -133,7 +134,7 @@ const static byte pump4[8] = {
 	0b01010
 };
 
-const static byte pump5[8] = {
+const static byte pump5[8] PROGMEM = {
 	0b01010,
 	0b01010,
 	0b10101,
@@ -148,7 +149,7 @@ const static byte pump5[8] = {
 
 static byte *pumpAnim[PUMP_STATE_COUNT] = {pump1, pump2, pump3, pump4, pump5};
 
-const static byte fire2[8] = {
+const static byte fire2[8] PROGMEM = {
 	0b00000,
 	0b00100,
 	0b01100,
@@ -159,7 +160,7 @@ const static byte fire2[8] = {
 	0b01110
 };
 
-const static byte fire3[8] = {
+const static byte fire3[8] PROGMEM = {
 	0b00000,
 	0b00000,
 	0b00100,
@@ -170,7 +171,7 @@ const static byte fire3[8] = {
 	0b01110
 };
 
-const static byte fire4[8] = {
+const static byte fire4[8] PROGMEM = {
 	0b00000,
 	0b00000,
 	0b01000,
@@ -207,6 +208,14 @@ void DisplayLiquidCrystal::dispTitle(const char *str)
 	mLcd.print(">");
 }
 
+void DisplayLiquidCrystal::createChar(byte idx, const byte progmemChar[8])
+{
+	uint8_t tmpChar[8];
+
+	memcpy_P(tmpChar, progmemChar, sizeof(uint8_t) * 8);
+	mLcd.createChar(idx, tmpChar);
+}
+
 DisplayLiquidCrystal::DisplayLiquidCrystal():
 mLcd(LIQUID_CRYSTAL_RS,
 	LIQUID_CRYSTAL_EN,
@@ -219,13 +228,13 @@ mHeatState(0)
 {
 	const char *str;
 	mLcd.begin(LIQUID_CRYSTAL_WIDTH, LIQUID_CRYSTAL_HEIGHT);
-	mLcd.createChar(BEER_CHAR, (uint8_t *) beer);
-	mLcd.createChar(THERMOMETER_CHAR, (uint8_t *) thermometer);
-	mLcd.createChar(DEGREE_CHAR, (uint8_t *) degree);
-	mLcd.createChar(PLUG_CHAR, (uint8_t *) plug);
-	mLcd.createChar(PUMP_CHAR, (uint8_t *) pump1);
-	mLcd.createChar(HEAT_CHAR, (uint8_t *) fire1);
-	mLcd.createChar(CLOCK_CHAR, (uint8_t *) clock);
+	createChar(BEER_CHAR, (uint8_t *) beer);
+	createChar(THERMOMETER_CHAR, (uint8_t *) thermometer);
+	createChar(DEGREE_CHAR, (uint8_t *) degree);
+	createChar(PLUG_CHAR, (uint8_t *) plug);
+	createChar(PUMP_CHAR, (uint8_t *) pump1);
+	createChar(HEAT_CHAR, (uint8_t *) fire1);
+	createChar(CLOCK_CHAR, (uint8_t *) clock);
 
 	dispTitle(getString(STR_BREWOMATIC));
 	str = getString(STR_STARTING);
@@ -316,13 +325,12 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 
 void DisplayLiquidCrystal::loadAnimChar()
 {
-	mLcd.createChar(PUMP_CHAR, pumpAnim[mPumpState]);
-
+	createChar(PUMP_CHAR, pumpAnim[mPumpState]);
 	mPumpState++;
 	if (mPumpState == PUMP_STATE_COUNT)
 		mPumpState = 0;
 
-	mLcd.createChar(HEAT_CHAR, heatAnim[mHeatState]);
+	createChar(HEAT_CHAR, heatAnim[mHeatState]);
 	mHeatState++;
 	if (mHeatState == HEAT_STATE_COUNT)
 		mHeatState = 0;

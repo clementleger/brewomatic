@@ -21,6 +21,7 @@ class DisplayLiquidCrystal: public Display {
 		void displayManual(BrewOMatic *b);
 
 	private:
+		void createChar(byte idx, const byte progmemChar[8]);
 		void dispTitle(const char *str);
 		void loadAnimChar();
 		void drawBool(bool status);
