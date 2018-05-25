@@ -1,0 +1,15 @@
+R;0.1;Test recipe
+# Heating at 26 for 10 minutes without pump enabled
+H;10;26;0
+A;V;0
+# 3 phase mashing
+M;30;64;1
+A;I;0
+M;30;68;1
+M;10;72;1
+# Boiling
+B;0;100;0
+A;R;0
+# Cooling
+C;0;20;0
+A;C;0
