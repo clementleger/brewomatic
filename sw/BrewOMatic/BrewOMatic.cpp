@@ -327,6 +327,7 @@ void BrewOMatic::handleBrewing()
 				mCurrentAction = NULL;
 				mUpdateDisplay = true;
 				mStatus = 0;
+				mDisp->enterBrewing(this);
 			}
 		break;
 		case BREWING_START_STEP:

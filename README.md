@@ -103,13 +103,16 @@ and that the expected temperature is 70 degrees celsius:
 H;10;70;1
 
 Additionnaly to these main steps, some actions can be added using the following syntax:
-A;time;action_type
+A;action_type;time
 
 Action type can be on of the following value:
- - IM: Insert malt
- - RM: Remove malt
- - SC: Setup Cooler
- - IH: Insert Hop
+ - I: Insert malt
+ - R: Remove malt
+ - C: Setup Cooler
+ - H: Insert Hop
+ - V: Verify everything !
+
+Check the recipe folder for some recipes
 
 # Hardware
 

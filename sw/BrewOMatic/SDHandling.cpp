@@ -104,7 +104,7 @@ static int checkRecipeHeader(char *fields[MAX_TOKEN], uint8_t count)
 #define MAX_RECIPE_STEPS	16
 #define MAX_ACTION_COUNT	4
 
-static brewStringIndex getStepStr(const char c)
+static int getStepStr(const char c)
 {
 	switch (c) {
 		case 'H': return STR_HEATING;
@@ -112,16 +112,19 @@ static brewStringIndex getStepStr(const char c)
 		case 'B': return STR_BOILING;
 		case 'C': return STR_COOLING;
 	}
+	return -1;
 }
 
-static brewStringIndex getActionStr(const char c)
+static int getActionStr(const char c)
 {
 	switch (c) {
 		case 'I': return STR_INSERT_MALT;
 		case 'R': return STR_REMOVE_MALT;
 		case 'C': return STR_SETUP_COOLER;
 		case 'H': return STR_INSERT_HOP;
+		case 'V': return STR_VERIFY_EVERYTHING;
 	}
+	return -1;
 }
 
 static Recipe *fileParseRecipe(SdBaseFile *file)
@@ -165,14 +168,16 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 			case 'M':
 			case 'B':
 			case 'C':
-				if (count != 4) {
+				if (count != 4)
 					goto err;
-				}
 
 				duration = atoi(fields[1]);
 				targetTemp = atoi(fields[2]);
 				pumpEnable = fields[3][0] == '0' ? false : true;
 				idx = getStepStr(fields[0][0]);
+				if (idx < 0)
+					goto err;
+
 				step = new Step(idx, duration, targetTemp, pumpEnable, MAX_ACTION_COUNT);
 				recipe->mSteps.addElem(step);
 			break;
@@ -182,9 +187,15 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 				}
 
 				idx = getActionStr(fields[1][0]);
+				if (idx < 0)
+					goto err;
+
 				duration = atoi(fields[2]);
 				action = new Action(idx, duration);
-				step->mUserActions.addElem(action);				
+				if (duration == 0)
+					step->mPreStepAction = action;
+				else
+					step->mUserActions.addElem(action);				
 			break;
 		}
 	} while(1);

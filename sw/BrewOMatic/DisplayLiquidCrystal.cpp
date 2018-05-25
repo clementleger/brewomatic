@@ -486,16 +486,20 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	drawStatus(b, 1);
 
 	mLcd.setCursor(0, 2);
-	mLcd.write(byte(CLOCK_CHAR));
-	if (b->mStepStartMillis != 0) {
-		drawTime(b->mStepStartMillis);
+	if (b->mCurrentAction != NULL) {
+		mLcd.print(getString(b->mCurrentAction->getDescIdx()));
 	} else {
-		mLcd.print("-");
+		mLcd.write(byte(CLOCK_CHAR));
+		if (b->mStepStartMillis != 0) {
+			drawTime(b->mStepStartMillis);
+		} else {
+			mLcd.print("-");
+		}
+		mLcd.print("/");
+		mLcd.print(b->mCurrentStep->mDuration);
+		mLcd.print(":00");
 	}
-	mLcd.print("/");
-	mLcd.print(b->mCurrentStep->mDuration);
-	mLcd.print(":00");
-
+	
 	if (b->mStatus) {
 		mLcd.setCursor(0, 3);
 		mLcd.print(getString(b->mStatus));

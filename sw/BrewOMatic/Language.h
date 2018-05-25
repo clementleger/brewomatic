@@ -41,6 +41,7 @@ enum brewStringIndexEnum {
 	STR_NO_SD_CARD,
 	STR_BROWSE_SD_CARD,
 	STR_INVALID_RECIPE,
+	STR_VERIFY_EVERYTHING,
 	/* Always last member of enum */
 	STR_COUNT
 };
