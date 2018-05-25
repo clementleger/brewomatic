@@ -140,7 +140,12 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 	Action *action;
 
 	/* Get the first line */
-	ret = fileGetLine(file, line);
+	do {
+		ret = fileGetLine(file, line);
+		if (ret == -1)
+			return NULL;
+	} while (line[0] != 'R');
+
 	count = splitLine(line, fields);
 
 	if (checkRecipeHeader(fields, count)) {
@@ -154,7 +159,8 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 		/* Check end of file */
 		if (ret)
 			break;
-			
+
+		/* Skip comments file */
 		if (line[0] == '#')
 			continue;
 
@@ -172,6 +178,8 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 					goto err;
 
 				duration = atoi(fields[1]);
+				if (duration < 0)
+					goto err;
 				targetTemp = atoi(fields[2]);
 				pumpEnable = fields[3][0] == '0' ? false : true;
 				idx = getStepStr(fields[0][0]);
@@ -191,6 +199,9 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 					goto err;
 
 				duration = atoi(fields[2]);
+				if (duration < 0)
+					goto err;
+
 				action = new Action(idx, duration);
 				if (duration == 0)
 					step->mPreStepAction = action;
@@ -235,29 +246,21 @@ static void actionExecuteRecipe(MenuItem *item, BrewOMatic *b)
 Menu *sdCreateBrowseMenu(Menu *parent)
 {
 	Menu *menu;
-	int entryCount = 0;
 	SdBaseFile file;
+	int recipeCount = 0;
 	char name[MAX_NAME_SIZE];
 
 	if (!sdPresent)
 		return NULL;
 
+	menu = new Menu(STR_BROWSE_SD_CARD, MAX_DISPLAY_RECIPES + 1, parent);
+
 	sd.vwd()->rewind();
 	while (file.openNext(sd.vwd(), O_READ)) {
-
-		if (file.isDir()) {
-			file.close();
-			continue;
+		if (recipeCount == MAX_DISPLAY_RECIPES) {
+			menu->mItems.addElem(new MenuItemStrIdx(STR_TOO_MANY_RECIPES, 0, ICON_CROSS));
+			break;
 		}
-
-		entryCount++;
-		file.close();
-	}
-
-	menu = new Menu(STR_BROWSE_SD_CARD, entryCount, parent);
-
-	sd.vwd()->rewind();
-	while (file.openNext(sd.vwd(), O_READ)) {
 
 		if (file.isDir()) {
 			file.close();
@@ -270,6 +273,8 @@ Menu *sdCreateBrowseMenu(Menu *parent)
 		menu->mItems.addElem(it);
 
 		file.close();
+		recipeCount++;
+
 	}
 
 	return menu;

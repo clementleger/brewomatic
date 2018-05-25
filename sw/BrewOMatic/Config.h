@@ -52,6 +52,12 @@
  */
 #define SD_CARD_CHIP_SELECT	10
 
+/**
+ * Maximum number of recipes to display on the screen
+ * Adjust that according to the size of your RAM !
+ */
+#define MAX_DISPLAY_RECIPES	10
+
 /***********************************************************************
  *                       Inputs
  **********************************************************************/
