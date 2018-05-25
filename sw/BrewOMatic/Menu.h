@@ -15,6 +15,7 @@ enum iconClass {
 	ICON_BACK,
 	ICON_FOLDER,
 	ICON_CROSS,
+	ICON_PUMP,
 };
 
 typedef uint8_t brewMenuIcon;

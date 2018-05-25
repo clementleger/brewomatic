@@ -330,6 +330,16 @@ void DisplayLiquidCrystal::enterMenu(BrewOMatic *b, Menu *m)
 	mLastMenuStart = 0;
 }
 
+/* Keep that in sync with enum iconClass ! */
+static const char iconsToCustomChar[] =
+{
+	/* ICON_EMPTY */ -1,
+	/* ICON_BACK, */ UPLEVEL_CHAR,
+	/* ICON_FOLDER, */ FOLDER_CHAR,
+	/* ICON_CROSS, */ CROSS_CHAR,
+	/* ICON_PUMP, */ PUMP_CHAR,
+};
+
 void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 {
 	MenuItem *item;
@@ -359,19 +369,8 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 		mLcd.print(item->getTitleStr());
 
 		if (item->mIcon) {
-			switch (item->mIcon) {
-				case ICON_BACK:
-					icon = UPLEVEL_CHAR;
-				break;
-				case ICON_FOLDER:
-					icon = FOLDER_CHAR;
-				break;
-				case ICON_CROSS:
-					icon = CROSS_CHAR;
-				break;
-			}
 			mLcd.setCursor(LIQUID_CRYSTAL_WIDTH - 1, row);
-			mLcd.write(byte(icon));
+			mLcd.write(byte(iconsToCustomChar[item->mIcon]));
 		}
 		row++;
 	}

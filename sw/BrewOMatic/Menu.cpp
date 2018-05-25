@@ -70,9 +70,9 @@ Menu *createIdleMenu()
 Menu *createBrewingMenu()
 {
 
-	Menu *menu = new Menu(STR_BREWING_MENU, 3, NULL);
+	Menu *menu = new Menu(STR_BREWING_MENU, 2, NULL);
 	menu->mItems.addElem(new MenuItemStrIdx(STR_STOP, actionStopBrewing, ICON_CROSS));
-	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump, ICON_EMPTY));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump, ICON_PUMP));
 
 	return menu;
 }
