@@ -4,11 +4,11 @@
 
 
 HeaterControl::HeaterControl(unsigned int sampleTime):
+mPidOutput(0),
 mCtrl(),
 mEnable(0),
 mTargetTemp(0),
 mPidInput(0),
-mPidOutput(0),
 mPid(&mPidInput, &mPidOutput, &mTargetTemp, PID_P_VALUE, PID_I_VALUE, PID_D_VALUE, DIRECT)
 {
 	mPid.SetOutputLimits(0, 100);

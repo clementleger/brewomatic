@@ -2,7 +2,6 @@
 #define _ROTARY_ENCODER_H
 
 #include "Input.h"
-#include "BrewOMatic.h"
 #include <Encoder.h>
 
 class RotaryEncoder: public Input {

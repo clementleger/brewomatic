@@ -40,4 +40,8 @@
 # error "Undefined temp probe"
 #endif
 
+#if ENABLED(STAT_OUTPUT) || ENABLED(DEBUG)
+# define USE_SERIAL 1
+#endif
+
 #endif

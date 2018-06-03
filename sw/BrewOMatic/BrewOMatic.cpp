@@ -8,7 +8,10 @@
 
 BrewOMatic brewOMatic;
 
-BrewOMatic::BrewOMatic()
+BrewOMatic::BrewOMatic():
+mInput(),
+mDisp(),
+mTempProbe()
 {
 	mState = STATE_IDLE;
 	mCurrentMenu = NULL;
@@ -57,7 +60,7 @@ void BrewOMatic::actionStopBrewing()
 	mHeaterControl->setEnable(false);
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
 
-	mDisp->enterIdle(this);
+	mDisp.enterIdle(this);
 }
 
 void BrewOMatic::actionStartBrewing()
@@ -66,7 +69,7 @@ void BrewOMatic::actionStartBrewing()
 
 	mStatus = STR_STARTING;
 
-	mDisp->enterBrewing(this);
+	mDisp.enterBrewing(this);
 	
 	mHeaterControl->setEnable(true);
 	getNextStep();
@@ -79,7 +82,7 @@ void BrewOMatic::actionStartManual()
 	mStepStartMillis = millis();
 
 	mHeaterControl->setEnable(true);
-	mDisp->enterManual(this);
+	mDisp.enterManual(this);
 }
 
 void BrewOMatic::actionMenuBack(bool exit)
@@ -97,13 +100,13 @@ void BrewOMatic::actionMenuBack(bool exit)
 
 	switch (mState) {
 		case STATE_IDLE:
-			mDisp->enterIdle(this);
+			mDisp.enterIdle(this);
 		break;
 		case STATE_BREWING:
-			mDisp->enterBrewing(this);
+			mDisp.enterBrewing(this);
 		break;
 		case STATE_MANUAL:
-			mDisp->enterManual(this);
+			mDisp.enterManual(this);
 		break;
 	}
 }
@@ -114,7 +117,7 @@ void BrewOMatic::actionMenuBack(bool exit)
  */
 uint8_t BrewOMatic::handleButton(Menu *onPress)
 {
-	uint8_t button = mInput->getButtonPressed();
+	uint8_t button = mInput.getButtonPressed();
 
 	/* Ugly non-generic case: we wait for user input and do not want
 	 * any generic handling */
@@ -128,7 +131,7 @@ uint8_t BrewOMatic::handleButton(Menu *onPress)
 			/* If not in menu, start menu when Ok is pressed */
 			if (!mCurrentMenu) {
 				mCurrentMenu = onPress;
-				mDisp->enterMenu(this, mCurrentMenu);
+				mDisp.enterMenu(this, mCurrentMenu);
 				mUpdateDisplay = true;
 			} else {
 				/* In menu, execute the menu callback */
@@ -170,7 +173,7 @@ void BrewOMatic::handleIdle()
 		return;
 
 	if (curMillis - mLastDispUpdate > SEC_TO_MS(2)) {
-		mTempProbe->getTemp(&mCurrentTemp);
+		mTempProbe.getTemp(&mCurrentTemp);
 		mUpdateDisplay = true;
 		mLastDispUpdate = curMillis;
 	}
@@ -187,6 +190,26 @@ void BrewOMatic::updateDisplay()
 			mUpdateDisplay = true;
 	}
 }
+#if ENABLED(STAT_OUTPUT)
+void BrewOMatic::updateStat()
+{
+	unsigned long curMillis = millis();
+
+	if (((curMillis - mLastStatUpdate) > STAT_OUTPUT_INTERVAL)) {
+		mLastStatUpdate = curMillis;
+		outSerial.print(mCurrentTemp);
+		outSerial.print(":");
+		outSerial.println(mTargetTemp);
+	}
+}
+
+#else
+
+void BrewOMatic::updateStat()
+{
+}
+
+#endif
 
 void BrewOMatic::updateTemp()
 {
@@ -195,7 +218,7 @@ void BrewOMatic::updateTemp()
 
 	if ((curMillis - mTempUpdate) > TEMP_SAMPLE_TIME_MS) {
 		mTempUpdate = curMillis;
-		ret = mTempProbe->getTemp(&mCurrentTemp);
+		ret = mTempProbe.getTemp(&mCurrentTemp);
 		if (ret) {
 			/* FIXME: Abort brewing if temp read failed multiple times */
 		}
@@ -222,6 +245,7 @@ void BrewOMatic::handleManual()
 
 	updateTemp();
 	updateDisplay();
+	updateStat();
 }
 
 void BrewOMatic::setTargetTemp(unsigned int targetTemp)
@@ -327,7 +351,7 @@ void BrewOMatic::handleBrewing()
 				mCurrentAction = NULL;
 				mUpdateDisplay = true;
 				mStatus = 0;
-				mDisp->enterBrewing(this);
+				mDisp.enterBrewing(this);
 			}
 		break;
 		case BREWING_START_STEP:
@@ -351,6 +375,7 @@ void BrewOMatic::handleBrewing()
 
 	updateTemp();
 	updateDisplay();
+	updateStat();
 }
 
 void BrewOMatic::handleDisplay()
@@ -359,20 +384,20 @@ void BrewOMatic::handleDisplay()
 		return;
 
 	if (mCurrentMenu) {
-		mDisp->displayMenu(this, mCurrentMenu);
+		mDisp.displayMenu(this, mCurrentMenu);
 		mUpdateDisplay = false;
 		return;
 	}
 
 	switch (mState) {
 		case STATE_IDLE:
-			mDisp->displayIdle(this);
+			mDisp.displayIdle(this);
 		break;
 		case STATE_BREWING:
-			mDisp->displayBrewing(this);
+			mDisp.displayBrewing(this);
 		break;
 		case STATE_MANUAL:
-			mDisp->displayManual(this);
+			mDisp.displayManual(this);
 		break;
 	}
 
@@ -408,6 +433,10 @@ void BrewOMatic::setup()
 {
 	int ret;
 
+#if ENABLED(STAT_OUTPUT) || ENABLED(DEBUG)
+	outSerial.begin(SERIAL_BAUDRATE);
+#endif
+
 	pinMode(PUMP_CONTROL_PIN, OUTPUT);
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
 
@@ -415,10 +444,7 @@ void BrewOMatic::setup()
 	delay(50);
 	beeperBeep(NOTE_C4, 50);
 
-	mTempProbe = new TEMP_PROBE_TYPE();
-	mDisp = new DISPLAY_TYPE();
 	mHeaterControl = new HeaterControl(TEMP_SAMPLE_TIME_MS);
-	mInput = new RotaryEncoder();
 
 	mError = false;
 	mStatus = STR_READY;
@@ -429,7 +455,7 @@ void BrewOMatic::setup()
 	mIdleMenu = createIdleMenu();
 	mBrewingMenu = createBrewingMenu();
 
-	ret = mTempProbe->getTemp(&mCurrentTemp);
+	ret = mTempProbe.getTemp(&mCurrentTemp);
 	if (ret)
 		setError(STR_TEMP_FAILED);
 
@@ -438,8 +464,8 @@ void BrewOMatic::setup()
 
 	delay(SEC_TO_MS(START_DELAY));
 
-	mDisp->enterIdle(this);
-	mDisp->displayIdle(this);
+	mDisp.enterIdle(this);
+	mDisp.displayIdle(this);
 
 	dbgOutput("Setup OK\n");
 }
@@ -449,10 +475,6 @@ void BrewOMatic::setup()
  */
 void setup()
 {
-#if ENABLED(SERIAL_OUTPUT) || ENABLED(DEBUG)
-	Serial.begin(SERIAL_BAUDRATE);
-#endif
-
 	brewOMatic.setup();
 }
 

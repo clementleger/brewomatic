@@ -1,3 +1,4 @@
+#include "Config.h"
 #include "RotaryEncoder.h"
 
 RotaryEncoder::RotaryEncoder():

@@ -37,6 +37,17 @@
 #define DEBUG	0
 
 /**
+ * Output statistic on serial periodically if enabled
+ */
+#define STAT_OUTPUT 1
+
+/**
+ * Output statistic periodically
+ * if defined, statistics will be printed eriodically on serial
+ */
+#define STAT_OUTPUT_INTERVAL	1000
+
+/**
  * Delay before starting in seconds
  */
 #define START_DELAY	0
@@ -170,7 +181,7 @@
 /**
  * Temperature and heating control delay
  */
-#define TEMP_SAMPLE_TIME_MS	100
+#define TEMP_SAMPLE_TIME_MS	500
 
 /**
  * If using a system which requires crossing detection

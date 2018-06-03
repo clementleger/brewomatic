@@ -73,13 +73,16 @@ class BrewOMatic {
 	private:
 		brewomaticState mState;
 
-		TempProbe *mTempProbe;
-		Display *mDisp;
-		Input *mInput;
+		TEMP_PROBE_TYPE mTempProbe;
+		DISPLAY_TYPE mDisp;
+		RotaryEncoder mInput;
 
 		unsigned long mLastDispUpdate;
 		unsigned long mTempUpdate;
 		unsigned long mLastBeepTime;
+#if ENABLED(STAT_OUTPUT)
+		unsigned long mLastStatUpdate;
+#endif
 		void setTargetTemp(unsigned int);
 		void setError(brewStringIndex err);
 
@@ -98,6 +101,7 @@ class BrewOMatic {
 
 		void updateTemp();
 		void updateDisplay();
+		void updateStat();
 
 		void changeState(brewomaticState state);
 		void handleIdle();

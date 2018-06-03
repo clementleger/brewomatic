@@ -8,6 +8,10 @@
 #define DBG_MSG_MAX_SIZE	50
 #define DBG_MSG_PREFIX		"DBG: "
 
+#if ENABLED(USE_SERIAL)
+MinimumSerial outSerial;
+#endif
+
 #if ENABLED(DEBUG)
 void dbgOutput(const char *fmt, ... ) {
 	char buf[DBG_MSG_MAX_SIZE] = DBG_MSG_PREFIX; // resulting string limited to 128 chars
@@ -15,7 +19,7 @@ void dbgOutput(const char *fmt, ... ) {
 	va_start (args, fmt);
 	vsnprintf(buf + strlen(DBG_MSG_PREFIX), DBG_MSG_MAX_SIZE - strlen(DBG_MSG_PREFIX), fmt, args);
 	va_end (args);
-	Serial.print(buf);
+	outSerial.print(buf);
 }
 #else
 
