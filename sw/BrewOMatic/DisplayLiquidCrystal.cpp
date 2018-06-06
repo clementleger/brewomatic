@@ -345,7 +345,6 @@ void DisplayLiquidCrystal::displayMenu(BrewOMatic *b, Menu *m)
 	MenuItem *item;
 	byte row = 0;
 	byte dispCount = DISP_MENU_ENTRY;
-	byte icon;
 
 	mLcd.clear();
 	if (m->getItemCount() < DISP_MENU_ENTRY) {

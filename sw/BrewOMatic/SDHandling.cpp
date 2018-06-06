@@ -1,11 +1,12 @@
 #include "Config.h"
-#include "SerialOutput.h"
-#include "Menu.h"
 
 #if ENABLED(USE_SD_CARD)
 
+#include "SerialOutput.h"
 #include "SDHandling.h"
 #include "BrewOMatic.h"
+#include "Recipe.h"
+#include "Menu.h"
 
 #include "SPI.h"
 #include "SdFat.h"
@@ -239,6 +240,8 @@ static void actionExecuteRecipe(MenuItem *item, BrewOMatic *b)
 
 	b->mCurrentRecipe = recipe;
 	b->actionStartBrewing();
+
+	file.close();
 }
 
 #define MAX_NAME_SIZE	30

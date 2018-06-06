@@ -1,17 +1,18 @@
 
-#include "Language.h"
 #include "Menu.h"
 #include "Config.h"
+#include "Language.h"
+#include "Statistic.h"
+#include "SDHandling.h"
 #include "BrewOMatic.h"
 #include "ACZeroCrossing.h"
-#include "SDHandling.h"
 
 BrewOMatic brewOMatic;
 
 BrewOMatic::BrewOMatic():
-mInput(),
+mTempProbe(),
 mDisp(),
-mTempProbe()
+mInput()
 {
 	mState = STATE_IDLE;
 	mCurrentMenu = NULL;
@@ -56,6 +57,7 @@ void BrewOMatic::actionStopBrewing()
 	}
 	changeState(STATE_IDLE);
 
+	statStop();
 	/* Stop everything */
 	mHeaterControl->setEnable(false);
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
@@ -63,8 +65,11 @@ void BrewOMatic::actionStopBrewing()
 	mDisp.enterIdle(this);
 }
 
+
 void BrewOMatic::actionStartBrewing()
 {
+	char ret;
+	ret = statStart();
 	changeState(STATE_BREWING);
 
 	mStatus = STR_STARTING;
@@ -81,6 +86,7 @@ void BrewOMatic::actionStartManual()
 	mCurrentStep = createManualStep();
 	mStepStartMillis = millis();
 
+	statStart();
 	mHeaterControl->setEnable(true);
 	mDisp.enterManual(this);
 }
@@ -197,9 +203,7 @@ void BrewOMatic::updateStat()
 
 	if (((curMillis - mLastStatUpdate) > STAT_OUTPUT_INTERVAL)) {
 		mLastStatUpdate = curMillis;
-		outSerial.print(mCurrentTemp);
-		outSerial.print(":");
-		outSerial.println(mTargetTemp);
+		statOutputTemp(mCurrentTemp, mTargetTemp);
 	}
 }
 

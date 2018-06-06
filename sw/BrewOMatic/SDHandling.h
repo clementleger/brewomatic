@@ -2,11 +2,11 @@
 #define _SDHANDLING_H
 
 #include "Config.h"
+#include "Arduino.h"
+#include "Menu.h"
 
 #if ENABLED(USE_SD_CARD)
 
-#include "Recipe.h"
-#include "Menu.h"
 
 int sdInit();
 Menu *sdCreateBrowseMenu(Menu *parent);

@@ -48,6 +48,17 @@
 #define STAT_OUTPUT_INTERVAL	1000
 
 /**
+ * Define to output statistics on serial
+ */
+#define STAT_OUTPUT_SERIAL	1
+
+/**
+ * Define to output statistics on sd card
+ * SD card must be enabled for that obviously
+ */
+#define STAT_OUTPUT_SD	1
+
+/**
  * Delay before starting in seconds
  */
 #define START_DELAY	0
