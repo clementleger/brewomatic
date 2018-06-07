@@ -68,14 +68,13 @@ void BrewOMatic::actionStopBrewing()
 
 void BrewOMatic::actionStartBrewing()
 {
-	char ret;
-	ret = statStart();
 	changeState(STATE_BREWING);
 
 	mStatus = STR_STARTING;
 
 	mDisp.enterBrewing(this);
 	
+	statStart();
 	mHeaterControl->setEnable(true);
 	getNextStep();
 }
@@ -281,9 +280,8 @@ void BrewOMatic::waitEndOfStep()
 		return;
 
 	dbgOutput("Stop step %s\n", mCurrentStep->mName);
-	/* Stop the pump and heater */
+	/* Stop the pump */
 	digitalWrite(PUMP_CONTROL_PIN, LOW);
-	mHeaterControl->setEnable(false);
 
 	mStatus = STR_BREWING;
 	mBrewingState = BREWING_GET_NEXT_STEP;
@@ -294,7 +292,7 @@ void BrewOMatic::getNextStep()
 	mUpdateDisplay = true;
 	mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
 	if (!mCurrentStep) {
-		/* Stop the pump and heater */
+		/* Stop the pump */
 		digitalWrite(PUMP_CONTROL_PIN, LOW);
 		mBrewingState = BREWING_END;
 		return;
