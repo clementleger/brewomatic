@@ -28,9 +28,16 @@ static char buf[MAX_BUF_SIZE];
 
 void statOutputTemp(unsigned char temp, unsigned char targetTemp)
 {
-	int size = snprintf(buf, MAX_BUF_SIZE, "%d:%d\n", temp, targetTemp);
+	memset(buf, 0, MAX_BUF_SIZE);
+
+	itoa(temp, buf, 10);
+	buf[strlen(buf)] = ':';
+	itoa(targetTemp, &buf[strlen(buf)], 10);
+	buf[strlen(buf)] = '\n';
+	int size = strlen(buf);
 #if ENABLED(STAT_OUTPUT_SD) && ENABLED(USE_SD_CARD)
 	logFile->write(buf, size);
+	logFile->sync();
 #endif
 #if ENABLED(STAT_OUTPUT_SERIAL)
 	outSerial.print(buf);
@@ -40,7 +47,6 @@ void statOutputTemp(unsigned char temp, unsigned char targetTemp)
 void statStop()
 {
 #if ENABLED(STAT_OUTPUT_SD) && ENABLED(USE_SD_CARD)
-	logFile->sync();
 	logFile->close();
 	delete logFile;
 #endif
