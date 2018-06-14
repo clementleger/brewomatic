@@ -1,0 +1,31 @@
+R;0.1;Brew&Beer
+# Verify everything !
+A;V;-1
+# Heating to 50 °C
+H;0;50;1
+# Insert Malt
+A;I;-1
+# 50°C during 10 minutes
+M;10;50;1
+# 64°C during 30 minutes
+M;30;64;1
+# 68°C during 30 minutes
+M;30;68;1
+# 72°C during 10 minutes
+M;10;72;1
+# Remove Malt
+A;R;-1
+# Reach Boiling point
+B;0;100;0
+# Insert Hop 1
+A;H;-1
+# 100°C during 50 minutes
+B;10;100;0
+# Insert Hop 2
+A;H;-1
+# 100°C during 10 minutes
+B;10;100;0
+# Setup cooler
+A;C;-1
+# Cooling
+C;0;21;1

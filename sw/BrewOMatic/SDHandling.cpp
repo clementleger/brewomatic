@@ -102,8 +102,8 @@ static int checkRecipeHeader(char *fields[MAX_TOKEN], uint8_t count)
 	return 0;
 }
 
-#define MAX_RECIPE_STEPS	16
-#define MAX_ACTION_COUNT	4
+#define MAX_RECIPE_STEPS	12
+#define MAX_ACTION_COUNT	2
 
 static int getStepStr(const char c)
 {
@@ -138,7 +138,7 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 	int duration, targetTemp;
 	bool pumpEnable;
 	brewStringIndex idx;
-	Action *action;
+	Action *action = NULL;
 
 	/* Get the first line */
 	do {
@@ -189,25 +189,30 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 
 				step = new Step(idx, duration, targetTemp, pumpEnable, MAX_ACTION_COUNT);
 				recipe->mSteps.addElem(step);
+
+				if (action != NULL) {
+					step->mPreStepAction = action;
+					action = NULL;
+				}
 			break;
 			case 'A':
-				if (count != 3 || step == NULL) {
+				if (count != 3)
 					goto err;
-				}
 
 				idx = getActionStr(fields[1][0]);
 				if (idx < 0)
 					goto err;
 
 				duration = atoi(fields[2]);
-				if (duration < 0)
+
+				if (duration < 0 && action != NULL)
 					goto err;
 
 				action = new Action(idx, duration);
-				if (duration == 0)
-					step->mPreStepAction = action;
-				else
-					step->mUserActions.addElem(action);				
+				if (duration != -1) {
+					step->mUserActions.addElem(action);
+					action = NULL;
+				}
 			break;
 		}
 	} while(1);

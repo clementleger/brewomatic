@@ -112,7 +112,10 @@ Action type can be on of the following value:
  - H: Insert Hop
  - V: Verify everything !
 
-Check the recipe folder for some recipes
+If time is is equal -1, then, the action will be executed before the step.
+The action must also be put before the step line in the recipe.
+
+Check the recipe folder for some samples recipes !
 
 # Hardware
 
