@@ -20,7 +20,7 @@ B;0;100;0
 # Insert Hop 1
 A;H;-1
 # 100°C during 50 minutes
-B;10;100;0
+B;50;100;0
 # Insert Hop 2
 A;H;-1
 # 100°C during 10 minutes
