@@ -220,6 +220,13 @@
  */
 #define PUMP_CONTROL_PIN	5
 
+/**
+ * If your pump can operate up to a max temperature
+ * set this to a sane value.
+ * If not, simply put a really high value... (150 for instance)
+ */
+#define PUMP_MAX_TEMP		80
+
 /* Do not touch ! */
 #include "ConfigSanity.h"
 

@@ -40,7 +40,11 @@ void BrewOMatic::changeState(brewomaticState state)
 bool BrewOMatic::actionEnablePump()
 {
 	mCurrentStep->mEnablePump = !mCurrentStep->mEnablePump;
-	digitalWrite(PUMP_CONTROL_PIN, mCurrentStep->mEnablePump);
+	if (mCurrentStep->mEnablePump)
+		pumpSet(mCurrentStep->mPumpDutyCycle);
+	else
+		pumpSet(mCurrentStep->mPumpDutyCycle);
+
 	mUpdateDisplay = true;
 
 	return mCurrentStep->mEnablePump;
@@ -60,7 +64,7 @@ void BrewOMatic::actionStopBrewing()
 	statStop();
 	/* Stop everything */
 	mHeaterControl->setEnable(false);
-	digitalWrite(PUMP_CONTROL_PIN, LOW);
+	pumpSet(0);
 
 	mDisp.enterIdle(this);
 }
@@ -263,7 +267,7 @@ void BrewOMatic::startStep()
 
 	dbgOutput("Start step %s\n", mCurrentStep->mName);
 	if (mCurrentStep->mEnablePump)
-		digitalWrite(PUMP_CONTROL_PIN, HIGH);
+		pumpSet(mCurrentStep->pumpDutyCycle);
 
 	setTargetTemp(mCurrentStep->mTargetTemp);
 	mStatus = STR_WAIT_TEMP;
@@ -281,7 +285,7 @@ void BrewOMatic::waitEndOfStep()
 
 	dbgOutput("Stop step %s\n", mCurrentStep->mName);
 	/* Stop the pump */
-	digitalWrite(PUMP_CONTROL_PIN, LOW);
+	pumpSet(0);
 
 	mStatus = STR_BREWING;
 	mBrewingState = BREWING_GET_NEXT_STEP;
@@ -293,7 +297,7 @@ void BrewOMatic::getNextStep()
 	mCurrentStep = mCurrentRecipe->mSteps.getNextElem();
 	if (!mCurrentStep) {
 		/* Stop the pump */
-		digitalWrite(PUMP_CONTROL_PIN, LOW);
+		pumpSet(0);
 		mBrewingState = BREWING_END;
 		return;
 	}
@@ -440,7 +444,7 @@ void BrewOMatic::setup()
 #endif
 
 	pinMode(PUMP_CONTROL_PIN, OUTPUT);
-	digitalWrite(PUMP_CONTROL_PIN, LOW);
+	pumpSet(0);
 
 	beeperBeep(NOTE_B4, 50);
 	delay(50);

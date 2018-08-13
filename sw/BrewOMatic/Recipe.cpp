@@ -3,8 +3,10 @@
 
 Step::Step(brewStringIndex name, unsigned long duration,
 	   unsigned char targetTemp, bool enablePump,
+	   unsigned char pumpDutyCycle,
 	   unsigned char actionCount):
 mEnablePump(enablePump),
+mPumpDutyCycle(pumpDutyCycle),
 mTargetTemp(targetTemp),
 mDuration(duration),
 mName(name),
@@ -47,5 +49,5 @@ Step::~Step()
 
 Step *createManualStep()
 {
-	return new Step(STR_MANUAL_MODE, 0, 25, false, 0);
+	return new Step(STR_MANUAL_MODE, 0, 25, false, 100, 0);
 }

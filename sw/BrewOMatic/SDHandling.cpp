@@ -136,6 +136,7 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 	Step *step = NULL;
 	char *fields[MAX_TOKEN];
 	int duration, targetTemp;
+	uint8_t pumpDutyCycle;
 	bool pumpEnable;
 	brewStringIndex idx;
 	Action *action = NULL;
@@ -175,7 +176,7 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 			case 'M':
 			case 'B':
 			case 'C':
-				if (count != 4)
+				if (count < 4)
 					goto err;
 
 				duration = atoi(fields[1]);
@@ -187,7 +188,19 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 				if (idx < 0)
 					goto err;
 
-				step = new Step(idx, duration, targetTemp, pumpEnable, MAX_ACTION_COUNT);
+				if (pumpEnable)
+					pumpDutyCycle = 100;
+				else
+					pumpDutyCycle = 0;
+
+				/* 5th field is pump duty cycle */
+				if (count >= 5) {
+					pumpDutyCycle = atoi(fields[4]);
+					if (pumpDutyCycle > 100)
+						pumpDutyCycle = 100;
+				}
+
+				step = new Step(idx, duration, targetTemp, pumpEnable, pumpDutyCycle, MAX_ACTION_COUNT);
 				recipe->mSteps.addElem(step);
 
 				if (action != NULL) {

@@ -83,7 +83,7 @@ Recipes are stored in .br (Brew Recipe) files on SD card.
 The format is basically a csv files with specific values:
 
 Lines format is the following:
-step;duration;temperature;pump_enable
+step;duration;temperature;pump_enable;pump_duty_cycle
 
 Step is mainly an indicator to display the correct step name on LCD.
 Step can be one of the following value:
@@ -94,8 +94,9 @@ Step can be one of the following value:
 
 Duration is then the step duration described in minutes.
 Temperature is the target temperature for this phase in Celsius.
-And finally pump enable is a boolean desribing if pump should be enabled for the
-step.
+And finally pump_enable is a boolean describing if pump should be enabled for the
+step. pump_duty_cycle is the duty cycle (0% - 100%) for the pump (done using PWM).
+
 
 For instance, the following line tell the system that we are in a heating step for 10 minutes
 and that the expected temperature is 70 degrees celsius:

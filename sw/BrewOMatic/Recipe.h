@@ -28,9 +28,11 @@ class Step {
 		Step();
 		Step(brewStringIndex name, unsigned long duration,
 		     unsigned char targetTemp, bool enablePump,
+		     unsigned char mPumpDutyCycle,
 		     unsigned char actionCount);
 
 		bool mEnablePump;
+		unsigned char mPumpDutyCycle;
 		unsigned char mTargetTemp;
 		unsigned long mDuration;
 		brewStringIndex mName;
