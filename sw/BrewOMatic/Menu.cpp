@@ -3,7 +3,7 @@
 #include "SDHandling.h"
 #include "BrewOMatic.h"
 
-static void actionMenuBack(MenuItem *item, BrewOMatic *b)
+static void actionMenuBack(__attribute__((unused)) MenuItem *item, BrewOMatic *b)
 {
 	b->actionMenuBack(false);
 }

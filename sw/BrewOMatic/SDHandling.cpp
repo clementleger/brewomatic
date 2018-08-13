@@ -143,7 +143,7 @@ static Recipe *fileParseRecipe(SdBaseFile *file)
 	/* Get the first line */
 	do {
 		ret = fileGetLine(file, line);
-		if (ret == -1)
+		if (ret)
 			return NULL;
 	} while (line[0] != 'R');
 
