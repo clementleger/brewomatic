@@ -1,5 +1,6 @@
 
 #include "Menu.h"
+#include "Pump.h"
 #include "Config.h"
 #include "Language.h"
 #include "Statistic.h"
@@ -267,7 +268,7 @@ void BrewOMatic::startStep()
 
 	dbgOutput("Start step %s\n", mCurrentStep->mName);
 	if (mCurrentStep->mEnablePump)
-		pumpSet(mCurrentStep->pumpDutyCycle);
+		pumpSet(mCurrentStep->mPumpDutyCycle);
 
 	setTargetTemp(mCurrentStep->mTargetTemp);
 	mStatus = STR_WAIT_TEMP;

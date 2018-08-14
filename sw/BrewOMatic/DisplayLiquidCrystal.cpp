@@ -449,9 +449,15 @@ void DisplayLiquidCrystal::drawStatus(BrewOMatic *b, int row)
 	mLcd.write(byte(HEAT_CHAR));
 	drawBool(1);
 
-	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
-	mLcd.print("    ");
-	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH - 4, row + 1);
+	/* Draw pump power */
+	if (b->mCurrentStep->mEnablePump) {
+		mLcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 1, row + 1);
+		mLcd.print((int) b->mCurrentStep->mPumpDutyCycle);
+		mLcd.print("%");
+	}
+
+	/* Draw heater power */
+	mLcd.setCursor(LIQUID_CRYSTAL_WIDTH / 2 + 6, row + 1);
 	mLcd.print((int) b->mHeaterControl->mPidOutput);
 	mLcd.print("%");
 }
@@ -484,6 +490,11 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	drawStatus(b, 1);
 
 	mLcd.setCursor(0, 2);
+	/* Clear the line */
+	for(int i = 0; i < LIQUID_CRYSTAL_WIDTH; i++)
+		mLcd.print(" ");
+	mLcd.setCursor(0, 2);
+
 	if (b->mCurrentAction != NULL) {
 		mLcd.print(getString(b->mCurrentAction->getDescIdx()));
 	} else {
