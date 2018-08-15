@@ -44,7 +44,7 @@ bool BrewOMatic::actionEnablePump()
 	if (mCurrentStep->mEnablePump)
 		pumpSet(mCurrentStep->mPumpDutyCycle);
 	else
-		pumpSet(mCurrentStep->mPumpDutyCycle);
+		pumpSet(0);
 
 	mUpdateDisplay = true;
 
