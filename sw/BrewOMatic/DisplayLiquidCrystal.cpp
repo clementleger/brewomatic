@@ -314,6 +314,8 @@ void DisplayLiquidCrystal::enterIdle(BrewOMatic *b)
 void DisplayLiquidCrystal::displayIdle(BrewOMatic *b)
 {
 	mLcd.setCursor(0, 2);
+	mLcd.print("         ");
+	mLcd.setCursor(0, 2);
 	mLcd.write(byte(THERMOMETER_CHAR));
 	mLcd.print(b->mCurrentTemp);
 	mLcd.write(byte(DEGREE_CHAR));
