@@ -7,7 +7,7 @@
 
 #define SEC_TO_MS(_sec)	(_sec * 1000)
 
-#define BREWOMATIC_VERSION_STRING	"0.1"
+#define BREWOMATIC_VERSION_STRING	"0.2"
 
 class BrewOMatic;
 
