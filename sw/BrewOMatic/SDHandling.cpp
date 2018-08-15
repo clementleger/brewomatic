@@ -66,7 +66,7 @@ exit:
 	return ret;
 }
 
-#define MAX_TOKEN 4
+#define MAX_TOKEN 6
 
 static uint8_t splitLine(char line[MAX_LINE_SIZE], char *ptrs[MAX_TOKEN])
 {
