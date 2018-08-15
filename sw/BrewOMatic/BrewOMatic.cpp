@@ -235,10 +235,8 @@ void BrewOMatic::updateTemp()
 	mHeaterControl->handleHeating(mCurrentTemp);
 }
 
-void BrewOMatic::handleManual()
+void BrewOMatic::setTempOnButton(unsigned char b)
 {
-	unsigned char b = handleButton(mBrewingMenu);
-
 	if (b != Input::BUTTON_NONE) {
 		if (b == Input::BUTTON_NEXT) {
 			setTargetTemp(mTargetTemp + 1);
@@ -250,6 +248,13 @@ void BrewOMatic::handleManual()
 			}
 		}
 	}
+}
+
+void BrewOMatic::handleManual()
+{
+	unsigned char b = handleButton(mBrewingMenu);
+
+	setTempOnButton(b);
 
 	updateTemp();
 	updateDisplay();
@@ -365,9 +370,11 @@ void BrewOMatic::handleBrewing()
 			startStep();
 		break;
 		case BREWING_WAIT_TEMP_REACHED:
+			setTempOnButton(b);
 			waitTempReached();
 		break;
 		case BREWING_WAIT_END_OF_STEP:
+			setTempOnButton(b);
 			waitEndOfStep();
 		break;
 		case BREWING_END:

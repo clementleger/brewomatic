@@ -85,6 +85,7 @@ class BrewOMatic {
 #endif
 		void setTargetTemp(unsigned int);
 		void setError(brewStringIndex err);
+		void setTempOnButton(unsigned char b);
 
 		brewingState mBrewingState;
 		Menu *mCurrentMenu;
