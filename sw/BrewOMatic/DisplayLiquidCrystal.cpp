@@ -507,7 +507,7 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 		}
 		mLcd.print("/");
 		mLcd.print(b->mCurrentStep->mDuration);
-		mLcd.print(":00");
+		mLcd.print("m");
 	}
 	
 	if (b->mStatus) {
