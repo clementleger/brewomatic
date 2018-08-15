@@ -263,12 +263,14 @@ static void actionExecuteRecipe(MenuItem *item, BrewOMatic *b)
 }
 
 #define MAX_NAME_SIZE	30
+#define RECIPE_SUFFIX	".br"
 
 Menu *sdCreateBrowseMenu(Menu *parent)
 {
 	Menu *menu;
 	SdBaseFile file;
 	int recipeCount = 0;
+	unsigned int len;
 	char name[MAX_NAME_SIZE];
 
 	if (!sdPresent)
@@ -287,15 +289,26 @@ Menu *sdCreateBrowseMenu(Menu *parent)
 			file.close();
 			continue;
 		}
-
+		
 		file.getName(name, MAX_NAME_SIZE);
+
+		len = strlen(name);
+		if (len < strlen(RECIPE_SUFFIX) + 1) {
+			file.close();
+			continue;
+		}
+
+		if (strcmp(&name[len - strlen(RECIPE_SUFFIX)], RECIPE_SUFFIX)) {
+			file.close();
+			continue;
+		}
+
 		MenuItemStr *it = new MenuItemStr(strdup(name), actionExecuteRecipe, ICON_EMPTY);
 
 		menu->mItems.addElem(it);
 
-		file.close();
 		recipeCount++;
-
+		file.close();
 	}
 
 	return menu;
