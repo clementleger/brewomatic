@@ -487,12 +487,13 @@ void DisplayLiquidCrystal::displayBrewing(BrewOMatic *b)
 	mLcd.print(" ");
 	mLcd.print(getString(b->mCurrentStep->mName));
 
-	drawStatus(b, 1);
-
 	mLcd.setCursor(0, 2);
 	/* Clear the line */
 	for(int i = 0; i < LIQUID_CRYSTAL_WIDTH; i++)
 		mLcd.print(" ");
+
+	drawStatus(b, 1);
+
 	mLcd.setCursor(0, 2);
 
 	if (b->mCurrentAction != NULL) {
