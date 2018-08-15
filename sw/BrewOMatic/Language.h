@@ -43,6 +43,7 @@ enum brewStringIndexEnum {
 	STR_INVALID_RECIPE,
 	STR_VERIFY_EVERYTHING,
 	STR_TOO_MANY_RECIPES,
+	STR_NEXT_STEP,
 	/* Always last member of enum */
 	STR_COUNT
 };

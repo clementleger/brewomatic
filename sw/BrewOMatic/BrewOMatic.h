@@ -56,6 +56,7 @@ class BrewOMatic {
 		void actionStopBrewing();
 		void actionStartBrewing();
 		void actionStartManual();
+		void actionNextStep();
 		bool actionEnablePump();
 		void actionMenuBack(bool exit);
 		void setCurrentMenu(Menu *m);

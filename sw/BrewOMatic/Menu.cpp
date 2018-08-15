@@ -26,6 +26,11 @@ static void actionStartManual(MenuItem *item, BrewOMatic *b)
 	b->actionStartManual();
 }
 
+static void actionNextStep(MenuItem *item, BrewOMatic *b)
+{
+	b->actionNextStep();
+}
+
 static void actionSubmenu(MenuItem *item, BrewOMatic *b)
 {
 	MenuItemStrIdxMenu *it = (MenuItemStrIdxMenu *) item;
@@ -70,9 +75,10 @@ Menu *createIdleMenu()
 Menu *createBrewingMenu()
 {
 
-	Menu *menu = new Menu(STR_BREWING_MENU, 2, NULL);
+	Menu *menu = new Menu(STR_BREWING_MENU, 3, NULL);
 	menu->mItems.addElem(new MenuItemStrIdx(STR_STOP, actionStopBrewing, ICON_CROSS));
 	menu->mItems.addElem(new MenuItemStrIdx(STR_ENABLE_PUMP, actionEnablePump, ICON_PUMP));
+	menu->mItems.addElem(new MenuItemStrIdx(STR_NEXT_STEP, actionNextStep, ICON_EMPTY));
 
 	return menu;
 }

@@ -95,6 +95,13 @@ void BrewOMatic::actionStartManual()
 	mDisp.enterManual(this);
 }
 
+void BrewOMatic::actionNextStep()
+{
+	/* Stop the pump */
+	pumpSet(0);
+	mBrewingState = BREWING_GET_NEXT_STEP;
+}
+
 void BrewOMatic::actionMenuBack(bool exit)
 {
 	if (!mCurrentMenu)
