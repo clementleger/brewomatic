@@ -331,7 +331,7 @@ void BrewOMatic::getNextStep()
 
 void BrewOMatic::waitTempReached()
 {
-	if (abs(mCurrentTemp - mCurrentStep->mTargetTemp) > 1)
+	if (abs(mCurrentTemp - mTargetTemp) > 1)
 		return;
 
 	beeperBeep(NOTE_B4, 20);
