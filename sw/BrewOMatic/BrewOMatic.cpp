@@ -100,6 +100,8 @@ void BrewOMatic::actionNextStep()
 	/* Stop the pump */
 	pumpSet(0);
 	mBrewingState = BREWING_GET_NEXT_STEP;
+
+	actionMenuBack(true);
 }
 
 void BrewOMatic::actionMenuBack(bool exit)
